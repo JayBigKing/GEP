@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <unordered_map>
 using namespace std;
 enum SymbolType
 {
@@ -13,12 +14,17 @@ enum SymbolType
 class Symbol
 {
 public:
+	Symbol(){}
 	Symbol(SymbolType symbolType, string symbolName);
+	Symbol(int num,SymbolType symbolType, string symbolName);
 	~Symbol(){}
+	void setNum(int theNum) { num = theNum; }
+
 	SymbolType getSymbolType() { return symbolType; }
 	string getSymbolName() { return symbolName; }
-
+	int getNum() { return num; }
 protected:
+	int num;
 	SymbolType symbolType;
 	string symbolName;
 };
@@ -27,6 +33,7 @@ class FunctionSymbol: public Symbol
 {
 public:
 	FunctionSymbol(SymbolType symbolType,string symbolName,int numOfInputArg , double(*functionHandler)(double *args, int argLen));
+	FunctionSymbol(int num, SymbolType symbolType, string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen));
 	~FunctionSymbol(){}
 	double callFunctionHandler(double *args, int argLen);
 	int getNumOfInputArg() { return numOfInputArg; }
@@ -39,10 +46,20 @@ class TerminalSymbol : public Symbol
 {
 public:
 	TerminalSymbol(string symbolName , double val);
+	TerminalSymbol(int num, string symbolName, double val);
 	~TerminalSymbol(){}
 	double getVal() { return value; }
 private:
 	double value;
+};
+struct SymbolMapInfo
+{
+	SymbolType symbolType;
+	int index;
+	void set(SymbolType st, int index0) {
+		symbolType = st;
+		index = index0;
+	}
 };
 
 class SymbolSet
@@ -67,9 +84,13 @@ public:
 	vector<FunctionSymbol>& getSubFunctionSet() { return subFunctionSet; }
 	vector<TerminalSymbol>& getTerminalSet() { return terminalSet; }
 	vector<Symbol>& getInputArgSet() { return inputArgSet; }
+	unordered_map<string, SymbolMapInfo>& getSymbolMap() { return symbolMap; }
 private:
+	int symbolNum = 0;
 	vector<FunctionSymbol> functionSet;
 	vector<FunctionSymbol> subFunctionSet;
 	vector<TerminalSymbol> terminalSet;
 	vector<Symbol> inputArgSet;
+	unordered_map<string, SymbolMapInfo> symbolMap;
+	vector<SymbolMapInfo> symbolVec;
 };
