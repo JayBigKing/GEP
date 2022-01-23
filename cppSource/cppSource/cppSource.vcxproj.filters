@@ -21,9 +21,27 @@
     <ClCompile Include="Symbol.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ChromosomeRule.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Chromosome.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ChromosomeDecoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Symbol.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Chromosome.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ChromosomeRule.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ChromosomeDecoder.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

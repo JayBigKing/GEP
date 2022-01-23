@@ -1,27 +1,80 @@
 #include "Symbol.h"
 //Symbol's function
-Symbol::Symbol(SymbolType symbolType, string symbolName):symbolType(symbolType),symbolName(symbolName){}
+
 Symbol::Symbol(int num, SymbolType symbolType, string symbolName) : num(num),symbolType(symbolType), symbolName(symbolName) {}
+Symbol::Symbol(SymbolType symbolType, string symbolName) : Symbol(0,symbolType,symbolName){}
+
+Symbol::Symbol(int num, string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen)) :
+	num(num), symbolType(FUNCTION), symbolName(symbolName), numOfInputArg(numOfInputArg), functionHandler(functionHandler) {}
+Symbol::Symbol(string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen)):
+	Symbol(0, symbolName, numOfInputArg,functionHandler){}
+
+Symbol::Symbol(int num, string symbolName, double val):
+	num(num),symbolType(TERMINAL),symbolName(symbolName),value(val){}
+Symbol::Symbol(string symbolName, double val):
+	Symbol(0,symbolName,val){}
+
+Symbol::Symbol(int num, string symbolName, int numOfInputArg, int ADFIndex):
+num(num), symbolType(SUB_FUNCTION), symbolName(symbolName), ADFIndex(ADFIndex) {}
+Symbol::Symbol(string symbolName, int numOfInputArg, int ADFIndex):
+	Symbol(0,symbolName,ADFIndex){}
 
 
-//FunctionSymbol's functions
-FunctionSymbol::FunctionSymbol(SymbolType symbolType, string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen)):
-	Symbol(symbolType,symbolName),numOfInputArg(numOfInputArg),functionHandler(functionHandler){}
-FunctionSymbol::FunctionSymbol(int num, SymbolType symbolType, string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen)):
-	Symbol(num,symbolType, symbolName), numOfInputArg(numOfInputArg), functionHandler(functionHandler) {}
-double FunctionSymbol::callFunctionHandler(double *args, int argLen) {
+double Symbol::callFunctionHandler(double *args, int argLen) {
+	try{
+		if(symbolType != FUNCTION )
+		throw "it`s no function ";
+	}
+	catch (const char* &e) {
+		printf("%s\r\n", e);
+		exit(-1);
+	}
 	return functionHandler(args, argLen);
 }
+double Symbol::callFunctionHandler(double *args) {
+	return callFunctionHandler(args, this->numOfInputArg);
+}
+int Symbol::getNumOfInputArg() {
+	try {
+		if (symbolType != FUNCTION )
+			throw "it`s no function ";
+	}
+	catch (const char* &e) {
+		printf("%s\r\n", e);
+		exit(-1);
+	}
+	return numOfInputArg;
+}
+double Symbol::getVal() {
+	try {
+		if (symbolType != TERMINAL)
+			throw "it`s no terminal";
+	}
+	catch (const char* &e) {
+		printf("%s\r\n", e);
+		exit(-1);
+	}
+	return value;
+}
 
-//TerminalSymbol's function
-TerminalSymbol::TerminalSymbol(string symbolName, double val):
-	Symbol(TERMINAL,symbolName),value(val){}
-TerminalSymbol::TerminalSymbol(int num, string symbolName, double val):
-	Symbol(num, TERMINAL, symbolName), value(val) {}
+////FunctionSymbol's functions
+//FunctionSymbol::FunctionSymbol(SymbolType symbolType, string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen)):
+//	Symbol(symbolType,symbolName),numOfInputArg(numOfInputArg),functionHandler(functionHandler){}
+//FunctionSymbol::FunctionSymbol(int num, SymbolType symbolType, string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen)):
+//	Symbol(num,symbolType, symbolName), numOfInputArg(numOfInputArg), functionHandler(functionHandler) {}
+//double FunctionSymbol::callFunctionHandler(double *args, int argLen) {
+//	return functionHandler(args, argLen);
+//}
+//
+////TerminalSymbol's function
+//TerminalSymbol::TerminalSymbol(string symbolName, double val):
+//	Symbol(TERMINAL,symbolName),value(val){}
+//TerminalSymbol::TerminalSymbol(int num, string symbolName, double val):
+//	Symbol(num, TERMINAL, symbolName), value(val) {}
 
 //SymbolSet's function
 bool SymbolSet::pushFunctionSymbol(string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen)) {
-	FunctionSymbol fs(symbolNum,FUNCTION, symbolName , numOfInputArg, functionHandler);
+	Symbol fs(symbolNum, symbolName , numOfInputArg, functionHandler);
 	SymbolMapInfo smi;
 
 	functionSet.push_back(fs);
@@ -32,7 +85,7 @@ bool SymbolSet::pushFunctionSymbol(string symbolName, int numOfInputArg, double(
 	symbolNum++;
 	return true;
 }
-bool SymbolSet::pushFunctionSymbol(FunctionSymbol functionSymbol) {
+bool SymbolSet::pushFunctionSymbol(Symbol functionSymbol) {
 	if (functionSymbol.getSymbolType() != FUNCTION)
 		return false;
 	SymbolMapInfo smi;
@@ -46,8 +99,8 @@ bool SymbolSet::pushFunctionSymbol(FunctionSymbol functionSymbol) {
 }
 
 
-bool SymbolSet::pushSubFunctionSymbol(string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen)) {
-	FunctionSymbol sfs(symbolNum,SUB_FUNCTION, symbolName, numOfInputArg, functionHandler);
+bool SymbolSet::pushSubFunctionSymbol(string symbolName, int numOfInputArg, int ADFIndex) {
+	Symbol sfs(symbolNum,symbolName, numOfInputArg, ADFIndex);
 	SymbolMapInfo smi;
 
 	subFunctionSet.push_back(sfs);
@@ -57,7 +110,7 @@ bool SymbolSet::pushSubFunctionSymbol(string symbolName, int numOfInputArg, doub
 	symbolNum++;
 	return true;
 }
-bool SymbolSet::pushSubFunctionSymbol(FunctionSymbol subFunctionSymbol) {
+bool SymbolSet::pushSubFunctionSymbol(Symbol subFunctionSymbol) {
 	if (subFunctionSymbol.getSymbolType() != SUB_FUNCTION)
 		return false;
 	SymbolMapInfo smi;
@@ -73,7 +126,7 @@ bool SymbolSet::pushSubFunctionSymbol(FunctionSymbol subFunctionSymbol) {
 }
 
 bool SymbolSet::pushTerminalSymbol(string symbolName, double val) {
-	TerminalSymbol terminal(symbolNum,symbolName, val);
+	Symbol terminal(symbolNum,symbolName, val);
 	SymbolMapInfo smi;
 
 	terminalSet.push_back(terminal);
@@ -84,7 +137,7 @@ bool SymbolSet::pushTerminalSymbol(string symbolName, double val) {
 	return true;
 
 }
-bool SymbolSet::pushTerminalSymbol(TerminalSymbol terminal) {
+bool SymbolSet::pushTerminalSymbol(Symbol terminal) {
 	SymbolMapInfo smi;
 
 	terminal.setNum(symbolNum);
@@ -120,4 +173,34 @@ bool SymbolSet::pushInputArgSymbol(Symbol inputArg) {
 	symbolVec.push_back(smi);
 	symbolNum++;
 	return true;
+}
+
+Symbol& SymbolSet::getSymbolHelp(SymbolMapInfo smi) {
+	switch (smi.symbolType)
+	{
+	case FUNCTION:
+		return functionSet[smi.index];
+		break;
+
+	case SUB_FUNCTION:
+		return subFunctionSet[smi.index];
+		break;
+	case TERMINAL:
+		return terminalSet[smi.index];
+		break;
+	case ARGUMENT:
+		return inputArgSet[smi.index];
+		break;
+	default:
+		break;
+	}
+
+}
+Symbol& SymbolSet::getSymbol(string str) {
+	SymbolMapInfo smi = symbolMap[str];
+	return getSymbolHelp(smi);
+}
+Symbol& SymbolSet::getSymbol(int index) {
+	SymbolMapInfo smi = symbolVec[index];
+	return getSymbolHelp(smi);
 }

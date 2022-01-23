@@ -17,41 +17,57 @@ public:
 	Symbol(){}
 	Symbol(SymbolType symbolType, string symbolName);
 	Symbol(int num,SymbolType symbolType, string symbolName);
+	Symbol(string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen));
+	Symbol(int num, string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen));
+	Symbol(string symbolName , double val);
+	Symbol(int num, string symbolName, double val);
+	Symbol(string symbolName, int numOfInputArg, int ADFIndex);
+	Symbol(int num, string symbolName, int numOfInputArg, int ADFIndex);
 	~Symbol(){}
 	void setNum(int theNum) { num = theNum; }
+	void setVal(double val) { value = val; }
 
 	SymbolType getSymbolType() { return symbolType; }
 	string getSymbolName() { return symbolName; }
 	int getNum() { return num; }
+
+	double callFunctionHandler(double *args, int argLen);
+	double callFunctionHandler(double *args);
+	int getNumOfInputArg();
+	double getVal();
 protected:
-	int num;
+	int num;	
 	SymbolType symbolType;
 	string symbolName;
-};
-
-class FunctionSymbol: public Symbol
-{
-public:
-	FunctionSymbol(SymbolType symbolType,string symbolName,int numOfInputArg , double(*functionHandler)(double *args, int argLen));
-	FunctionSymbol(int num, SymbolType symbolType, string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen));
-	~FunctionSymbol(){}
-	double callFunctionHandler(double *args, int argLen);
-	int getNumOfInputArg() { return numOfInputArg; }
-private:
+	double value;
 	int numOfInputArg;
 	double(*functionHandler)(double *args, int argLen);
+	int ADFIndex;
 };
 
-class TerminalSymbol : public Symbol
-{
-public:
-	TerminalSymbol(string symbolName , double val);
-	TerminalSymbol(int num, string symbolName, double val);
-	~TerminalSymbol(){}
-	double getVal() { return value; }
-private:
-	double value;
-};
+//class FunctionSymbol: public Symbol
+//{
+//public:
+//	FunctionSymbol(SymbolType symbolType,string symbolName,int numOfInputArg , double(*functionHandler)(double *args, int argLen));
+//	FunctionSymbol(int num, SymbolType symbolType, string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen));
+//	~FunctionSymbol(){}
+//	double callFunctionHandler(double *args, int argLen);
+//	int getNumOfInputArg() { return numOfInputArg; }
+//private:
+//	int numOfInputArg;
+//	double(*functionHandler)(double *args, int argLen);
+//};
+//
+//class TerminalSymbol : public Symbol
+//{
+//public:
+//	TerminalSymbol(string symbolName , double val);
+//	TerminalSymbol(int num, string symbolName, double val);
+//	~TerminalSymbol(){}
+//	double getVal() { return value; }
+//private:
+//	double value;
+//};
 struct SymbolMapInfo
 {
 	SymbolType symbolType;
@@ -69,27 +85,30 @@ public:
 	~SymbolSet(){}
 
 	bool pushFunctionSymbol(string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen));
-	bool pushFunctionSymbol(FunctionSymbol functionSymbol);
+	bool pushFunctionSymbol(Symbol functionSymbol);
 
-	bool pushSubFunctionSymbol(string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen));
-	bool pushSubFunctionSymbol(FunctionSymbol subFunctionSymbol);
+	bool pushSubFunctionSymbol(string symbolName,int numOfInputArg, int ADFIndex);
+	bool pushSubFunctionSymbol(Symbol subFunctionSymbol);
 
 	bool pushTerminalSymbol(string symbolName, double val);
-	bool pushTerminalSymbol(TerminalSymbol terminal);
+	bool pushTerminalSymbol(Symbol terminal);
 
 	bool pushInputArgSymbol(string symbolName);
 	bool pushInputArgSymbol(Symbol inputArg);
 
-	vector<FunctionSymbol>& getFunctionSet() { return functionSet; }
-	vector<FunctionSymbol>& getSubFunctionSet() { return subFunctionSet; }
-	vector<TerminalSymbol>& getTerminalSet() { return terminalSet; }
+	vector<Symbol>& getFunctionSet() { return functionSet; }
+	vector<Symbol>& getSubFunctionSet() { return subFunctionSet; }
+	vector<Symbol>& getTerminalSet() { return terminalSet; }
 	vector<Symbol>& getInputArgSet() { return inputArgSet; }
 	unordered_map<string, SymbolMapInfo>& getSymbolMap() { return symbolMap; }
+	Symbol& getSymbol(string str);
+	Symbol& getSymbol(int index);
+	Symbol& getSymbolHelp(SymbolMapInfo smi);
 private:
 	int symbolNum = 0;
-	vector<FunctionSymbol> functionSet;
-	vector<FunctionSymbol> subFunctionSet;
-	vector<TerminalSymbol> terminalSet;
+	vector<Symbol> functionSet;
+	vector<Symbol> subFunctionSet;
+	vector<Symbol> terminalSet;
 	vector<Symbol> inputArgSet;
 	unordered_map<string, SymbolMapInfo> symbolMap;
 	vector<SymbolMapInfo> symbolVec;

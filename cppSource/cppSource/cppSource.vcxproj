@@ -144,10 +144,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Chromosome.cpp" />
+    <ClCompile Include="ChromosomeDecoder.cpp" />
+    <ClCompile Include="ChromosomeRule.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Symbol.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Chromosome.h" />
+    <ClInclude Include="ChromosomeDecoder.h" />
+    <ClInclude Include="ChromosomeRule.h" />
     <ClInclude Include="Symbol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
