@@ -35,6 +35,7 @@ public:
 	double callFunctionHandler(double *args);
 	int getNumOfInputArg();
 	double getVal();
+	int getADFIndex();
 protected:
 	int num;	
 	SymbolType symbolType;

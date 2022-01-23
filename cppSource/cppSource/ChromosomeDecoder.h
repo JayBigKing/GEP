@@ -25,8 +25,10 @@ private:
 	SymbolSet symbolSet;
 
 	double mainProgramDecode();
+	double ADFProgramDecode(Symbol &subFunctionSym , double* inputArgsVal);
 	DecodeElement makeDecodElement(int index, int chroIndex , int &globalPointIndex);
 	void setSymbolSetTerminals();
+	void setSymbolSetInputArgs(int num, double* args);
 
 
 };

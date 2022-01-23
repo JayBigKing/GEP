@@ -55,7 +55,7 @@ void test2() {
 	symbolSet.pushFunctionSymbol("add", 2, minusHandler);
 	symbolSet.pushFunctionSymbol("add0", 2, addHandler);
 	symbolSet.pushTerminalSymbol("v0", 10);
-	symbolSet.pushSubFunctionSymbol("minus", 2, minusHandler);
+	symbolSet.pushSubFunctionSymbol("G", 2, 1);
 	symbolSet.pushInputArgSymbol("a");
 	vector<Symbol> functionSet = symbolSet.getFunctionSet();
 	vector<Symbol> subFuncSet = symbolSet.getSubFunctionSet();
@@ -78,25 +78,37 @@ void test3() {
 	args[1] = 2;
 
 
-	symbolSet.pushFunctionSymbol("minus", 2, minusHandler);
-	symbolSet.pushFunctionSymbol("times", 2, timesHandler);
-	symbolSet.pushTerminalSymbol("a", 10);
-	symbolSet.pushTerminalSymbol("b", 10);
+	symbolSet.pushFunctionSymbol("add", 2, addHandler);	//0
+	symbolSet.pushFunctionSymbol("times", 2, timesHandler); //1
+	symbolSet.pushTerminalSymbol("a", 10);	//2
+	symbolSet.pushTerminalSymbol("b", 10);	//3
+	symbolSet.pushSubFunctionSymbol("G", 2, 0);	//4
+	symbolSet.pushInputArgSymbol("x");		//5
+	symbolSet.pushInputArgSymbol("y");		//6
 
 	int mainProgramH = 10;
 	vector<int>ADFH;
+	ADFH.push_back(1);
 	ChromosomeRule cr(mainProgramH, ADFH, symbolSet);
 	Chromosome chromosome(cr);
 	ChromosomeDecoder cd;
 	vector<double>input(2);
 
-	chromosome.mainProgramEx[0] = 0;
-	chromosome.mainProgramEx[1] = 3;
-	chromosome.mainProgramEx[2] = 1;
-	chromosome.mainProgramEx[3] = 3;
-	chromosome.mainProgramEx[4] = 2;
 
-	input[0] = 0.5;
+	chromosome.mainProgramEx[0] = 4;
+	chromosome.mainProgramEx[1] = 1;
+	chromosome.mainProgramEx[2] = 2;
+	chromosome.mainProgramEx[3] = 2;
+	chromosome.mainProgramEx[4] = 2;
+	chromosome.mainProgramEx[5] = 3;
+	chromosome.mainProgramEx[6] = 2;
+
+	chromosome.ADFEx[0][0] = 0;
+	chromosome.ADFEx[0][1] = 5;
+	chromosome.ADFEx[0][2] = 6;
+
+
+	input[0] = 1;
 	input[1] = 2;
 
 	printf("%f\r\n", cd.decode(input, chromosome, cr));

@@ -15,7 +15,7 @@ Symbol::Symbol(string symbolName, double val):
 	Symbol(0,symbolName,val){}
 
 Symbol::Symbol(int num, string symbolName, int numOfInputArg, int ADFIndex):
-num(num), symbolType(SUB_FUNCTION), symbolName(symbolName), ADFIndex(ADFIndex) {}
+num(num), symbolType(SUB_FUNCTION), symbolName(symbolName), numOfInputArg(numOfInputArg), ADFIndex(ADFIndex) {}
 Symbol::Symbol(string symbolName, int numOfInputArg, int ADFIndex):
 	Symbol(0,symbolName,ADFIndex){}
 
@@ -36,8 +36,8 @@ double Symbol::callFunctionHandler(double *args) {
 }
 int Symbol::getNumOfInputArg() {
 	try {
-		if (symbolType != FUNCTION )
-			throw "it`s no function ";
+		if (symbolType != FUNCTION && symbolType != SUB_FUNCTION)
+			throw "it`s no function or sub function";
 	}
 	catch (const char* &e) {
 		printf("%s\r\n", e);
@@ -47,8 +47,8 @@ int Symbol::getNumOfInputArg() {
 }
 double Symbol::getVal() {
 	try {
-		if (symbolType != TERMINAL)
-			throw "it`s no terminal";
+		if (symbolType != TERMINAL && symbolType != ARGUMENT)
+			throw "it`s no terminal or input argument!";
 	}
 	catch (const char* &e) {
 		printf("%s\r\n", e);
@@ -56,7 +56,17 @@ double Symbol::getVal() {
 	}
 	return value;
 }
-
+int Symbol::getADFIndex() {
+	try {
+		if (symbolType != SUB_FUNCTION)
+			throw "it`s no sub function";
+	}
+	catch (const char* &e) {
+		printf("%s\r\n", e);
+		exit(-1);
+	}
+	return ADFIndex;
+}
 ////FunctionSymbol's functions
 //FunctionSymbol::FunctionSymbol(SymbolType symbolType, string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen)):
 //	Symbol(symbolType,symbolName),numOfInputArg(numOfInputArg),functionHandler(functionHandler){}
