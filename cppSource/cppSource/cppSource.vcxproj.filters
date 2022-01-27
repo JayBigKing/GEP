@@ -30,6 +30,21 @@
     <ClCompile Include="ChromosomeDecoder.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="FunctioonPreset.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SymbolSetGenerator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SL_ChromosomeDecoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SL_GEP.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GEP.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Symbol.h">
@@ -42,6 +57,24 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ChromosomeDecoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolSetGenerator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionPreset.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GEP.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SL_GEP.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SL_ChromosomeDecoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="initHelp.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

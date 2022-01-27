@@ -16,6 +16,7 @@ public:
 	ChromosomeRule(){}
 	ChromosomeRule(int mainProgramH,vector<int>& ADFH, SymbolSet sSet);
 	~ChromosomeRule(){}
+	void init(int mainProgramH, vector<int>& ADFH, SymbolSet sSet);
 	ProgramRule& getMainPR() { return mainPR; }
 	vector<ProgramRule>& getADFPR() { return ADFPR; }
 	ProgramRule& getADFPR(int index) { 
@@ -37,6 +38,7 @@ private:
 	int u;
 	SymbolSet symbolSet;
 
+	void initHelp(int mainProgramH, vector<int>&ADFH);
 
 };
 

@@ -147,14 +147,25 @@
     <ClCompile Include="Chromosome.cpp" />
     <ClCompile Include="ChromosomeDecoder.cpp" />
     <ClCompile Include="ChromosomeRule.cpp" />
+    <ClCompile Include="FunctioonPreset.cpp" />
+    <ClCompile Include="GEP.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SL_ChromosomeDecoder.cpp" />
+    <ClCompile Include="SL_GEP.cpp" />
     <ClCompile Include="Symbol.cpp" />
+    <ClCompile Include="SymbolSetGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chromosome.h" />
     <ClInclude Include="ChromosomeDecoder.h" />
     <ClInclude Include="ChromosomeRule.h" />
+    <ClInclude Include="FunctionPreset.h" />
+    <ClInclude Include="GEP.h" />
+    <ClInclude Include="initHelp.h" />
+    <ClInclude Include="SL_ChromosomeDecoder.h" />
+    <ClInclude Include="SL_GEP.h" />
     <ClInclude Include="Symbol.h" />
+    <ClInclude Include="SymbolSetGenerator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

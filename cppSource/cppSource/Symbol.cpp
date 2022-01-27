@@ -4,15 +4,21 @@
 Symbol::Symbol(int num, SymbolType symbolType, string symbolName) : num(num),symbolType(symbolType), symbolName(symbolName) {}
 Symbol::Symbol(SymbolType symbolType, string symbolName) : Symbol(0,symbolType,symbolName){}
 
-Symbol::Symbol(int num, string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen)) :
-	num(num), symbolType(FUNCTION), symbolName(symbolName), numOfInputArg(numOfInputArg), functionHandler(functionHandler) {}
-Symbol::Symbol(string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen)):
+Symbol::Symbol(int num, string symbolName, int numOfInputArg, double(*functionHandler)(const double *args, const int argLen)) :
+	num(num), symbolType(FUNCTION), symbolName(symbolName), numOfInputArg(numOfInputArg), functionHandler(functionHandler) , functionType(USER){}
+Symbol::Symbol(string symbolName, int numOfInputArg, double(*functionHandler)(const double *args, const int argLen)):
 	Symbol(0, symbolName, numOfInputArg,functionHandler){}
 
-Symbol::Symbol(int num, string symbolName, double val):
-	num(num),symbolType(TERMINAL),symbolName(symbolName),value(val){}
-Symbol::Symbol(string symbolName, double val):
-	Symbol(0,symbolName,val){}
+Symbol::Symbol(int num, WhichFunction wf):
+	num(num), symbolType(FUNCTION), symbolName(getFunctionName(wf)), numOfInputArg(getFunctionArgLen(wf)), functionType(PRESET),whichFunction(wf){}
+Symbol::Symbol( WhichFunction wf):
+	Symbol(0,wf){}
+
+
+Symbol::Symbol(int num, string symbolName, double val,bool ifConstant):
+	num(num),symbolType(TERMINAL),symbolName(symbolName),value(val),ifValueConstant(ifConstant){}
+Symbol::Symbol(string symbolName, double val, bool ifConstant):
+	Symbol(0,symbolName,val,ifConstant){}
 
 Symbol::Symbol(int num, string symbolName, int numOfInputArg, int ADFIndex):
 num(num), symbolType(SUB_FUNCTION), symbolName(symbolName), numOfInputArg(numOfInputArg), ADFIndex(ADFIndex) {}
@@ -20,16 +26,23 @@ Symbol::Symbol(string symbolName, int numOfInputArg, int ADFIndex):
 	Symbol(0,symbolName,ADFIndex){}
 
 
+
+
 double Symbol::callFunctionHandler(double *args, int argLen) {
 	try{
 		if(symbolType != FUNCTION )
-		throw "it`s no function ";
+			throw "it`s no function ";
+		if (functionType == PRESET)
+			return functionPresetHandler(args, whichFunction);
+		else
+			return functionHandler(args, argLen);
+
 	}
 	catch (const char* &e) {
 		printf("%s\r\n", e);
 		exit(-1);
 	}
-	return functionHandler(args, argLen);
+
 }
 double Symbol::callFunctionHandler(double *args) {
 	return callFunctionHandler(args, this->numOfInputArg);
@@ -83,7 +96,7 @@ int Symbol::getADFIndex() {
 //	Symbol(num, TERMINAL, symbolName), value(val) {}
 
 //SymbolSet's function
-bool SymbolSet::pushFunctionSymbol(string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen)) {
+bool SymbolSet::pushFunctionSymbol(string symbolName, int numOfInputArg, double(*functionHandler)(const double *args, const int argLen)) {
 	Symbol fs(symbolNum, symbolName , numOfInputArg, functionHandler);
 	SymbolMapInfo smi;
 
@@ -94,6 +107,19 @@ bool SymbolSet::pushFunctionSymbol(string symbolName, int numOfInputArg, double(
 
 	symbolNum++;
 	return true;
+}
+bool SymbolSet::pushFunctionSymbol( WhichFunction wf) {
+	Symbol fs(symbolNum, wf);
+	SymbolMapInfo smi;
+
+	functionSet.push_back(fs);
+	smi.set(FUNCTION, functionSet.size() - 1);
+	symbolMap[fs.getSymbolName()] = smi;
+	symbolVec.push_back(smi);
+
+	symbolNum++;
+	return true;
+
 }
 bool SymbolSet::pushFunctionSymbol(Symbol functionSymbol) {
 	if (functionSymbol.getSymbolType() != FUNCTION)
@@ -135,8 +161,8 @@ bool SymbolSet::pushSubFunctionSymbol(Symbol subFunctionSymbol) {
 	return true;
 }
 
-bool SymbolSet::pushTerminalSymbol(string symbolName, double val) {
-	Symbol terminal(symbolNum,symbolName, val);
+bool SymbolSet::pushTerminalSymbol(string symbolName, double val, bool ifConstant) {
+	Symbol terminal(symbolNum,symbolName, val, ifConstant);
 	SymbolMapInfo smi;
 
 	terminalSet.push_back(terminal);

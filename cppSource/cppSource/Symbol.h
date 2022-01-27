@@ -1,7 +1,8 @@
 #pragma once
-#include <string>
-#include <vector>
-#include <unordered_map>
+//#include <string>
+//#include <vector>
+//#include <unordered_map>
+#include "FunctionPreset.h"
 using namespace std;
 enum SymbolType
 {
@@ -10,6 +11,11 @@ enum SymbolType
 	TERMINAL,
 	ARGUMENT
 };
+enum FunctionType {
+	PRESET,
+	USER
+};
+
 
 class Symbol
 {
@@ -17,10 +23,17 @@ public:
 	Symbol(){}
 	Symbol(SymbolType symbolType, string symbolName);
 	Symbol(int num,SymbolType symbolType, string symbolName);
-	Symbol(string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen));
-	Symbol(int num, string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen));
-	Symbol(string symbolName , double val);
-	Symbol(int num, string symbolName, double val);
+
+	Symbol(string symbolName, int numOfInputArg, double(*functionHandler)(const double *args, const int argLen));
+	Symbol(int num, string symbolName, int numOfInputArg, double(*functionHandler)(const double *args, const int argLen));
+
+	Symbol(WhichFunction wf);
+	Symbol(int num, WhichFunction wf);
+
+
+	Symbol(string symbolName , double val,bool ifConstant = false);
+	Symbol(int num, string symbolName, double val, bool ifConstant = false);
+
 	Symbol(string symbolName, int numOfInputArg, int ADFIndex);
 	Symbol(int num, string symbolName, int numOfInputArg, int ADFIndex);
 	~Symbol(){}
@@ -42,7 +55,10 @@ protected:
 	string symbolName;
 	double value;
 	int numOfInputArg;
-	double(*functionHandler)(double *args, int argLen);
+	double(*functionHandler)(const double *args,const int argLen);
+	FunctionType functionType;
+	WhichFunction whichFunction;
+	bool ifValueConstant;
 	int ADFIndex;
 };
 
@@ -85,13 +101,14 @@ public:
 	SymbolSet(){}
 	~SymbolSet(){}
 
-	bool pushFunctionSymbol(string symbolName, int numOfInputArg, double(*functionHandler)(double *args, int argLen));
+	bool pushFunctionSymbol(string symbolName, int numOfInputArg, double(*functionHandler)(const double *args, const int argLen));
+	bool pushFunctionSymbol( WhichFunction wf);
 	bool pushFunctionSymbol(Symbol functionSymbol);
 
 	bool pushSubFunctionSymbol(string symbolName,int numOfInputArg, int ADFIndex);
 	bool pushSubFunctionSymbol(Symbol subFunctionSymbol);
 
-	bool pushTerminalSymbol(string symbolName, double val);
+	bool pushTerminalSymbol(string symbolName, double val, bool ifConstant = false);
 	bool pushTerminalSymbol(Symbol terminal);
 
 	bool pushInputArgSymbol(string symbolName);

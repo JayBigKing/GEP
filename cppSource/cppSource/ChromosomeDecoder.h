@@ -13,22 +13,34 @@ class ChromosomeDecoder
 public:
 	ChromosomeDecoder(){}
 	~ChromosomeDecoder(){}
-	double decode(vector<double>& term, Chromosome &chromosome1, ChromosomeRule &cr1);
-	double decode(vector<double>& term);
+
+	//传入vector，主要是方便C++使用
+	double decode(vector<double>& realTerm, Chromosome &chromosome1, ChromosomeRule &cr1);
+	double decode(vector<double>& realTerm);
+
+	//上下的decode()都得用，封装出来，方便调用
+	void decodeHelpIn(Chromosome &chromosome1, ChromosomeRule &cr1);
+	double decodeHelpOut();
+
+	//传入数组指针，主要是方便调用
+	double decode(double* realTerm, Chromosome &chromosome1, ChromosomeRule &cr1);
+	double decode(double* realTerm);
+
 	void setChromosome(Chromosome &chromosome) { this->chromosome = chromosome; }
 	void setChromosomeRule(ChromosomeRule &cr) { this->cr = cr;	symbolSet = cr.getSymbolSet();}
 
-private:
-	vector<double> terminals;
+protected:
+	vector<double> realTerminals;
 	Chromosome chromosome;
 	ChromosomeRule cr;
 	SymbolSet symbolSet;
 
-	double mainProgramDecode();
-	double ADFProgramDecode(Symbol &subFunctionSym , double* inputArgsVal);
+	virtual double mainProgramDecode() = 0;
+	virtual double ADFProgramDecode(Symbol &subFunctionSym, double* inputArgsVal) = 0;
 	DecodeElement makeDecodElement(int index, int chroIndex , int &globalPointIndex);
 	void setSymbolSetTerminals();
 	void setSymbolSetInputArgs(int num, double* args);
+	void setRealTerm(double* realTerm);
 
 
 };

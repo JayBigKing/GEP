@@ -1,10 +1,22 @@
 #include "ChromosomeRule.h"
+#include "initHelp.h"
 int getExpressionL(int h, int u) {
 	return h * (u - 1) + 1;
 }
 ChromosomeRule::ChromosomeRule(int mainProgramH, vector<int>&ADFH, SymbolSet sSet):
 	ADFPR(ADFH.size()),u(0), symbolSet(sSet)
 {
+	initHelp(mainProgramH, ADFH);
+}
+
+void ChromosomeRule::init(int mainProgramH, vector<int>&ADFH, SymbolSet sSet) {
+	initVectorHelp(ADFPR, ADFH.size());
+	u = 0;
+	symbolSet = sSet;
+	initHelp(mainProgramH,ADFH);
+}
+
+void ChromosomeRule::initHelp(int mainProgramH, vector<int>&ADFH) {
 	u = 0;
 	vector<Symbol> *fs = &symbolSet.getFunctionSet();
 	vector<Symbol> *sfs = &symbolSet.getSubFunctionSet();
