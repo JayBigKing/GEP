@@ -8,6 +8,7 @@
 #include "SymbolSetGenerator.h"
 #include "initHelp.h"
 #include "SL_GEP.h"
+#include "GA_HelpFunc.h"
 using namespace std;
 double addHandler(const double *args, const int len) {
 	return args[0] + args[1];
@@ -352,9 +353,39 @@ void test8() {
 	printf("%f\r\n", slgep.test1());
 }
 
+void test9() {
+	vector<double> tmp(4);
+	tmp[0] = 0.1;
+	tmp[1] = 0.5;
+	tmp[2] = 0.6;
+	tmp[3] = 1;
+	//tmp[0] = 0.1;
+	//tmp[1] = 0.2;
+	//tmp[2] = 0.3;
+	//tmp[3] = 0.4;
+	//tmp[4] = 0.45;
+	//tmp[5] = 0.46;
+	//tmp[6] = 0.48;
+	//tmp[7] = 0.67;
+	//tmp[8] = 0.9;
+	//tmp[9] = 1;
+	//printf("%d\r\n", getTheGambleIndex(-0.1, tmp));
+	//printf("%d\r\n", getTheGambleIndex(0, tmp));
+	//printf("%d\r\n", getTheGambleIndex(0.05, tmp));
+	//printf("%d\r\n", getTheGambleIndex(0.15, tmp));
+	//printf("%d\r\n", getTheGambleIndex(0.25, tmp));
+	//printf("%d\r\n", getTheGambleIndex(0.35, tmp));
+	//printf("%d\r\n", getTheGambleIndex(0.599, tmp));
+	//printf("%d\r\n", getTheGambleIndex(0.919, tmp));
+	//printf("%d\r\n", getTheGambleIndex(1., tmp));
+	//printf("%d\r\n", getTheGambleIndex(1.8, tmp));
+
+	printf("%d\r\n", getTheGambleIndex(0.55, tmp));
+}
+
 
 int main() {
-	test8();
+	test9();
 
 
 	return 0;

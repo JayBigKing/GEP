@@ -23,9 +23,42 @@ public:
 
 	double test1();
 
+	pair<Chromosome, ChromosomeRule> train();
+
 	~SL_GEP(){}
 
 private:
+	default_random_engine FGenerator;
+	default_random_engine BetaGenerator;
+	default_random_engine SelectGenerator;
+	default_random_engine YGenerator;
+	default_random_engine GambleGenerator;
+	default_random_engine CRGenerator;
+
+
+	vector<Chromosome> UChromosomes;
 	
+	int totalExpressionLen;
+	void initRandGenerator();
+
+
+
+	void initChromosomes();					//初始化染色体
+
+	void mutation();						//变异
+	double getPsi(const int &a, const int &b);
+	double getPhi(const int &bestSymbolNum, const int &chroIndexSymbolNum, const int &r1SymbolNum, const int &r2SymbolNum,
+		const double &F, const double &beta);
+	void individualMutation(const int &chroIndex, const int &r1, const int &r2, const double &F, const double &beta);
+	void mainProgramFragmentMutation(const int &chroIndex, const int &FragmentIndex, const int &r1, const int &r2, 
+		const double &F, const double &beta , const double  &yRandVal);
+	void ADFFragmentMutation(const int &chroIndex, const int &ADFIndex , const int &FragmentIndex, const int &r1, 
+		const int &r2, const double &F, const double &beta, const double  &yRandVal);
+	void mainProgramGetNewFragment(const int &chroIndex, const int &FragmentIndex );
+	void ADFGetNewFragmentMutation(const int &chroIndex, const int &ADFIndex, const int &FragmentIndex,bool authorType = true);
+
+	void crossover() ;						//交叉
+	int getTotalExpressionLen();
+	int getTotalExpressionIndex(int inThisExIndex, int ADFIndex = -1);
 };
 
