@@ -122,6 +122,8 @@ public:
 	Symbol& getSymbol(string str);
 	Symbol& getSymbol(int index);
 	Symbol& getSymbolHelp(SymbolMapInfo smi);
+
+	SymbolSet& operator = (const SymbolSet &ss);
 private:
 	int symbolNum = 0;
 	vector<Symbol> functionSet;

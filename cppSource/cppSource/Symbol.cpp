@@ -240,3 +240,21 @@ Symbol& SymbolSet::getSymbol(int index) {
 	SymbolMapInfo smi = symbolVec[index];
 	return getSymbolHelp(smi);
 }
+
+SymbolSet& SymbolSet::operator = (const SymbolSet &ss) {
+	/*	int symbolNum = 0;
+	vector<Symbol> functionSet;
+	vector<Symbol> subFunctionSet;
+	vector<Symbol> terminalSet;
+	vector<Symbol> inputArgSet;
+	unordered_map<string, SymbolMapInfo> symbolMap;
+	vector<SymbolMapInfo> symbolVec;*/
+	this->symbolNum = ss.symbolNum;
+	this->functionSet = ss.functionSet;
+	this->subFunctionSet = ss.subFunctionSet;
+	this->terminalSet = ss.terminalSet;
+	this->inputArgSet = ss.inputArgSet;
+	this->symbolMap = ss.symbolMap;
+	this->symbolVec = ss.symbolVec;
+	return *this;
+}

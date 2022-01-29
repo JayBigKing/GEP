@@ -32,6 +32,8 @@ public:
 	}
 	int getU() { return u; }
 	SymbolSet& getSymbolSet() { return symbolSet; }
+
+	ChromosomeRule& operator = (const ChromosomeRule &cr);
 private:
 	ProgramRule mainPR;
 	vector<ProgramRule> ADFPR;

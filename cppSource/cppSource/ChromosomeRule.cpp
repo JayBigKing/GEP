@@ -46,3 +46,11 @@ void ChromosomeRule::initHelp(int mainProgramH, vector<int>&ADFH) {
 	}
 
 }
+
+ChromosomeRule& ChromosomeRule::operator = (const ChromosomeRule &cr) {
+	this->mainPR = cr.mainPR;
+	this->ADFPR = cr.ADFPR;
+	this->u = cr.u;
+	this->symbolSet = cr.symbolSet;
+	return *this;
+}

@@ -4,7 +4,8 @@ GEP::GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int ne
 	WhichFunction* presetFunctions, int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs, bool ifUseSuspendNum,
 	double similarValue) :
 	ADFH(numOfADFs), mainProgramH(mainPH), chromosomesNum(chroNum), chromosomes(chroNum), termAnsPairNum(TAPairNum), numOfValInTerm(numOfTerminals),
-	realTermSet(TAPairNum),ansSet(TAPairNum), epoch(0), needEpoch(needEpoch) ,ifUseSuspendNum(ifUseSuspendNum),similarValue(similarValue),generator(time(NULL)){
+	realTermSet(TAPairNum),ansSet(TAPairNum), epoch(0), needEpoch(needEpoch) ,ifUseSuspendNum(ifUseSuspendNum),similarValue(similarValue),generator(time(NULL)),
+	minDistance(numeric_limits<double>::max()){
 
 	//初始化symbolSet
 	SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals, constants, numOfConstants, presetFunctions, numOfPresetFunctions, argsLenOfADFs, numOfADFs);
@@ -14,7 +15,8 @@ GEP::GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int ne
 GEP::GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int needEpoch, int numOfTerminals, WhichFunction* presetFunctions,
 	int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs, bool ifUseSuspendNum , double similarValue 
 ) : ADFH(numOfADFs), mainProgramH(mainPH), chromosomesNum(chroNum), chromosomes(chroNum), termAnsPairNum(TAPairNum), numOfValInTerm(numOfTerminals), 
-realTermSet(TAPairNum),ansSet(TAPairNum), epoch(0), needEpoch(needEpoch), ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)) {
+realTermSet(TAPairNum),ansSet(TAPairNum), epoch(0), needEpoch(needEpoch), ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),
+minDistance(numeric_limits<double>::max()) {
 
 	//初始化symbolSet
 	SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals,  presetFunctions, numOfPresetFunctions, argsLenOfADFs, numOfADFs);
@@ -27,7 +29,8 @@ GEP::GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int ne
 	bool ifUseSuspendNum , double similarValue 
 ) :
 	ADFH(numOfADFs), mainProgramH(mainPH), chromosomesNum(chroNum), chromosomes(chroNum), termAnsPairNum(TAPairNum), numOfValInTerm(numOfTerminals),
-	realTermSet(TAPairNum), ansSet(TAPairNum), epoch(0), needEpoch(needEpoch), ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)) {
+	realTermSet(TAPairNum), ansSet(TAPairNum), epoch(0), needEpoch(needEpoch), ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),
+	minDistance(numeric_limits<double>::max()) {
 
 	//初始化symbolSet
 	SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals, constants, numOfConstants, presetFunctions, numOfPresetFunctions, argsLenOfADFs, numOfADFs);
@@ -38,7 +41,8 @@ GEP::GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int ne
 GEP::GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int needEpoch, int numOfTerminals, int* presetFunctions,
 	int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs, bool ifUseSuspendNum , double similarValue 
 ) : ADFH(numOfADFs), mainProgramH(mainPH), chromosomesNum(chroNum), chromosomes(chroNum), termAnsPairNum(TAPairNum), numOfValInTerm(numOfTerminals),
-realTermSet(TAPairNum), ansSet(TAPairNum), epoch(0), needEpoch(needEpoch), ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)) {
+realTermSet(TAPairNum), ansSet(TAPairNum), epoch(0), needEpoch(needEpoch), ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),
+minDistance(numeric_limits<double>::max()) {
 
 	//初始化symbolSet
 	SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals, presetFunctions, numOfPresetFunctions, argsLenOfADFs, numOfADFs);
@@ -70,6 +74,7 @@ void GEP::initHelp(double *realTermVec, double *ansVec , int* inputADFHs) {
 		ansSet[i] = ansVec[i];
 	}
 
+	
 
 	initCouldChooseSet();
 	initChromosomeSymbolCount2();
@@ -292,7 +297,25 @@ int GEP::getRandSymbolNum(ChromosomePos cp, int ADFIndex) {
 
 }
 
+bool GEP::shouldContiue() {
+	if (epoch < needEpoch) {
+		epoch++;
+		return true;
+	}
+	else {
+		epoch++;
+		return false;
+	}
+}
+void GEP::recordBestChromosome(const int &chroIndex, const double & nowMinDistance) {
+	if (nowMinDistance < minDistance) {
+		minDistance = nowMinDistance;
+		bestChromosomeAndIndex.first = chromosomes[chroIndex];
+		bestChromosomeAndIndex.second = chroIndex;
+	}
 
+
+}
 
 
 

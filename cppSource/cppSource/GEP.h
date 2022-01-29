@@ -91,6 +91,8 @@ protected:
 	double similarValue = 1e-6;
 
 	default_random_engine generator;
+
+	double minDistance = 0;
 //	uniform_int_distribution<int>MPFirstDistribution;
 //	uniform_int_distribution<int>MPSecondDistribution;
 //	vector<uniform_int_distribution<int>>ADFFirstDistribution;
@@ -106,13 +108,14 @@ protected:
 
 	//train相关函数
 	//判断是否应该停止训练
-	//bool shouldContiue();
+	bool shouldContiue();
+	void recordBestChromosome(const int &chroIndex, const double & nowMinDistance);
 
 	//遗传过程
 	virtual void initChromosomes() = 0;					//初始化染色体
 	virtual void mutation() = 0;						//变异
 	virtual void crossover() = 0;						//交叉
-	//virtual void selection() = 0;
+	virtual void selection() = 0;						//自然选择
 
 	int getRandSymbolNum(ChromosomePos cp ,int ADFIndex = -1);
 

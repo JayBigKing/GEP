@@ -385,7 +385,7 @@ void test9() {
 
 
 int main() {
-	test9();
+	test8();
 
 
 	return 0;

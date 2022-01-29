@@ -9,6 +9,9 @@ public:
 	~Chromosome(){}
 	vector<int> mainProgramEx;
 	vector<vector<int>> ADFEx;
+
+	Chromosome& operator = (const Chromosome &c);
+
 private:
 	void initHelp(ChromosomeRule &cr);
 	//vector<int> mainProgramEx;

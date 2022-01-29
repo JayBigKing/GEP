@@ -21,3 +21,8 @@ void Chromosome::initHelp(ChromosomeRule &cr) {
 		ADFEx[i] = tmp;
 	}
 }
+Chromosome& Chromosome::operator = (const Chromosome &c) {
+	this->mainProgramEx = c.mainProgramEx;
+	this->ADFEx = c.ADFEx;
+	return *this;
+}
