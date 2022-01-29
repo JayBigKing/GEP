@@ -12,6 +12,7 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
 	UChromosome.init(cr);
 
 	initRandGenerator();
+	getTotalExpressionLen();
 }
 
 SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int needEpoch, int numOfTerminals,
@@ -24,6 +25,7 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
 	UChromosome.init(cr);
 
 	initRandGenerator();
+	getTotalExpressionLen();
 }
 
 
@@ -38,6 +40,7 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
 	UChromosome.init(cr);
 
 	initRandGenerator();
+	getTotalExpressionLen();
 }
 
 
@@ -51,6 +54,7 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
 	UChromosome.init(cr);
 
 	initRandGenerator();
+	getTotalExpressionLen();
 }
 
 
@@ -119,16 +123,19 @@ void SL_GEP::initChromosomes() {
 			theAExH = cr.getADFPR(t).h;
 			theAExL = cr.getADFPR(t).l;
 			for (int j = 0; j < theAExH; ++j, ++k)
-				chromosomes[i].ADFEx[t][k] = getRandSymbolNum(ADF_FIRST);
+				chromosomes[i].ADFEx[t][k] = getRandSymbolNum(ADF_FIRST,t);
 
 			for (int j = 0; j < theAExL; ++j, ++k)
-				chromosomes[i].ADFEx[t][k] = getRandSymbolNum(ADF_SECOND);
+				chromosomes[i].ADFEx[t][k] = getRandSymbolNum(ADF_SECOND,t);
 
 		}
 
 		nowDis = calculateDistance(chromosomes[i]);
 		recordBestChromosome(i,nowDis);
+
+		//recordOneSymbolCount(i);
 	}
+
 
 
 }
@@ -173,29 +180,53 @@ void SL_GEP::mainProgramGetNewFragment(const int &chroIndex , const int &Fragmen
 	if (FragmentIndex < theMExH) {
 		vector<double>symbolProbability(couldChooseSetOfMainProgramFirst.size());
 		for (int i = 0; i < couldChooseSetOfMainProgramFirst.size(); ++i) {
-			symbolProbability[i] = (double)this->mainProgramSymbolCount[chroIndex][couldChooseSetOfMainProgramFirst[i]];			//只是暂存，后面会分布在0-1
+			symbolProbability[i] = (double)this->mainProgramSymbolCount[FragmentIndex][couldChooseSetOfMainProgramFirst[i]];			//只是暂存，后面会分布在0-1
 			probabilityDenominator += symbolProbability[i];						
 		}
 
-		for (int i = 0; i < couldChooseSetOfMainProgramFirst.size(); ++i)
-			symbolProbability[i] = (probabilityCount += (symbolProbability[i] / symbolProbability[i]));
+		//UChromosome.mainProgramEx[FragmentIndex] = getRandSymbolNum(MAIN_PROGRAM_FIRST);
+		//return;
+//		if (probabilityDenominator == 0.0) {
+		if (distribution(YGenerator) > 0.9) {
+			UChromosome.mainProgramEx[FragmentIndex] = getRandSymbolNum(MAIN_PROGRAM_FIRST);
+		}
+		else {
+			for (int i = 0; i < couldChooseSetOfMainProgramFirst.size(); ++i)
+				symbolProbability[i] = (probabilityCount += (symbolProbability[i] / probabilityDenominator));
 
 
-		UChromosome.mainProgramEx[FragmentIndex] = couldChooseSetOfMainProgramFirst[getTheGambleIndex(distribution(GambleGenerator), symbolProbability)];
+			UChromosome.mainProgramEx[FragmentIndex] = couldChooseSetOfMainProgramFirst[getTheGambleIndex(distribution(GambleGenerator), symbolProbability)];
+			//if (this->mainProgramSymbolCount[FragmentIndex][UChromosome.mainProgramEx[FragmentIndex]] == 0)
+			//	printf("!!!!!\r\n");
+		}
+
 	}
 	else {
 		vector<Symbol> &terminalSet = cr.getSymbolSet().getTerminalSet();
 		vector<double>symbolProbability(terminalSet.size());
 		for (int i = 0 ; i < terminalSet.size(); ++i) {
-			symbolProbability[i] = (double)this->mainProgramSymbolCount[chroIndex][terminalSet[i].getNum()];			//只是暂存，后面会分布在0-1
+			symbolProbability[i] = (double)this->mainProgramSymbolCount[FragmentIndex][terminalSet[i].getNum()];			//只是暂存，后面会分布在0-1
 			probabilityDenominator += symbolProbability[i];
 		}
 
-		for (int i = 0; i < terminalSet.size(); ++i)
-			symbolProbability[i] = (probabilityCount += (symbolProbability[i] / symbolProbability[i]));
+		//UChromosome.mainProgramEx[FragmentIndex] = getRandSymbolNum(MAIN_PROGRAM_SECOND);
+		//return;
+//		if (probabilityDenominator == 0.0) {
+		if (distribution(YGenerator) > 0.9){
+			UChromosome.mainProgramEx[FragmentIndex] = getRandSymbolNum(MAIN_PROGRAM_SECOND);
 
 
-		UChromosome.mainProgramEx[FragmentIndex] = terminalSet[getTheGambleIndex(distribution(GambleGenerator), symbolProbability)].getNum();
+		}
+		else {
+			for (int i = 0; i < terminalSet.size(); ++i)
+				symbolProbability[i] = (probabilityCount += (symbolProbability[i] / probabilityDenominator));
+
+
+			UChromosome.mainProgramEx[FragmentIndex] = terminalSet[getTheGambleIndex(distribution(GambleGenerator), symbolProbability)].getNum();
+			//if (this->mainProgramSymbolCount[FragmentIndex][UChromosome.mainProgramEx[FragmentIndex]] == 0)
+			//	printf("!!!!!\r\n");
+		}
+
 
 
 	}
@@ -207,9 +238,9 @@ void SL_GEP::ADFGetNewFragmentMutation(const int &chroIndex, const int &ADFIndex
 	if (authorType) {
 		int theAExH = cr.getADFPR(ADFIndex).h;
 		if (FragmentIndex < theAExH)
-			UChromosome.ADFEx[ADFIndex][FragmentIndex] = getRandSymbolNum(ADF_FIRST);
+			UChromosome.ADFEx[ADFIndex][FragmentIndex] = getRandSymbolNum(ADF_FIRST, ADFIndex);
 		else
-			UChromosome.ADFEx[ADFIndex][FragmentIndex] = getRandSymbolNum(ADF_SECOND);
+			UChromosome.ADFEx[ADFIndex][FragmentIndex] = getRandSymbolNum(ADF_SECOND, ADFIndex);
 	}
 
 }
@@ -282,6 +313,7 @@ int SL_GEP::getTotalExpressionLen() {
 	}
 	catch (const char *e) {
 		printf("%s\r\n", e);
+		exit(-1);
 	}
 
 }
@@ -292,7 +324,7 @@ int SL_GEP::getTotalExpressionIndex(int inThisExIndex, int ADFIndex ) {
 		return inThisExIndex;
 	else {
 		int theIndex = cr.getMainPR().totalLen;
-		for (int i = 0; i < inThisExIndex - 1; ++i)
+		for (int i = 0; i < ADFIndex - 1; ++i)
 			theIndex += cr.getADFPR(i).totalLen;
 		return theIndex + inThisExIndex;
 	}
@@ -384,7 +416,32 @@ void SL_GEP::inheritanceProcess() {
 		individualCrossover(i,CR);						//交叉
 
 		individualSelection(i);							//自然选择
+
+		recordOneSymbolCount(i);
+
+
 	}
 
-}
+	printf("%d:%f\r\n",epoch, minDistance);
 
+}
+//********************************************************
+
+
+//记录一条染色体的每个片段所用的symbol
+//********************************************************
+void SL_GEP::recordOneSymbolCount(const int &chroIndex) {
+	
+	int mainPSize = chromosomes[chroIndex].mainProgramEx.size();
+	int numOfADF = chromosomes[chroIndex].ADFEx.size();
+	for (int i = 0; i < mainPSize; ++i) {
+		recordSymbolCount(chromosomes[chroIndex].mainProgramEx[i], i);
+	}
+
+	for (int i = 0; i < numOfADF; ++i) {
+		int ADFLen = chromosomes[chroIndex].ADFEx[i].size();
+		for (int j = 0; j < ADFLen; ++j) {
+			recordSymbolCount(chromosomes[chroIndex].ADFEx[i][j], j, i);
+		}
+	}
+}

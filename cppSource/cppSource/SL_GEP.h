@@ -78,5 +78,7 @@ private:
 	//ManhattanDis ChebyshevDis
 
 	void inheritanceProcess();				//遗传过程，优化单线程的程序，将突变，交叉，自然旋转放在一起
+
+	void recordOneSymbolCount(const int &chroIndex);
 };
 

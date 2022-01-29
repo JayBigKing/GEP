@@ -48,6 +48,9 @@
     <ClCompile Include="GA_HelpFunc.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ChromosomeShower.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Symbol.h">
@@ -81,6 +84,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="GA_HelpFunc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ChromosomeShower.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,18 +1,5 @@
-﻿  SL_GEP.cpp
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(60): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(61): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(62): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(63): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(64): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(65): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(66): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(105): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(220): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(222): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(230): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(305): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(307): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(315): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(287): warning C4715: “SL_GEP::getTotalExpressionLen”: 不是所有的控件路径都返回值
+﻿  main.cpp
+d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\main.cpp(304): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“unsigned __int64”
+  d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\main.cpp(304): note: 请考虑在格式字符串中使用“%zd”
   cppSource.vcxproj -> D:\assignment\bGraduationProject\work\dll\GEP\cppSource\x64\Debug\cppSource.exe
   cppSource.vcxproj -> D:\assignment\bGraduationProject\work\dll\GEP\cppSource\x64\Debug\cppSource.pdb (Full PDB)

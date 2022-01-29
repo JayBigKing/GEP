@@ -147,6 +147,7 @@
     <ClCompile Include="Chromosome.cpp" />
     <ClCompile Include="ChromosomeDecoder.cpp" />
     <ClCompile Include="ChromosomeRule.cpp" />
+    <ClCompile Include="ChromosomeShower.cpp" />
     <ClCompile Include="FunctioonPreset.cpp" />
     <ClCompile Include="GA_HelpFunc.cpp" />
     <ClCompile Include="GEP.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Chromosome.h" />
     <ClInclude Include="ChromosomeDecoder.h" />
     <ClInclude Include="ChromosomeRule.h" />
+    <ClInclude Include="ChromosomeShower.h" />
     <ClInclude Include="FunctionPreset.h" />
     <ClInclude Include="GA_HelpFunc.h" />
     <ClInclude Include="GEP.h" />

@@ -78,8 +78,9 @@ double functionPresetHandler(const double *args, WhichFunction whichFunction) {
 			throw "error : no such function which is preseted!";
 		}
 	}
-	catch (const char *e) {
-		printf("%d\r\n", e);
+	catch (const char* &e) {
+		printf("%s\r\n", e);
+		exit(-1);
 	}
 }
 double functionPresetHandler(const double *args, const int len, WhichFunction whichFunction) {
@@ -89,8 +90,9 @@ double functionPresetHandler(const double *args, const int len, WhichFunction wh
 		else
 			return functionPresetHandler(args, whichFunction);
 	}
-	catch (const char *e) {
-		printf("%d\r\n", e);
+	catch (const char* &e) {
+		printf("%s\r\n", e);
+		exit(-1);
 	}
 }
 

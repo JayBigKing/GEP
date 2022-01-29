@@ -9,6 +9,7 @@
 #include "initHelp.h"
 #include "SL_GEP.h"
 #include "GA_HelpFunc.h"
+#include "ChromosomeShower.h"
 using namespace std;
 double addHandler(const double *args, const int len) {
 	return args[0] + args[1];
@@ -354,11 +355,20 @@ void test8() {
 }
 
 void test9() {
-	vector<double> tmp(4);
-	tmp[0] = 0.1;
-	tmp[1] = 0.5;
-	tmp[2] = 0.6;
-	tmp[3] = 1;
+	vector<double> tmp(7);
+	tmp[0] = 0.142;
+	tmp[1] = 0.142;
+	tmp[2] = 0.357;
+	tmp[3] = 0.357;
+	tmp[4] = 0.357;
+	tmp[5] = 0.643;
+	tmp[6] = 1;
+	double t = 0.1;
+	for (int i = 0; i < 50; ++i) {
+		printf("%d\r\n", getTheGambleIndex(t, tmp));
+		t += 0.012;
+	}
+
 	//tmp[0] = 0.1;
 	//tmp[1] = 0.2;
 	//tmp[2] = 0.3;
@@ -379,14 +389,96 @@ void test9() {
 	//printf("%d\r\n", getTheGambleIndex(0.919, tmp));
 	//printf("%d\r\n", getTheGambleIndex(1., tmp));
 	//printf("%d\r\n", getTheGambleIndex(1.8, tmp));
-
-	printf("%d\r\n", getTheGambleIndex(0.55, tmp));
+	//printf("%d\r\n", getTheGambleIndex(0.55, tmp));
 }
 
+double fitFunction(double *args) {
+	//return sin(args[0]) + cos(args[1] * args[1]) - (args[0] - args[1]*args[1]);
+	//return args[0] * args[0];
+	//return args[0] * sin(args[0]);
+	//return sin(args[0]) * sin(args[1]) + cos(args[0]);			//add times cos sin cos x y x
+	//return pow(args[0], 4) + pow(args[0], 3) + pow(args[0], 2) + args[0];
+	//return sin(args[0]) + cos(args[0]) * cos(args[1]);			//add sin times x cos  cos x y
+	return args[0] * args[0] * args[0] + args[1];				//add times y x times x x
+	//return args[0] * args[0] * args[0] + args[1] * sin(args[0]) + args[1];				//add times add x times times y x x y sin x
+}
+
+void fitFunctionOut(int num,int dim,double *realTermVec,double *ansVec) {
+	for (int i = 0; i < num * dim; ++i)
+		realTermVec[i] = i;
+	for (int i = 0 , j = 0; i < num; ++i,j += dim) {
+		ansVec[i] = fitFunction(&realTermVec[j]);
+	}
+}
+
+void beforeTest10() {
+	int TAPairNum = 10;
+	int numOfValInTerm = 2;
+	boost::shared_array<double> realTermVec(new double[TAPairNum * numOfValInTerm]);
+	boost::shared_array<double> ansVec(new double[TAPairNum]);
+
+	fitFunctionOut(TAPairNum, numOfValInTerm, realTermVec.get(), ansVec.get());
+	for (int i = 0; i < TAPairNum; ++i)
+		printf("%f   ", ansVec[i]);
+	printf("\r\n");
+}
+
+void test10() {
+	int chroNum = 50;
+	int numOfTerminals = 2;
+	int numOfPresetFunctions = 10;
+	int numOfADFs = 1;
+
+	int mainProgramH = 10;
+
+	int TAPairNum = 50;
+	int needEpoch = 1200;
+
+	boost::shared_array<int> presetFunctions(new int[numOfPresetFunctions]);
+	boost::shared_array<int> argsLenOfADFs(new int[numOfADFs]);
+	boost::shared_array<double> realTermVec(new double[TAPairNum * numOfTerminals]);
+	boost::shared_array<double> ansVec(new double[TAPairNum]);
+
+
+	fitFunctionOut(TAPairNum, numOfTerminals, realTermVec.get(), ansVec.get());
+
+	for (int i = 0, j = 0; i < numOfPresetFunctions; i++, j++) {
+		if (j == (int)W_divide)
+			j++;
+		presetFunctions[i] = j;
+	}
+	//presetFunctions[0] = (int)W_times;
+	//presetFunctions[1] = (int)W_add;
+	//presetFunctions[2] = (int)W_sin;
+	//presetFunctions[3] = (int)W_cos;
+	//presetFunctions[4] = (int)W_minus;
+
+	argsLenOfADFs[0] = 2;
+	//argsLenOfADFs[1] = 3;
+
+
+	boost::shared_array<int> ADFH(new int[numOfADFs]);
+	ADFH[0] = 5;
+	//ADFH[1] = 8;
+
+
+	SL_GEP slgep(chroNum, realTermVec.get(), ansVec.get(), TAPairNum, needEpoch, numOfTerminals, presetFunctions.get(), numOfPresetFunctions, argsLenOfADFs.get(),
+		numOfADFs, mainProgramH, ADFH.get());
+
+
+	ChromosomeShower cs(slgep.getChromosomeRule());
+	
+	pair<Chromosome, ChromosomeRule> thePair = slgep.train();
+
+	cs.simpleShow(thePair.first);
+
+
+}
 
 int main() {
-	test8();
-
+	//test8();
+	test10();
+	//test9();
 
 	return 0;
 }

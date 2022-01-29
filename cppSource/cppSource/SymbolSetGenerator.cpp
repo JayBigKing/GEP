@@ -106,7 +106,7 @@ void SymbolSetGenerator::pushTerminals(SymbolSet &symbolSet, int numOfTerminals)
 
 void SymbolSetGenerator::pushConstans(SymbolSet &symbolSet, double *constants, int numOfConstants) {
 	int digitPtr = 0;
-	char alphaStr[] = {'c', 0,0 };
+	char alphaStr[] = {'C', 0,0 };
 	char *alphaPtr = &alphaStr[1];
 	*alphaPtr = startAlpha;
 	for (int i = 0; i < numOfConstants; ++i) {
@@ -136,7 +136,7 @@ void SymbolSetGenerator::pushADFandInputArgs(SymbolSet &symbolSet, int *argsLenO
 	int maxLen = 0;
 	int ADFIndexCount = 0;
 	int digitPtr1 = 0 , digitPtr2 = 0;
-	char alphaStr1[] = { 'a', 0,0 }, alphaStr2[] = { 'i', 0,0 };
+	char alphaStr1[] = { 'A', 0,0 }, alphaStr2[] = { 'I', 0,0 };
 	char *alphaPtr1 = &alphaStr1[1];
 
 	char *alphaPtr2 = &alphaStr2[1];
