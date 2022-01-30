@@ -62,9 +62,9 @@ protected:
 
 
 	//记录mainProgram每个位置选的symbol的数量
-	vector<unordered_map<int, uint64_t>>mainProgramSymbolCount;
+	vector<unordered_map<int, double>>mainProgramSymbolCount;
 	//记录ADF每个位置选的symbol的数量
-	vector<vector<unordered_map<int, uint64_t>>>ADFSymbolCount;
+	vector<vector<unordered_map<int, double>>>ADFSymbolCount;
 
 	//MainProgram 前H位可以选的symbol
 	vector<int>couldChooseSetOfMainProgramFirst;
@@ -118,6 +118,7 @@ protected:
 	virtual void selection() = 0;						//自然选择
 
 	int getRandSymbolNum(ChromosomePos cp ,int ADFIndex = -1);
-	void recordSymbolCount(int symbolNum, const int &FragmentIndex ,const int & ADFIndex = -1);
+	void recordSymbolCount(const int & symbolNum, const int &FragmentIndex ,const double &score = 1.0,const int & ADFIndex = -1);
+
 
 };

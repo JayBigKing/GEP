@@ -78,6 +78,7 @@ void GEP::initHelp(double *realTermVec, double *ansVec , int* inputADFHs) {
 
 	initCouldChooseSet();
 	initChromosomeSymbolCount2();
+
 }
 
 
@@ -92,7 +93,7 @@ void GEP::initChromosomeSymbolCount() {
 	vector<Symbol> &subFunctionSet = cr.getSymbolSet().getSubFunctionSet();
 	vector<Symbol> &terminalSet = cr.getSymbolSet().getTerminalSet();
 	vector<Symbol> &inputArgSet = cr.getSymbolSet().getInputArgSet();
-	unordered_map<int, uint64_t> tmpMap;
+	unordered_map<int, double> tmpMap;
 
 	//首先是mainProgram
 	
@@ -167,7 +168,8 @@ void GEP::initChromosomeSymbolCount2() {
 	int theExH = 0;
 	int theExU = 0;
 	int theExL = 0;
-	unordered_map<int,uint64_t> tmpMap;
+	double meanVal = 1.0 / chromosomesNum;
+	unordered_map<int,double> tmpMap;
 	try {
 		if (!couldChooseSetOfMainProgramFirst.size())
 			throw "error : CouldChooseSet is not ininted!";
@@ -186,7 +188,7 @@ void GEP::initChromosomeSymbolCount2() {
 	theExL = cr.getMainPR().l;
 
 	for (int i = 0; i < couldChooseSetOfMainProgramFirst.size(); ++i)
-		tmpMap[couldChooseSetOfMainProgramFirst[i]] = 1;
+		tmpMap[couldChooseSetOfMainProgramFirst[i]] = meanVal;
 
 
 
@@ -199,7 +201,7 @@ void GEP::initChromosomeSymbolCount2() {
 
 	tmpMap.clear();
 	for (int i = 0; i < terminalSet.size(); ++i)
-		tmpMap[terminalSet[i].getNum()] = 1;
+		tmpMap[terminalSet[i].getNum()] = meanVal;
 
 	//将map存入vec
 	for (int i = 0; i < theExL; ++i)
@@ -216,7 +218,7 @@ void GEP::initChromosomeSymbolCount2() {
 		tmpMap.clear();
 
 		for (int j = 0; j < couldChooseSetOfADFFirst[i].size(); ++j)
-			tmpMap[couldChooseSetOfADFFirst[i][j]] = 1;
+			tmpMap[couldChooseSetOfADFFirst[i][j]] = meanVal;
 
 		for (int j = 0; j < theExH; ++j)
 			ADFSymbolCount[i].push_back(tmpMap);
@@ -224,7 +226,7 @@ void GEP::initChromosomeSymbolCount2() {
 
 		tmpMap.clear();
 		for (int j = 0; j < couldChooseSetOfADFSecond[i].size(); ++j)
-			tmpMap[couldChooseSetOfADFSecond[i][j]] = 1;
+			tmpMap[couldChooseSetOfADFSecond[i][j]] = meanVal;
 
 		for (int j = 0; j < theExL; ++j)
 			ADFSymbolCount[i].push_back(tmpMap);
@@ -318,19 +320,19 @@ void GEP::recordBestChromosome(const int &chroIndex, const double & nowMinDistan
 }
 
 
-void GEP::recordSymbolCount(int symbolNum, const int &FragmentIndex, const int & ADFIndex ) {
+void GEP::recordSymbolCount(const int & symbolNum, const int &FragmentIndex, const double &score, const int & ADFIndex ) {
 	try {
 		if (ADFIndex == -1) {
 			if (this->mainProgramSymbolCount[FragmentIndex].find(symbolNum) == this->mainProgramSymbolCount[FragmentIndex].end())
 				throw "error : invaild symbol!";
 			else
-				this->mainProgramSymbolCount[FragmentIndex][symbolNum] = this->mainProgramSymbolCount[FragmentIndex][symbolNum] + 1;
+				this->mainProgramSymbolCount[FragmentIndex][symbolNum] = this->mainProgramSymbolCount[FragmentIndex][symbolNum] + score;
 		}
 		else {
 			if (this->ADFSymbolCount[ADFIndex][FragmentIndex].find(symbolNum) == this->ADFSymbolCount[ADFIndex][FragmentIndex].end())
 				throw "error : invaild symbol!";
 			else
-				this->ADFSymbolCount[ADFIndex][FragmentIndex][symbolNum] = this->ADFSymbolCount[ADFIndex][FragmentIndex][symbolNum] + 1;
+				this->ADFSymbolCount[ADFIndex][FragmentIndex][symbolNum] = this->ADFSymbolCount[ADFIndex][FragmentIndex][symbolNum] + score;
 		}
 	}
 	catch (const char *e) {

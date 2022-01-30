@@ -5,7 +5,7 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
 	WhichFunction* presetFunctions, int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs,
 	bool ifUseSuspendNum , double similarValue ) :
 	GEP(chroNum, realTermVec, ansVec, TAPairNum, needEpoch, numOfTerminals, constants, numOfConstants, presetFunctions, numOfPresetFunctions,
-		argsLenOfADFs, numOfADFs, mainPH, inputADFHs, ifUseSuspendNum, similarValue) {
+		argsLenOfADFs, numOfADFs, mainPH, inputADFHs, ifUseSuspendNum, similarValue),totalWeight(0.0),chromosomeWeight(chroNum) {
 	cdPtr = boost::make_shared<SL_ChromosomeDecoder>();
 	cdPtr->setChromosomeRule(cr);
 
@@ -19,7 +19,7 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
 	WhichFunction* presetFunctions, int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs,
 	bool ifUseSuspendNum , double similarValue ) :
 	GEP(chroNum, realTermVec, ansVec, TAPairNum, needEpoch, numOfTerminals, presetFunctions, numOfPresetFunctions,
-		argsLenOfADFs, numOfADFs, mainPH, inputADFHs, ifUseSuspendNum, similarValue) {
+		argsLenOfADFs, numOfADFs, mainPH, inputADFHs, ifUseSuspendNum, similarValue), totalWeight(0.0), chromosomeWeight(chroNum) {
 	cdPtr = boost::make_shared<SL_ChromosomeDecoder>();
 	cdPtr->setChromosomeRule(cr);
 	UChromosome.init(cr);
@@ -34,7 +34,7 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
 	int* presetFunctions, int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs,
 	bool ifUseSuspendNum , double similarValue ) :
 	GEP(chroNum, realTermVec, ansVec, TAPairNum, needEpoch, numOfTerminals, constants, numOfConstants, presetFunctions, numOfPresetFunctions,
-		argsLenOfADFs, numOfADFs, mainPH, inputADFHs, ifUseSuspendNum, similarValue) {
+		argsLenOfADFs, numOfADFs, mainPH, inputADFHs, ifUseSuspendNum, similarValue), totalWeight(0.0), chromosomeWeight(chroNum) {
 	cdPtr = boost::make_shared<SL_ChromosomeDecoder>();
 	cdPtr->setChromosomeRule(cr);
 	UChromosome.init(cr);
@@ -48,7 +48,7 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
 	int* presetFunctions, int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs,
 	bool ifUseSuspendNum , double similarValue) :
 	GEP(chroNum, realTermVec, ansVec, TAPairNum, needEpoch, numOfTerminals, presetFunctions, numOfPresetFunctions,
-		argsLenOfADFs, numOfADFs, mainPH, inputADFHs, ifUseSuspendNum, similarValue) {
+		argsLenOfADFs, numOfADFs, mainPH, inputADFHs, ifUseSuspendNum, similarValue), totalWeight(0.0), chromosomeWeight(chroNum) {
 	cdPtr = boost::make_shared<SL_ChromosomeDecoder>();
 	cdPtr->setChromosomeRule(cr);
 	UChromosome.init(cr);
@@ -131,10 +131,12 @@ void SL_GEP::initChromosomes() {
 		}
 
 		nowDis = calculateDistance(chromosomes[i]);
+		setChromosomeWeight(i, nowDis);
 		recordBestChromosome(i,nowDis);
 
-		//recordOneSymbolCount(i);
+		recordOneSymbolCount(i);
 	}
+	//recordAllCount();
 
 
 
@@ -205,7 +207,7 @@ void SL_GEP::mainProgramGetNewFragment(const int &chroIndex , const int &Fragmen
 		vector<Symbol> &terminalSet = cr.getSymbolSet().getTerminalSet();
 		vector<double>symbolProbability(terminalSet.size());
 		for (int i = 0 ; i < terminalSet.size(); ++i) {
-			symbolProbability[i] = (double)this->mainProgramSymbolCount[FragmentIndex][terminalSet[i].getNum()];			//只是暂存，后面会分布在0-1
+			symbolProbability[i] = this->mainProgramSymbolCount[FragmentIndex][terminalSet[i].getNum()];			//只是暂存，后面会分布在0-1
 			probabilityDenominator += symbolProbability[i];
 		}
 
@@ -382,6 +384,7 @@ void SL_GEP::individualSelection(const int &chroIndex){
 		nowMinDistance = xDistance;
 
 	recordBestChromosome(chroIndex, nowMinDistance);
+	setChromosomeWeight(chroIndex, nowMinDistance);
 
 }
 double SL_GEP::calculateDistance(const 	Chromosome &c){
@@ -421,8 +424,9 @@ void SL_GEP::inheritanceProcess() {
 
 
 	}
+	//recordAllCount();
 
-	printf("%d:%f\r\n",epoch, minDistance);
+	printf("%d:%f\r\n",epoch, minDistance);		//602  (>2200)
 
 }
 //********************************************************
@@ -430,18 +434,42 @@ void SL_GEP::inheritanceProcess() {
 
 //记录一条染色体的每个片段所用的symbol
 //********************************************************
-void SL_GEP::recordOneSymbolCount(const int &chroIndex) {
+void SL_GEP::recordOneSymbolCount(const int &chroIndex, const double &score) {
 	
 	int mainPSize = chromosomes[chroIndex].mainProgramEx.size();
 	int numOfADF = chromosomes[chroIndex].ADFEx.size();
 	for (int i = 0; i < mainPSize; ++i) {
-		recordSymbolCount(chromosomes[chroIndex].mainProgramEx[i], i);
+		recordSymbolCount(chromosomes[chroIndex].mainProgramEx[i], i,score);
 	}
 
 	for (int i = 0; i < numOfADF; ++i) {
 		int ADFLen = chromosomes[chroIndex].ADFEx[i].size();
 		for (int j = 0; j < ADFLen; ++j) {
-			recordSymbolCount(chromosomes[chroIndex].ADFEx[i][j], j, i);
+			recordSymbolCount(chromosomes[chroIndex].ADFEx[i][j], j, score, i);
 		}
 	}
+}
+
+void SL_GEP::recordAllCount() {
+	if (totalWeight) {
+		for (int i = 0; i < chromosomesNum; ++i) {
+			recordOneSymbolCount(i, chromosomeWeight[i] / totalWeight);
+		}
+	}
+	else {
+		int meanVal = 1 / chromosomesNum;
+		for (int i = 0; i < chromosomesNum; ++i) {
+			recordOneSymbolCount(i, chromosomesNum);
+		}
+	}
+
+	totalWeight = 0;
+
+
+}
+
+void SL_GEP::setChromosomeWeight(const int & chroIndex, const double& distance) {
+	chromosomeWeight[chroIndex] = distance;
+	totalWeight += distance;
+
 }

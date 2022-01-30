@@ -7,7 +7,7 @@ unordered_map<WhichFunction, pair<int, string>>functionArgMap{
 	{ W_sin,pair<int,string>{1,"sin"} },{ W_cos,pair<int,string>{1,"cos"} },
 	{ W_tan,pair<int,string>{1,"tan"} },{ W_asin,pair<int,string>{1,"asin"} },
 	{ W_acos,pair<int,string>{1,"acose"} },{ W_atan,pair<int,string>{1,"atan"} },
-	{ W_atan2,pair<int,string>{1,"atan2"} },{ W_pow,pair<int,string>{2,"pow"} },
+	{ W_atan2,pair<int,string>{2,"atan2"} },{ W_pow,pair<int,string>{2,"pow"} },
 	{ W_square,pair<int,string>{1,"square"} },{ W_cube ,pair<int,string>{1,"cube"} },
 	{ W_sqrt,pair<int,string>{1,"sqrt"} },{ W_log2,pair<int,string>{1,"log2"} },
 	{ W_log10,pair<int,string>{1,"log10"} },{ W_max,pair<int,string>{2,"max"} },

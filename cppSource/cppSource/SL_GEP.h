@@ -41,6 +41,11 @@ private:
 	Chromosome UChromosome;
 
 	int totalExpressionLen;
+
+
+	long double totalWeight;
+	vector<double>chromosomeWeight;
+
 	void initRandGenerator();
 
 
@@ -79,6 +84,10 @@ private:
 
 	void inheritanceProcess();				//遗传过程，优化单线程的程序，将突变，交叉，自然旋转放在一起
 
-	void recordOneSymbolCount(const int &chroIndex);
+	void recordOneSymbolCount(const int &chroIndex, const double &score = 1);
+
+	void recordAllCount();
+
+	void setChromosomeWeight(const int & chroIndex, const double& distance);
 };
 

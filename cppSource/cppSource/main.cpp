@@ -393,14 +393,15 @@ void test9() {
 }
 
 double fitFunction(double *args) {
-	//return sin(args[0]) + cos(args[1] * args[1]) - (args[0] - args[1]*args[1]);
+	return sin(args[0]) + cos(args[1] * args[1]) - (args[0] - args[1]*args[1]);			//add sin minus x cos minus times  x times y y y y
 	//return args[0] * args[0];
 	//return args[0] * sin(args[0]);
 	//return sin(args[0]) * sin(args[1]) + cos(args[0]);			//add times cos sin cos x y x
 	//return pow(args[0], 4) + pow(args[0], 3) + pow(args[0], 2) + args[0];
 	//return sin(args[0]) + cos(args[0]) * cos(args[1]);			//add sin times x cos  cos x y
-	return args[0] * args[0] * args[0] + args[1];				//add times y x times x x
+	//return args[0] * args[0] * args[0] + args[1];				//add times y x times x x
 	//return args[0] * args[0] * args[0] + args[1] * sin(args[0]) + args[1];				//add times add x times times y x x y sin x
+	//return args[0] * args[0] * args[0] + sin(args[1]+args[0]);				//add times sin x times add x x x y
 }
 
 void fitFunctionOut(int num,int dim,double *realTermVec,double *ansVec) {
@@ -426,13 +427,13 @@ void beforeTest10() {
 void test10() {
 	int chroNum = 50;
 	int numOfTerminals = 2;
-	int numOfPresetFunctions = 10;
+	int numOfPresetFunctions = 5;
 	int numOfADFs = 1;
 
-	int mainProgramH = 10;
+	int mainProgramH = 16;
 
 	int TAPairNum = 50;
-	int needEpoch = 1200;
+	int needEpoch = 2200;
 
 	boost::shared_array<int> presetFunctions(new int[numOfPresetFunctions]);
 	boost::shared_array<int> argsLenOfADFs(new int[numOfADFs]);
