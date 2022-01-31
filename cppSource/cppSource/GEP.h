@@ -121,6 +121,7 @@ protected:
 
 	int getRandSymbolNum(ChromosomePos cp ,int ADFIndex = -1);
 	void recordSymbolCount(const int & symbolNum, const int &FragmentIndex ,const double &score = 1.0,const int & ADFIndex = -1);
-	void setSymbolCount(const int & symbolNum, const int &FragmentIndex, const double &score , const int & ADFIndex = -1);
+	//void setSymbolCount(const int & symbolNum, const int &FragmentIndex, const double &score , const int & ADFIndex = -1);
+	void setSymbolCountByRandVal(const int & symbolNum, const int &FragmentIndex, const double &randVal, const int & ADFIndex = -1);
 
 };

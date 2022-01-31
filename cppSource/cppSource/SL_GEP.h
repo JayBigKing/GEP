@@ -35,6 +35,7 @@ private:
 	default_random_engine GambleGenerator;
 	default_random_engine CRGenerator;
 	default_random_engine KGenerator;
+	default_random_engine ACSGenerator;
 
 
 	//vector<Chromosome> UChromosomes;
@@ -79,6 +80,7 @@ private:
 
 	void selection() {}						//自然选择
 	void individualSelection(const int &chroIndex);
+	void individualSelection(const int &chroIndex,const double &randVal);
 	double calculateDistance(const 	Chromosome &c);
 	double EuclideanDis(const Chromosome &c);
 	//ManhattanDis ChebyshevDis
@@ -86,7 +88,8 @@ private:
 	void inheritanceProcess();				//遗传过程，优化单线程的程序，将突变，交叉，自然旋转放在一起
 
 	void recordOneSymbolCount(const int &chroIndex, const double &score = 1);
-	void setOneSymbolCount(const int &chroIndex, const double &score );
+	//void setOneSymbolCount(const int &chroIndex, const double &score );
+	void setOneSymbolCountByRandVal(const int &chroIndex, const double &randVal);
 
 	void recordAllCount();
 

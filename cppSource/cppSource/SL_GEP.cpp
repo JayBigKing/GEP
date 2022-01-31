@@ -68,6 +68,7 @@ void SL_GEP::initRandGenerator() {
 	GambleGenerator.seed(initDistribution(generator));
 	CRGenerator.seed(initDistribution(generator));
 	KGenerator.seed(initDistribution(generator));
+	ACSGenerator.seed(initDistribution(generator));
 
 }
 
@@ -387,6 +388,27 @@ void SL_GEP::individualSelection(const int &chroIndex){
 	setChromosomeWeight(chroIndex, nowMinDistance);
 
 }
+void SL_GEP::individualSelection(const int &chroIndex, const double &randVal) {
+	double xDistance = 0.0, uDistance = 0.0;
+	double nowMinDistance = 0.0;
+	//cdPtr->setChromosome(chromosomes[chroIndex]);
+	xDistance = calculateDistance(chromosomes[chroIndex]);
+	uDistance = calculateDistance(UChromosome);
+	if (uDistance < xDistance) {
+		chromosomes[chroIndex] = UChromosome;
+		nowMinDistance = uDistance;
+	}
+	else
+		nowMinDistance = xDistance;
+
+	recordBestChromosome(chroIndex, nowMinDistance);
+	setChromosomeWeight(chroIndex, nowMinDistance);
+
+	setOneSymbolCountByRandVal(chroIndex, randVal);
+
+
+}
+
 double SL_GEP::calculateDistance(const 	Chromosome &c){
 	return EuclideanDis(c);
 
@@ -413,12 +435,13 @@ void SL_GEP::inheritanceProcess() {
 		int r1 = indexDistribution(SelectGenerator),
 			r2 = indexDistribution(SelectGenerator);
 		double CR = distribution(CRGenerator);
+		double ACSRandVal = distribution(ACSGenerator);
 
 		individualMutation(i, r1, r2, F, beta);			//遗传
 
 		individualCrossover(i,CR);						//交叉
 
-		individualSelection(i);							//自然选择
+		individualSelection(i, ACSRandVal);							//自然选择
 
 		//recordOneSymbolCount(i);
 
@@ -449,17 +472,17 @@ void SL_GEP::recordOneSymbolCount(const int &chroIndex, const double &score) {
 		}
 	}
 }
-void SL_GEP::setOneSymbolCount(const int &chroIndex, const double &score) {
+void SL_GEP::setOneSymbolCountByRandVal(const int &chroIndex, const double &randVal) {
 	int mainPSize = chromosomes[chroIndex].mainProgramEx.size();
 	int numOfADF = chromosomes[chroIndex].ADFEx.size();
 	for (int i = 0; i < mainPSize; ++i) {
-		setSymbolCount(chromosomes[chroIndex].mainProgramEx[i], i, score);
+		setSymbolCountByRandVal(chromosomes[chroIndex].mainProgramEx[i], i, randVal);
 	}
 
 	for (int i = 0; i < numOfADF; ++i) {
 		int ADFLen = chromosomes[chroIndex].ADFEx[i].size();
 		for (int j = 0; j < ADFLen; ++j) {
-			setSymbolCount(chromosomes[chroIndex].ADFEx[i][j], j, score, i);
+			setSymbolCountByRandVal(chromosomes[chroIndex].ADFEx[i][j], j, randVal, i);
 		}
 	}
 
@@ -469,12 +492,27 @@ void SL_GEP::setOneSymbolCount(const int &chroIndex, const double &score) {
 
 void SL_GEP::recordAllCount() {
 	if (totalWeight) {
+		int theBestIndex = 0;
+		long double adjustTotalWeight = 0.0;
+		double lastBestWeightScore = -1;
 		for (int i = 0; i < chromosomesNum; ++i) {
 			double inputWeightScore = (chromosomeWeight[i] == 0.0 ? maxWeightScore : (totalWeight / chromosomeWeight[i]) / chromosomesNum );
-			recordOneSymbolCount(i, inputWeightScore);
+			adjustTotalWeight += inputWeightScore;
+			chromosomeWeight[i] = inputWeightScore;
+			if (inputWeightScore > lastBestWeightScore) {
+				lastBestWeightScore = inputWeightScore;
+				theBestIndex = i;
+			}
+			//recordOneSymbolCount(i, inputWeightScore);
 			if (inputWeightScore > maxWeightScore)
 				maxWeightScore = inputWeightScore;
 		}
+
+		for (int i = 0; i < chromosomesNum;++i)
+			recordOneSymbolCount(i, chromosomeWeight[i] / adjustTotalWeight);
+
+
+		//recordOneSymbolCount(theBestIndex, lastBestWeightScore / adjustTotalWeight);
 	}
 	else {
 		int meanVal = 1 / chromosomesNum;

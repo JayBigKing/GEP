@@ -342,6 +342,31 @@ void GEP::recordSymbolCount(const int & symbolNum, const int &FragmentIndex, con
 	}
 
 }
+
+void GEP::setSymbolCountByRandVal(const int & symbolNum, const int &FragmentIndex, const double &randVal, const int & ADFIndex) {
+	try {
+		if (ADFIndex == -1) {
+			if (this->mainProgramSymbolCount[FragmentIndex].find(symbolNum) == this->mainProgramSymbolCount[FragmentIndex].end())
+				throw "error : invaild symbol!";
+			else
+				this->mainProgramSymbolCount[FragmentIndex][symbolNum] = (1 - randVal) * this->mainProgramSymbolCount[FragmentIndex][symbolNum] + randVal * theMinSymbolCount;
+		}
+		else {
+			if (this->ADFSymbolCount[ADFIndex][FragmentIndex].find(symbolNum) == this->ADFSymbolCount[ADFIndex][FragmentIndex].end())
+				throw "error : invaild symbol!";
+			else
+				this->ADFSymbolCount[ADFIndex][FragmentIndex][symbolNum] = (1 - randVal) * this->ADFSymbolCount[ADFIndex][FragmentIndex][symbolNum] + randVal * theMinSymbolCount;
+		}
+	}
+	catch (const char *e) {
+		printf("%s\r\n", e);
+		exit(-1);
+	}
+
+
+}
+
+/*
 void GEP::setSymbolCount(const int & symbolNum, const int &FragmentIndex, const double &score, const int & ADFIndex) {
 	try {
 		int adjustScore = score;
@@ -365,7 +390,7 @@ void GEP::setSymbolCount(const int & symbolNum, const int &FragmentIndex, const 
 		exit(-1);
 	}
 
-}
+}*/
 
 
 /*
