@@ -168,7 +168,8 @@ void GEP::initChromosomeSymbolCount2() {
 	int theExH = 0;
 	int theExU = 0;
 	int theExL = 0;
-	double meanVal = 1.0 / chromosomesNum;
+	//double meanVal = 1.0 / chromosomesNum;
+	theMinSymbolCount = 1.0 / chromosomesNum;
 	unordered_map<int,double> tmpMap;
 	try {
 		if (!couldChooseSetOfMainProgramFirst.size())
@@ -188,7 +189,7 @@ void GEP::initChromosomeSymbolCount2() {
 	theExL = cr.getMainPR().l;
 
 	for (int i = 0; i < couldChooseSetOfMainProgramFirst.size(); ++i)
-		tmpMap[couldChooseSetOfMainProgramFirst[i]] = meanVal;
+		tmpMap[couldChooseSetOfMainProgramFirst[i]] = theMinSymbolCount;
 
 
 
@@ -201,7 +202,7 @@ void GEP::initChromosomeSymbolCount2() {
 
 	tmpMap.clear();
 	for (int i = 0; i < terminalSet.size(); ++i)
-		tmpMap[terminalSet[i].getNum()] = meanVal;
+		tmpMap[terminalSet[i].getNum()] = theMinSymbolCount;
 
 	//½«map´æÈëvec
 	for (int i = 0; i < theExL; ++i)
@@ -218,7 +219,7 @@ void GEP::initChromosomeSymbolCount2() {
 		tmpMap.clear();
 
 		for (int j = 0; j < couldChooseSetOfADFFirst[i].size(); ++j)
-			tmpMap[couldChooseSetOfADFFirst[i][j]] = meanVal;
+			tmpMap[couldChooseSetOfADFFirst[i][j]] = theMinSymbolCount;
 
 		for (int j = 0; j < theExH; ++j)
 			ADFSymbolCount[i].push_back(tmpMap);
@@ -226,7 +227,7 @@ void GEP::initChromosomeSymbolCount2() {
 
 		tmpMap.clear();
 		for (int j = 0; j < couldChooseSetOfADFSecond[i].size(); ++j)
-			tmpMap[couldChooseSetOfADFSecond[i][j]] = meanVal;
+			tmpMap[couldChooseSetOfADFSecond[i][j]] = theMinSymbolCount;
 
 		for (int j = 0; j < theExL; ++j)
 			ADFSymbolCount[i].push_back(tmpMap);
@@ -341,7 +342,30 @@ void GEP::recordSymbolCount(const int & symbolNum, const int &FragmentIndex, con
 	}
 
 }
+void GEP::setSymbolCount(const int & symbolNum, const int &FragmentIndex, const double &score, const int & ADFIndex) {
+	try {
+		int adjustScore = score;
+		if (adjustScore < theMinSymbolCount)
+			adjustScore = theMinSymbolCount;
+		if (ADFIndex == -1) {
+			if (this->mainProgramSymbolCount[FragmentIndex].find(symbolNum) == this->mainProgramSymbolCount[FragmentIndex].end())
+				throw "error : invaild symbol!";
+			else
+				this->mainProgramSymbolCount[FragmentIndex][symbolNum] = adjustScore;
+		}
+		else {
+			if (this->ADFSymbolCount[ADFIndex][FragmentIndex].find(symbolNum) == this->ADFSymbolCount[ADFIndex][FragmentIndex].end())
+				throw "error : invaild symbol!";
+			else
+				this->ADFSymbolCount[ADFIndex][FragmentIndex][symbolNum] = adjustScore;
+		}
+	}
+	catch (const char *e) {
+		printf("%s\r\n", e);
+		exit(-1);
+	}
 
+}
 
 
 /*

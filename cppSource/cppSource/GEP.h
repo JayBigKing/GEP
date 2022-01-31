@@ -88,7 +88,9 @@ protected:
 	bool ifUseSuspendNum = true;
 	int suspendNum = 1000;
 	int suspendCount = 0;              //用来判断优化是否停滞了
-	double similarValue = 1e-6;
+	const double similarValue = 1e-6;
+
+	double theMinSymbolCount = 1.0;
 
 	default_random_engine generator;
 
@@ -119,6 +121,6 @@ protected:
 
 	int getRandSymbolNum(ChromosomePos cp ,int ADFIndex = -1);
 	void recordSymbolCount(const int & symbolNum, const int &FragmentIndex ,const double &score = 1.0,const int & ADFIndex = -1);
-
+	void setSymbolCount(const int & symbolNum, const int &FragmentIndex, const double &score , const int & ADFIndex = -1);
 
 };

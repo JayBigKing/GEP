@@ -134,9 +134,9 @@ void SL_GEP::initChromosomes() {
 		setChromosomeWeight(i, nowDis);
 		recordBestChromosome(i,nowDis);
 
-		recordOneSymbolCount(i);
+		//recordOneSymbolCount(i);
 	}
-	//recordAllCount();
+	recordAllCount();
 
 
 
@@ -420,11 +420,11 @@ void SL_GEP::inheritanceProcess() {
 
 		individualSelection(i);							//×ÔÈ»Ñ¡Ôñ
 
-		recordOneSymbolCount(i);
+		//recordOneSymbolCount(i);
 
 
 	}
-	//recordAllCount();
+	recordAllCount();
 
 	printf("%d:%f\r\n",epoch, minDistance);		//602  (>2200)
 
@@ -449,11 +449,31 @@ void SL_GEP::recordOneSymbolCount(const int &chroIndex, const double &score) {
 		}
 	}
 }
+void SL_GEP::setOneSymbolCount(const int &chroIndex, const double &score) {
+	int mainPSize = chromosomes[chroIndex].mainProgramEx.size();
+	int numOfADF = chromosomes[chroIndex].ADFEx.size();
+	for (int i = 0; i < mainPSize; ++i) {
+		setSymbolCount(chromosomes[chroIndex].mainProgramEx[i], i, score);
+	}
+
+	for (int i = 0; i < numOfADF; ++i) {
+		int ADFLen = chromosomes[chroIndex].ADFEx[i].size();
+		for (int j = 0; j < ADFLen; ++j) {
+			setSymbolCount(chromosomes[chroIndex].ADFEx[i][j], j, score, i);
+		}
+	}
+
+
+}
+
 
 void SL_GEP::recordAllCount() {
 	if (totalWeight) {
 		for (int i = 0; i < chromosomesNum; ++i) {
-			recordOneSymbolCount(i, chromosomeWeight[i] / totalWeight);
+			double inputWeightScore = (chromosomeWeight[i] == 0.0 ? maxWeightScore : (totalWeight / chromosomeWeight[i]) / chromosomesNum );
+			recordOneSymbolCount(i, inputWeightScore);
+			if (inputWeightScore > maxWeightScore)
+				maxWeightScore = inputWeightScore;
 		}
 	}
 	else {
