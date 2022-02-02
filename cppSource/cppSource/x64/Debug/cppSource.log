@@ -1,24 +1,5 @@
-﻿  SL_GEP.cpp
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(64): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(65): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(66): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(67): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(68): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(69): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(70): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(71): warning C4244: “参数”: 从“unsigned __int64”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(110): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(254): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(256): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(264): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(340): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(342): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(350): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(462): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(463): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(469): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(476): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(477): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_gep.cpp(483): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+﻿  main.cpp
+d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\main.cpp(397): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“unsigned __int64”
+  d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\main.cpp(397): note: 请考虑在格式字符串中使用“%zd”
   cppSource.vcxproj -> D:\assignment\bGraduationProject\work\dll\GEP\cppSource\x64\Debug\cppSource.exe
   cppSource.vcxproj -> D:\assignment\bGraduationProject\work\dll\GEP\cppSource\x64\Debug\cppSource.pdb (Full PDB)

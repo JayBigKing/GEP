@@ -1,5 +1,6 @@
 #pragma once
 #include "ChromosomeDecoder.h"
+#include <stack>
 class SL_ChromosomeDecoder : public ChromosomeDecoder
 {
 public:
@@ -7,7 +8,25 @@ public:
 	~SL_ChromosomeDecoder(){}
 
 private:
+	void clearGlobalData();
+	void setChromosome(Chromosome &chromosome);
+	void recordMainProgramStackAndVec(vector<bool> &needADF);
+	void recordADFStackAndVec(const vector<bool> &needADF);
 	double mainProgramDecode();
 	double ADFProgramDecode(Symbol &subFunctionSym, double* inputArgsVal);
+
+
+
+	double mainProgramDecodeOrigin();
+	double ADFProgramDecodeOrigin(Symbol &subFunctionSym, double* inputArgsVal);
+
+
+	stack<DecodeElement> mainOpStack;
+	vector<stack<DecodeElement>>ADFOpStacks;
+
+	vector<DecodeElement> mainOcVector;			//oc means operate code
+	vector<vector<DecodeElement>>ADFOcVector;
+
+
 
 };

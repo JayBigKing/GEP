@@ -10,6 +10,7 @@
 #include "SL_GEP.h"
 #include "GA_HelpFunc.h"
 #include "ChromosomeShower.h"
+#include "SL_GEPTester.h"
 using namespace std;
 double addHandler(const double *args, const int len) {
 	return args[0] + args[1];
@@ -233,9 +234,6 @@ void test5() {
 }
 
 void test6() {
-	//(int numOfTerminals, 
-	//	WhichFunction* presetFunctions, int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs);
-
 	//a  0
 	//b  1
 	//add 2
@@ -277,14 +275,16 @@ void test6() {
 	//	vector<double>input(2);
 	boost::shared_array<double> input(new double[2]);
 
-
+	//G times add a a b a
+	//add x y
+	//(2*2 + (2+2)) = 8
 	chromosome.mainProgramEx[0] = 4;
 	chromosome.mainProgramEx[1] = 3;
 	chromosome.mainProgramEx[2] = 2;
 	chromosome.mainProgramEx[3] = 0;
 	chromosome.mainProgramEx[4] = 0;
 	chromosome.mainProgramEx[5] = 1;
-	chromosome.mainProgramEx[6] = 0;
+	chromosome.mainProgramEx[6] = 1;
 
 	chromosome.ADFEx[0][0] = 2;
 	chromosome.ADFEx[0][1] = 5;
@@ -292,6 +292,99 @@ void test6() {
 
 
 	input[0] = 1;
+	input[1] = 2;
+
+	printf("%f\r\n", cd.decode(input.get(), chromosome, cr));
+	printf("%f\r\n", cd.decode(input.get(), chromosome, cr));
+
+	input[0] = 2;
+	input[1] = 2;
+
+	printf("%f\r\n", cd.decode(input.get(), chromosome, cr));
+
+}
+
+
+void test6_5() {
+
+	//a  0
+	//b  1
+	//add 2
+	//times 3
+	//G1 4
+	//G2  5
+	//x   6
+	//y  7
+	int numOfTerminals = 2;
+	int numOfPresetFunctions = 2;
+	int numOfADFs = 2;
+
+	int mainProgramH = 10;
+
+	boost::shared_array<int> presetFunctions(new int[numOfPresetFunctions]);
+	boost::shared_array<int> argsLenOfADFs(new int[numOfADFs]);
+	boost::shared_array<double> args(new double[2]);
+	args[0] = 1;
+	args[1] = 2;
+
+	presetFunctions[0] = 0;
+	presetFunctions[1] = 2;
+
+	argsLenOfADFs[0] = 2;
+	argsLenOfADFs[1] = 2;
+
+	SymbolSetGenerator sg;
+	SymbolSet symbolSet;
+	sg.setSymbolSet(symbolSet, numOfTerminals, presetFunctions.get(), numOfPresetFunctions, argsLenOfADFs.get(), numOfADFs);
+	//SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals, presetFunctions.get(), numOfPresetFunctions, argsLenOfADFs.get(), numOfADFs);
+	//boost::shared_array<SymbolSet> symbolSetSA(sg.makeSymbolSet(numOfTerminals, presetFunctions.get(), numOfPresetFunctions, argsLenOfADFs.get(), numOfADFs));
+	//SymbolSet *symbolSet = symbolSetSA.get();
+
+
+
+	vector<int>ADFH;
+	ADFH.push_back(1);
+	ADFH.push_back(2);
+	ChromosomeRule cr(mainProgramH, ADFH, symbolSet);
+	Chromosome chromosome(cr);
+	SL_ChromosomeDecoder cd;
+	//	vector<double>input(2);
+	boost::shared_array<double> input(new double[2]);
+
+	//G1 times G2 a a b a
+	//add x y
+	//add times  y y  x
+	//G1(a*a,G2(b,a))
+	//(a*a) + G(b,a)
+	//(a*a) + y * (y+x)
+	//(a*a) + a + (a*b)
+	//(a*a) + (a+b)
+	chromosome.mainProgramEx[0] = 4;
+	chromosome.mainProgramEx[1] = 3;
+	chromosome.mainProgramEx[2] = 5;
+	chromosome.mainProgramEx[3] = 0;
+	chromosome.mainProgramEx[4] = 0;
+	chromosome.mainProgramEx[5] = 1;
+	chromosome.mainProgramEx[6] = 0;
+
+	chromosome.ADFEx[0][0] = 2;
+	chromosome.ADFEx[0][1] = 6;
+	chromosome.ADFEx[0][2] = 7;
+
+	//
+	chromosome.ADFEx[1][0] = 2;
+	chromosome.ADFEx[1][1] = 6;
+	chromosome.ADFEx[1][2] = 7;
+	chromosome.ADFEx[1][3] = 7;
+	chromosome.ADFEx[1][4] = 6;
+
+	input[0] = 1;
+	input[1] = 2;
+
+	printf("%f\r\n", cd.decode(input.get(), chromosome, cr));
+	printf("%f\r\n", cd.decode(input.get(), chromosome, cr));
+
+	input[0] = 2;
 	input[1] = 2;
 
 	printf("%f\r\n", cd.decode(input.get(), chromosome, cr));
@@ -476,10 +569,67 @@ void test10() {
 
 }
 
+void test11() {
+	int chroNum = 50;
+	int numOfTerminals = 2;
+	int numOfPresetFunctions = 5;
+	int numOfADFs = 1;
+
+	int mainProgramH = 16;
+
+	int TAPairNum = 50;
+	int needEpoch = 2400;
+
+	boost::shared_array<int> presetFunctions(new int[numOfPresetFunctions]);
+	boost::shared_array<int> argsLenOfADFs(new int[numOfADFs]);
+	boost::shared_array<double> realTermVec(new double[TAPairNum * numOfTerminals]);
+	boost::shared_array<double> ansVec(new double[TAPairNum]);
+
+
+	fitFunctionOut(TAPairNum, numOfTerminals, realTermVec.get(), ansVec.get());
+
+	for (int i = 0, j = 0; i < numOfPresetFunctions; i++, j++) {
+		if (j == (int)W_divide)
+			j++;
+		presetFunctions[i] = j;
+	}
+	//presetFunctions[0] = (int)W_times;
+	//presetFunctions[1] = (int)W_add;
+	//presetFunctions[2] = (int)W_sin;
+	//presetFunctions[3] = (int)W_cos;
+	//presetFunctions[4] = (int)W_minus;
+
+	argsLenOfADFs[0] = 2;
+	//argsLenOfADFs[1] = 3;
+
+
+	boost::shared_array<int> ADFH(new int[numOfADFs]);
+	ADFH[0] = 5;
+	//ADFH[1] = 8;
+
+
+	SL_GEP slgep(chroNum, realTermVec.get(), ansVec.get(), TAPairNum, needEpoch, numOfTerminals, presetFunctions.get(), numOfPresetFunctions, argsLenOfADFs.get(),
+		numOfADFs, mainProgramH, ADFH.get());
+
+
+	SL_GEPTester  sl_gepTest;
+	sl_gepTest.testTrainingZeroCostEpo(slgep);
+
+
+}
+void test12() {
+	SL_GEPTester  sl_gepTest;
+	sl_gepTest.testFile();
+
+}
 int main() {
 	//test8();
-	test10();
+	//test10();
+	test11();
 	//test9();
+	//test6();
+	//test6_5();
+	//test12();
 
 	return 0;
 }

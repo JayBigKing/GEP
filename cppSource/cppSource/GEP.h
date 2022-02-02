@@ -6,7 +6,6 @@
 #include<boost/smart_ptr.hpp>
 #include <random>
 #include <time.h>
-
 enum ChromosomePos
 {
 	MAIN_PROGRAM_FIRST = 0,

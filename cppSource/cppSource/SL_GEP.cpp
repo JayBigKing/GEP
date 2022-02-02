@@ -93,6 +93,7 @@ pair<Chromosome, ChromosomeRule> SL_GEP::train() {
 	initChromosomes();
 	for (; shouldContiue();) {
 		inheritanceProcess();
+		printf("%d:%f\r\n", epoch, minDistance);		//602  (>2200)
 	}
 	outPair.first = bestChromosomeAndIndex.first;
 	outPair.second = cr;
@@ -449,7 +450,7 @@ void SL_GEP::inheritanceProcess() {
 	}
 	recordAllCount();
 
-	printf("%d:%f\r\n",epoch, minDistance);		//602  (>2200)
+
 
 }
 //********************************************************

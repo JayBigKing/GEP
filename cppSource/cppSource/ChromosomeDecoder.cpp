@@ -35,9 +35,12 @@ double ChromosomeDecoder::decode(vector<double>& realTerm) {
 }
 //初始化染色体表达式，表达式规则的时候，有重复代码，集成起来
 void ChromosomeDecoder::decodeHelpIn(Chromosome &chromosome1, ChromosomeRule &cr1) {
-	chromosome = chromosome1;
-	cr = cr1;
-	symbolSet = cr.getSymbolSet();
+	setChromosomeRule(cr1);
+	//symbolSet = cr.getSymbolSet();
+
+	setChromosome(chromosome1);
+
+
 }
 //计算表达式值的时候有重复代码，集成起来
 double ChromosomeDecoder::decodeHelpOut() {

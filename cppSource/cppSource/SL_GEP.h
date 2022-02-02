@@ -1,6 +1,7 @@
 #pragma once
 #include"GEP.h"
 #include "SL_ChromosomeDecoder.h"
+#include "SL_GEPTester.h"
 class SL_GEP : public GEP
 {
 public:
@@ -26,6 +27,8 @@ public:
 	pair<Chromosome, ChromosomeRule> train();
 
 	~SL_GEP(){}
+
+	friend class SL_GEPTester;
 
 private:
 	default_random_engine FGenerator;

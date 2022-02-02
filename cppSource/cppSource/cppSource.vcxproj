@@ -154,6 +154,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SL_ChromosomeDecoder.cpp" />
     <ClCompile Include="SL_GEP.cpp" />
+    <ClCompile Include="SL_GEPTest.cpp" />
     <ClCompile Include="Symbol.cpp" />
     <ClCompile Include="SymbolSetGenerator.cpp" />
   </ItemGroup>
@@ -168,6 +169,7 @@
     <ClInclude Include="initHelp.h" />
     <ClInclude Include="SL_ChromosomeDecoder.h" />
     <ClInclude Include="SL_GEP.h" />
+    <ClInclude Include="SL_GEPTester.h" />
     <ClInclude Include="Symbol.h" />
     <ClInclude Include="SymbolSetGenerator.h" />
   </ItemGroup>
