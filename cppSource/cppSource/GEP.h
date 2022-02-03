@@ -104,6 +104,8 @@ protected:
 	void initChromosomeSymbolCount();
 	void initChromosomeSymbolCount2();
 	void initCouldChooseSet();
+
+	void resetSymbolCount();
 //	void initRand();
 
 

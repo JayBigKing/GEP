@@ -1,6 +1,13 @@
 #include "SL_GEP.h"
 #include "GA_HelpFunc.h"
 #include <limits>
+#define ANY_ONE_EQUAL_WAY 0
+#define LOW_ONE_FIRST 1
+#define BEST_ONE_ONLY 2
+#define ANY_ONE_COUNT_BY_WEIGHT 3
+#define WHICH_RENEW_SYMBOL_COUNT_WAY BEST_ONE_ONLY
+
+
 SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int needEpoch, int numOfTerminals, double *constants, int numOfConstants,
 	WhichFunction* presetFunctions, int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs,
 	bool ifUseSuspendNum , double similarValue ) :
@@ -88,6 +95,14 @@ double SL_GEP::test1() {
 	return cdPtr.get()->decode(realTermSet[0], chromosomes[0], cr);
 }
 
+void SL_GEP::reInit() {
+	generator.seed(time(NULL));
+	initRandGenerator();
+	minDistance = numeric_limits<double>::max();
+	epoch = 0;
+	resetSymbolCount();
+}
+
 pair<Chromosome, ChromosomeRule> SL_GEP::train() {
 	pair<Chromosome, ChromosomeRule> outPair;
 	initChromosomes();
@@ -133,12 +148,19 @@ void SL_GEP::initChromosomes() {
 		}
 
 		nowDis = calculateDistance(chromosomes[i]);
+#if WHICH_RENEW_SYMBOL_COUNT_WAY == ANY_ONE_COUNT_BY_WEIGHT || WHICH_RENEW_SYMBOL_COUNT_WAY == BEST_ONE_ONLY || WHICH_RENEW_SYMBOL_COUNT_WAY == LOW_ONE_FIRST
 		setChromosomeWeight(i, nowDis);
-		recordBestChromosome(i,nowDis);
+#endif 
 
-		//recordOneSymbolCount(i);
+
+		recordBestChromosome(i,nowDis);
+#if WHICH_RENEW_SYMBOL_COUNT_WAY == ANY_ONE_EQUAL_WAY
+		recordOneSymbolCount(i);
+#endif 
 	}
+#if WHICH_RENEW_SYMBOL_COUNT_WAY == ANY_ONE_COUNT_BY_WEIGHT || WHICH_RENEW_SYMBOL_COUNT_WAY == BEST_ONE_ONLY || WHICH_RENEW_SYMBOL_COUNT_WAY == LOW_ONE_FIRST
 	recordAllCount();
+#endif 
 
 
 
@@ -386,7 +408,7 @@ void SL_GEP::individualSelection(const int &chroIndex){
 		nowMinDistance = xDistance;
 
 	recordBestChromosome(chroIndex, nowMinDistance);
-	setChromosomeWeight(chroIndex, nowMinDistance);
+	//setChromosomeWeight(chroIndex, nowMinDistance);
 
 }
 void SL_GEP::individualSelection(const int &chroIndex, const double &randVal) {
@@ -405,7 +427,7 @@ void SL_GEP::individualSelection(const int &chroIndex, const double &randVal) {
 	recordBestChromosome(chroIndex, nowMinDistance);
 	setChromosomeWeight(chroIndex, nowMinDistance);
 
-	setOneSymbolCountByRandVal(chroIndex, randVal);
+	setOneSymbolCountByRandVal(chroIndex, randVal);				//片段的信息素衰减
 
 
 }
@@ -442,13 +464,22 @@ void SL_GEP::inheritanceProcess() {
 
 		individualCrossover(i,CR);						//交叉
 
+#if WHICH_RENEW_SYMBOL_COUNT_WAY == ANY_ONE_COUNT_BY_WEIGHT || WHICH_RENEW_SYMBOL_COUNT_WAY == BEST_ONE_ONLY || WHICH_RENEW_SYMBOL_COUNT_WAY == LOW_ONE_FIRST
 		individualSelection(i, ACSRandVal);							//自然选择
+#elif WHICH_RENEW_SYMBOL_COUNT_WAY == ANY_ONE_EQUAL_WAY
+		individualSelection(i);
+		recordOneSymbolCount(i);
+#endif
+
+		
 
 		//recordOneSymbolCount(i);
 
 
 	}
+#if WHICH_RENEW_SYMBOL_COUNT_WAY == ANY_ONE_COUNT_BY_WEIGHT || WHICH_RENEW_SYMBOL_COUNT_WAY == BEST_ONE_ONLY || WHICH_RENEW_SYMBOL_COUNT_WAY == LOW_ONE_FIRST
 	recordAllCount();
+#endif
 
 
 
@@ -493,27 +524,41 @@ void SL_GEP::setOneSymbolCountByRandVal(const int &chroIndex, const double &rand
 
 void SL_GEP::recordAllCount() {
 	if (totalWeight) {
+#if WHICH_RENEW_SYMBOL_COUNT_WAY == LOW_ONE_FIRST
+		for (int i = 0; i < chromosomesNum; ++i)
+			recordOneSymbolCount(i, chromosomeWeight[i] / totalWeight);
+#else // WHICH_RENEW_SYMBOL_COUNT_WAY == LOW_ONE_FIRST
+
 		int theBestIndex = 0;
 		long double adjustTotalWeight = 0.0;
 		double lastBestWeightScore = -1;
 		for (int i = 0; i < chromosomesNum; ++i) {
 			double inputWeightScore = (chromosomeWeight[i] == 0.0 ? maxWeightScore : (totalWeight / chromosomeWeight[i]) / chromosomesNum );
 			adjustTotalWeight += inputWeightScore;
+#if WHICH_RENEW_SYMBOL_COUNT_WAY == ANY_ONE_COUNT_BY_WEIGHT
 			chromosomeWeight[i] = inputWeightScore;
-			if (inputWeightScore > lastBestWeightScore) {
+#endif
+#if WHICH_RENEW_SYMBOL_COUNT_WAY == BEST_ONE_ONLY
+		if (inputWeightScore > lastBestWeightScore) {
 				lastBestWeightScore = inputWeightScore;
 				theBestIndex = i;
-			}
+		}
+#endif 
+
+
 			//recordOneSymbolCount(i, inputWeightScore);
 			if (inputWeightScore > maxWeightScore)
 				maxWeightScore = inputWeightScore;
 		}
-
+#if WHICH_RENEW_SYMBOL_COUNT_WAY == ANY_ONE_COUNT_BY_WEIGHT
 		for (int i = 0; i < chromosomesNum;++i)
 			recordOneSymbolCount(i, chromosomeWeight[i] / adjustTotalWeight);
+#endif
 
-
-		//recordOneSymbolCount(theBestIndex, lastBestWeightScore / adjustTotalWeight);
+#if WHICH_RENEW_SYMBOL_COUNT_WAY == BEST_ONE_ONLY
+		recordOneSymbolCount(theBestIndex, lastBestWeightScore / adjustTotalWeight);
+#endif 
+#endif 
 	}
 	else {
 		int meanVal = 1 / chromosomesNum;

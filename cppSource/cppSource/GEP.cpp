@@ -274,6 +274,24 @@ void GEP::initCouldChooseSet() {
 }
 
 
+void GEP::resetSymbolCount() {
+	int numOfADF = cr.getADFPR().size();
+	for (int i = 0; i < mainProgramSymbolCount.size(); ++i) {
+		unordered_map<int, double> &refMap = mainProgramSymbolCount[i];
+		for (auto it = refMap.begin(); it != refMap.end(); it++)
+			it->second = theMinSymbolCount;
+	}
+	for (int i = 0; i < numOfADF; ++i) {
+		for (int j = 0; j < ADFSymbolCount[i].size(); ++j) {
+			unordered_map<int, double> &refMap = ADFSymbolCount[i][j];
+			for (auto it = refMap.begin(); it != refMap.end(); it++)
+				it->second = theMinSymbolCount;
+		}
+
+	}
+
+}
+
 
 int GEP::getRandSymbolNum(ChromosomePos cp, int ADFIndex) {
 	using Range = std::uniform_int_distribution<>::param_type;

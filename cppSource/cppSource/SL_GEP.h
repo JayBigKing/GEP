@@ -26,6 +26,8 @@ public:
 
 	pair<Chromosome, ChromosomeRule> train();
 
+	void reInit();
+
 	~SL_GEP(){}
 
 	friend class SL_GEPTester;
@@ -52,6 +54,7 @@ private:
 	double maxWeightScore = 0;
 
 	void initRandGenerator();
+
 
 
 
