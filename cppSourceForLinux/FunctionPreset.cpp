@@ -61,7 +61,7 @@ double functionPresetHandler(const double *args, WhichFunction whichFunction) {
                 return cos(args[0]);
             case W_tan:
                 outVal = tan(args[0]);
-                if(outVal >= dangerousVal || isinf(outVal))
+                if(isinf(outVal) || outVal >= dangerousVal)
                     return theMaxReal;
                 else
                     return outVal;
@@ -111,7 +111,7 @@ double functionPresetHandler(const double *args, WhichFunction whichFunction) {
                 return min(args[0], args[1]);
             case W_ex:
                 outVal = exp(args[0]);
-                if(outVal >= dangerousVal || isinf(outVal))
+                if(isinf(outVal) || outVal >= dangerousVal)
                     return theMaxReal;
                 else
                     return outVal;

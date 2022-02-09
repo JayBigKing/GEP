@@ -1,6 +1,8 @@
 #include"FunctionPreset.h"
 #include <math.h>
 #include <algorithm>
+const double theMaxReal = numeric_limits<double>::max() - 1;
+const double dangerousVal = theMaxReal * 1e-10;
 unordered_map<WhichFunction, pair<int, string>>functionArgMap{
 	{ W_add ,pair<int,string>{2,"add"} },{ W_minus , pair<int,string>{2,"miuns"} },
 	{ W_times , pair<int,string>{2,"times"} },{ W_divide,pair<int,string>{2,"divide"} },
@@ -29,6 +31,7 @@ bool checkFunctionArgsLen(WhichFunction whichFunction, int len) {
 }
 double functionPresetHandler(const double *args, WhichFunction whichFunction) {
 	try {
+		double outVal;
 		switch (whichFunction)
 		{
 		case W_add:
@@ -38,24 +41,45 @@ double functionPresetHandler(const double *args, WhichFunction whichFunction) {
 		case W_times:
 			return args[0] * args[1];
 		case W_divide:
-			if (!args[1])
-				throw "error : divide zero!!";
-			else
-				return args[0] / args[1];
+			if (args[1] < 1e-5)
+				return theMaxReal;
+			else {
+				outVal = args[0] / args[1];
+				if (isfinite(outVal))
+					return theMaxReal;
+				else
+					return outVal;
+			}
 		case W_sin:
 			return sin(args[0]);
 		case W_cos:
 			return cos(args[0]);
 		case W_tan:
-			return tan(args[0]);
+			outVal = tan(args[0]);
+			if (isinf(outVal) || outVal >= dangerousVal)
+				return theMaxReal;
+			else
+				return outVal;
 		case W_asin:
+			if (args[0] > 1 || args[0] < -1)
+				return theMaxReal;
 			return asin(args[0]);
 		case W_acos:
+			if (args[0] > 1 || args[0] < -1)
+				return theMaxReal;
 			return acos(args[0]);
 		case  W_atan:
 			return atan(args[0]);
 		case W_atan2:
-			return atan2(args[0], args[1]);
+			if (args[1] < 1e-5)
+				return theMaxReal;
+			else {
+				outVal = atan2(args[0], args[1]);
+				if (isinf(outVal))
+					return theMaxReal;
+				else
+					return outVal;
+			}
 		case W_pow:
 			return pow(args[0], args[1]);
 		case W_square:
@@ -65,15 +89,27 @@ double functionPresetHandler(const double *args, WhichFunction whichFunction) {
 		case W_sqrt:
 			return sqrt(args[0]);
 		case W_log2:
-			return log(args[0]);
+			outVal = log(args[0]);
+			if (isnan(outVal))
+				return theMaxReal;
+			else
+				return outVal;
 		case W_log10:
-			return log10(args[0]);
+			outVal = log10(args[0]);
+			if (isnan(outVal))
+				return theMaxReal;
+			else
+				return outVal;
 		case W_max:
 			return max(args[0], args[1]);
 		case W_min:
 			return min(args[0], args[1]);
 		case W_ex:
-			return exp(args[0]);
+			outVal = exp(args[0]);
+			if (isinf(outVal) || outVal >= dangerousVal)
+				return theMaxReal;
+			else
+				return outVal;
 		default:
 			throw "error : no such function which is preseted!";
 		}
@@ -102,4 +138,7 @@ string getFunctionName(WhichFunction whichFunction) {
 
 int getFunctionArgLen(WhichFunction whichFunction) {
 	return functionArgMap[whichFunction].first;
+}
+const double &getTheMaxReal() {
+	return theMaxReal;
 }

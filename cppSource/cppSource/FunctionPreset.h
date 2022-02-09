@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 using namespace std;
+//const double theMaxReal;
 enum WhichFunction
 {
 	W_add = 0,
@@ -37,3 +38,5 @@ double functionPresetHandler(const double *args, const int len, WhichFunction wh
 
 string getFunctionName(WhichFunction whichFunction);
 int getFunctionArgLen(WhichFunction whichFunction);
+
+const double &getTheMaxReal();

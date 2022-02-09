@@ -180,6 +180,7 @@ double SL_ChromosomeDecoder::mainProgramDecode() {
 	DecodeElement lastDe;
 	//	vector<double> optNum(cr.getU());
 	boost::shared_array<double> args(new double[cr.getU()]);
+	double nowDecodeVal = 0.0;
 	for(int i = 0 ; i < mainOcVector.size() ; ++i)
 		outputVec[mainOcVector[i].chroIndex] = symbolSet.getSymbol(mainOcVector[i].symbolSetIndex).getVal();
 
@@ -194,10 +195,19 @@ double SL_ChromosomeDecoder::mainProgramDecode() {
 			args[j] = outputVec[i];
 		}
 
-		if (tmpDe.symbolType == FUNCTION)
-			outputVec[tmpDe.chroIndex] = tmpSym.callFunctionHandler(args.get());
-		else if (tmpDe.symbolType == SUB_FUNCTION)
-			outputVec[tmpDe.chroIndex] = ADFProgramDecode(tmpSym, args.get());
+		if (tmpDe.symbolType == FUNCTION) {
+			nowDecodeVal = tmpSym.callFunctionHandler(args.get());
+			if (nowDecodeVal >= getTheMaxReal())
+				return nowDecodeVal;
+			outputVec[tmpDe.chroIndex] = nowDecodeVal;
+		}
+		else if (tmpDe.symbolType == SUB_FUNCTION) {
+			nowDecodeVal = ADFProgramDecode(tmpSym, args.get());
+			if (nowDecodeVal >= getTheMaxReal())
+				return nowDecodeVal;
+			outputVec[tmpDe.chroIndex] = nowDecodeVal;
+		}
+
 	}
 
 	return outputVec[0];
@@ -218,6 +228,7 @@ double SL_ChromosomeDecoder::ADFProgramDecode(Symbol &subFunctionSym, double* in
 	DecodeElement tmpDe;
 	//	vector<double> optNum(cr.getU());
 	boost::shared_array<double> args(new double[cr.getU()]);
+	double nowDecodeVal = 0.0;
 
 	setSymbolSetInputArgs(subFunctionSym.getNumOfInputArg(), inputArgsVal);
 	for (int i = 0; i < ADFOcVector[theADFIndex].size(); ++i)
@@ -235,8 +246,13 @@ double SL_ChromosomeDecoder::ADFProgramDecode(Symbol &subFunctionSym, double* in
 			args[j] = outputVec[i];
 		}
 
-		if (tmpDe.symbolType == FUNCTION)
-			outputVec[tmpDe.chroIndex] = tmpSym.callFunctionHandler(args.get());
+		if (tmpDe.symbolType == FUNCTION) {
+			nowDecodeVal = tmpSym.callFunctionHandler(args.get());
+			if (nowDecodeVal >= getTheMaxReal())
+				return nowDecodeVal;
+			outputVec[tmpDe.chroIndex] = nowDecodeVal;
+		}
+
 	}
 
 	return outputVec[0];
