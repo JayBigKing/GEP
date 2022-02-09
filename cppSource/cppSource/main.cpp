@@ -641,7 +641,7 @@ double functionOut(double *args, int whichFunc) {
 
 void test13() {
 	int chroNum = 50;
-	int numOfPresetFunctions = 5;
+	int numOfPresetFunctions = 5 + 1;
 	int numOfADFs = 1;
 
 	int mainProgramH = 16;
@@ -654,11 +654,12 @@ void test13() {
 	boost::shared_array<int> presetFunctions(new int[numOfPresetFunctions]);
 	boost::shared_array<int> argsLenOfADFs(new int[numOfADFs]);
 
-	for (int i = 0, j = 0; i < numOfPresetFunctions; i++, j++) {
+	for (int i = 0, j = 0; i < numOfPresetFunctions - 1; i++, j++) {
 		if (j == (int)W_divide)
 			j++;
 		presetFunctions[i] = j;
 	}
+	presetFunctions[numOfPresetFunctions - 1] = (int)W_acos;
 	//presetFunctions[0] = (int)W_times;
 	//presetFunctions[1] = (int)W_add;
 	//presetFunctions[2] = (int)W_sin;
@@ -682,7 +683,7 @@ void test13() {
 
 	SL_GEPTester  sl_gepTest;
 	sl_gepTest.testTrainingEqaulTimeRes(functionOut, 4, chroNum, numOfTerminals, nullptr, 0, presetFunctions.get(), numOfPresetFunctions, argsLenOfADFs.get(),
-		numOfADFs, mainProgramH, ADFH.get(), 80, 30, 20);
+		numOfADFs, mainProgramH, ADFH.get(), 80, 30, 30);
 
 
 

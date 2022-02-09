@@ -396,7 +396,7 @@ void test9() {
 }
 
 double fitFunction(double *args) {
-    return sin(args[0]) + cos(args[1] * args[1]) - (args[0] - args[1]*args[1]);			//add sin minus x cos minus times  x times y y y y
+    //return sin(args[0]) + cos(args[1] * args[1]) - (args[0] - args[1]*args[1]);			//add sin minus x cos minus times  x times y y y y
     //return args[0] * args[0];
     //return args[0] * sin(args[0]);
     //return sin(args[0]) * sin(args[1]) + cos(args[0]);			//add times cos sin cos x y x
@@ -405,11 +405,12 @@ double fitFunction(double *args) {
     //return args[0] * args[0] * args[0] + args[1];				//add times y x times x x
     //return args[0] * args[0] * args[0] + args[1] * sin(args[0]) + args[1];				//add times add x times times y x x y sin x
     //return args[0] * args[0] * args[0] + sin(args[1]+args[0]);				//add times sin x times add x x x y
+    return args[0] / (args[1] * tan(args[1]));
 }
 
 void fitFunctionOut(int num,int dim,double *realTermVec,double *ansVec) {
     for (int i = 0; i < num * dim; ++i)
-        realTermVec[i] = i;
+        realTermVec[i] = i + 1;
     for (int i = 0 , j = 0; i < num; ++i,j += dim) {
         ansVec[i] = fitFunction(&realTermVec[j]);
     }
@@ -430,13 +431,13 @@ void beforeTest10() {
 void test10() {
     int chroNum = 50;
     int numOfTerminals = 2;
-    int numOfPresetFunctions = 5;
+    int numOfPresetFunctions = 7;
     int numOfADFs = 1;
 
     int mainProgramH = 16;
 
     int TAPairNum = 50;
-    int needEpoch = 2200;
+    int needEpoch = 10000;
 
     boost::shared_array<int> presetFunctions(new int[numOfPresetFunctions]);
     boost::shared_array<int> argsLenOfADFs(new int[numOfADFs]);
@@ -447,8 +448,8 @@ void test10() {
     fitFunctionOut(TAPairNum, numOfTerminals, realTermVec.get(), ansVec.get());
 
     for (int i = 0, j = 0; i < numOfPresetFunctions; i++, j++) {
-        if (j == (int)W_divide)
-            j++;
+//        if (j == (int)W_divide)
+//            j++;
         presetFunctions[i] = j;
     }
     //presetFunctions[0] = (int)W_times;
@@ -535,6 +536,8 @@ void test12() {
 double functionOut(double *args, int whichFunc) {
     switch (whichFunc)
     {
+//        case 0:
+//            return (args[0] + cos(args[3]) - sin(args[4]))  * sin(args[0] * args[0] + args[1]) - sin(cos(args[2]));
         case 0:
             return args[0] * sin(args[0] * args[0] + args[0]) ;         //x * sin(x^2 + x)
         case 1:
@@ -564,7 +567,7 @@ void test13() {
     int TAPairNum = 50;
     int needEpoch = 2400;
 
-    int functionOutNum = 7;
+    int functionOutNum = 6;
 
     vector<int>numOfTerminals;
 
@@ -620,9 +623,9 @@ int main() {
 //    test8();
 //    test9();
 //    beforeTest10();
-//    test10();
+    test10();
 //    test11();
 //    test12();
-    test13();
+//    test13();
     return 0;
 }

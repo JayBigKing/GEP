@@ -433,10 +433,19 @@ double SL_GEP::calculateDistance(const 	Chromosome &c){
 }
 double SL_GEP::EuclideanDis(const Chromosome &c){
 	double count = 0.0;
+	double decodeVal;
 	cdPtr->setChromosome(const_cast<Chromosome&>(c));
-	for (int i = 0; i < termAnsPairNum; ++i) 
-		count += pow((cdPtr->decode(realTermSet[i]) - ansSet[i]), 2);
-	return  sqrt(count);
+	for (int i = 0; i < termAnsPairNum; ++i) {
+		decodeVal = (cdPtr->decode(realTermSet[i]));
+		if (decodeVal >= getTheMaxReal())
+			return maxDistanceByNow;
+		count += pow((decodeVal - ansSet[i]), 2);
+	}
+	count = sqrt(count);
+	if (count > maxDistanceByNow)
+		maxDistanceByNow = count;
+
+	return  count;
 
 }
 //********************************************************
@@ -577,5 +586,10 @@ void SL_GEP::recordAllCount() {
 void SL_GEP::setChromosomeWeight(const int & chroIndex, const double& distance) {
 	chromosomeWeight[chroIndex] = distance;
 	totalWeight += distance;
+	adjustTotalWeight();
+}
 
+void SL_GEP::adjustTotalWeight() {
+	if (isinf(totalWeight))
+		totalWeight = getTheMaxReal();
 }

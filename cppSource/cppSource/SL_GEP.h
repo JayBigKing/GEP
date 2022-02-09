@@ -59,6 +59,7 @@ private:
 	long double totalWeight;
 	vector<double>chromosomeWeight;
 	double maxWeightScore = 0;
+	double maxDistanceByNow = 20000.0;
 
 	void initRandGenerator();
 
@@ -107,5 +108,6 @@ private:
 	void recordAllCount();
 
 	void setChromosomeWeight(const int & chroIndex, const double& distance);
+	void adjustTotalWeight();
 };
 

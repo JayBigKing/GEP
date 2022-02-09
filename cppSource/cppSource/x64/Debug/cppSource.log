@@ -1,15 +1,5 @@
 ﻿  main.cpp
 d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\main.cpp(397): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“unsigned __int64”
   d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\main.cpp(397): note: 请考虑在格式字符串中使用“%zd”
-  SL_GEPTest.cpp
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_geptest.cpp(78): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(505): note: 参见“localtime”的声明
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_geptest.cpp(84): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(505): note: 参见“localtime”的声明
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_geptest.cpp(218): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_geptest.cpp(322): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-d:\assignment\bgraduationproject\work\dll\gep\cppsource\cppsource\sl_geptest.cpp(355): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(505): note: 参见“localtime”的声明
-  正在生成代码...
   cppSource.vcxproj -> D:\assignment\bGraduationProject\work\dll\GEP\cppSource\x64\Debug\cppSource.exe
   cppSource.vcxproj -> D:\assignment\bGraduationProject\work\dll\GEP\cppSource\x64\Debug\cppSource.pdb (Full PDB)

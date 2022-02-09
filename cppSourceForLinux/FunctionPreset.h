@@ -44,5 +44,6 @@ double functionPresetHandler(const double *args, const int len, WhichFunction wh
 string getFunctionName(WhichFunction whichFunction);
 int getFunctionArgLen(WhichFunction whichFunction);
 
+const double &getTheMaxReal();
 
 #endif //CPPSOURCEFORLINUX_FUNCTIONPRESET_H
