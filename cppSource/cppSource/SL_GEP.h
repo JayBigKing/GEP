@@ -2,6 +2,11 @@
 #include"GEP.h"
 #include "SL_ChromosomeDecoder.h"
 #include "SL_GEPTester.h"
+#define ANY_ONE_EQUAL_WAY 0
+#define LOW_ONE_FIRST 1
+#define BEST_ONE_ONLY 2
+#define ANY_ONE_COUNT_BY_WEIGHT 3
+//#define WHICH_RENEW_SYMBOL_COUNT_WAY ANY_ONE_EQUAL_WAY
 class SL_GEP : public GEP
 {
 public:
@@ -33,6 +38,8 @@ public:
 	friend class SL_GEPTester;
 
 private:
+	uint8_t whichRenewSymbolCountWay = ANY_ONE_COUNT_BY_WEIGHT;
+
 	default_random_engine FGenerator;
 	default_random_engine BetaGenerator;
 	default_random_engine SelectGenerator;

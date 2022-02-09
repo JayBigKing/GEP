@@ -26,7 +26,8 @@ public:
 	double decode(double* realTerm, Chromosome &chromosome1, ChromosomeRule &cr1);
 	double decode(double* realTerm);
 
-	virtual void setChromosome(Chromosome &chromosome) { this->chromosome = chromosome; }
+	virtual void setChromosome(Chromosome &chromosome) = 0;
+	//{ this->chromosome = chromosome; }
 	void setChromosomeRule(ChromosomeRule &cr) { this->cr = cr;	symbolSet = cr.getSymbolSet();}
 
 protected:

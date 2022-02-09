@@ -38,6 +38,13 @@ public:
 		int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs, bool ifUseSuspendNum = true, double similarValue = 1e-6
 	);
 
+	void gepInit(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int needEpoch, int numOfTerminals, double *constants, int numOfConstants,
+		int* presetFunctions, int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs,
+		bool ifUseSuspendNum = true, double similarValue = 1e-6);
+
+	void gepInit(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int needEpoch, int numOfTerminals, int* presetFunctions,
+		int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs, bool ifUseSuspendNum = true, double similarValue = 1e-6);
+
 
 	virtual pair<Chromosome, ChromosomeRule> train() = 0;
 	pair<Chromosome, int> getBestChromosomeAndIndex() { return bestChromosomeAndIndex; }

@@ -619,17 +619,84 @@ void test11() {
 }
 void test12() {
 	SL_GEPTester  sl_gepTest;
-	sl_gepTest.testFile();
+	//sl_gepTest.testFile();
+	sl_gepTest.testDirectory();
 
 }
+double functionOut(double *args, int whichFunc) {
+	switch (whichFunc)
+	{
+	case 0:
+		return args[0] * sin(args[0]);
+	case 1:
+		return sin(args[0]) + cos(args[0]) * cos(args[1]);
+	case 2:
+		return args[0] * args[0] * args[0] + sin(args[1] + args[0]);
+	case 3:
+		return sin(args[0]) + cos(args[1] * args[1]) - (args[0] - args[1] * args[1]);
+	default:
+		return 0;
+	}
+}
+
+void test13() {
+	int chroNum = 50;
+	int numOfPresetFunctions = 5;
+	int numOfADFs = 1;
+
+	int mainProgramH = 16;
+
+	int TAPairNum = 50;
+	int needEpoch = 2400;
+
+	vector<int>numOfTerminals;
+
+	boost::shared_array<int> presetFunctions(new int[numOfPresetFunctions]);
+	boost::shared_array<int> argsLenOfADFs(new int[numOfADFs]);
+
+	for (int i = 0, j = 0; i < numOfPresetFunctions; i++, j++) {
+		if (j == (int)W_divide)
+			j++;
+		presetFunctions[i] = j;
+	}
+	//presetFunctions[0] = (int)W_times;
+	//presetFunctions[1] = (int)W_add;
+	//presetFunctions[2] = (int)W_sin;
+	//presetFunctions[3] = (int)W_cos;
+	//presetFunctions[4] = (int)W_minus;
+
+	argsLenOfADFs[0] = 2;
+	//argsLenOfADFs[1] = 3;
+
+
+	boost::shared_array<int> ADFH(new int[numOfADFs]);
+	ADFH[0] = 5;
+	//ADFH[1] = 8;
+
+	numOfTerminals.push_back(1);
+	numOfTerminals.push_back(2);
+	numOfTerminals.push_back(2);
+	numOfTerminals.push_back(2);
+
+
+
+	SL_GEPTester  sl_gepTest;
+	sl_gepTest.testTrainingEqaulTimeRes(functionOut, 4, chroNum, numOfTerminals, nullptr, 0, presetFunctions.get(), numOfPresetFunctions, argsLenOfADFs.get(),
+		numOfADFs, mainProgramH, ADFH.get(), 80, 30, 20);
+
+
+
+}
+
 int main() {
 	//test8();
 	//test10();
-	test11();
+	//test11();
 	//test9();
 	//test6();
 	//test6_5();
 	//test12();
+	test13();
 
 	return 0;
 }

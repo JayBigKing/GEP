@@ -6,10 +6,9 @@ class SL_ChromosomeDecoder : public ChromosomeDecoder
 public:
 	SL_ChromosomeDecoder(){}
 	~SL_ChromosomeDecoder(){}
-
+	void setChromosome(Chromosome &chromosome);
 private:
 	void clearGlobalData();
-	void setChromosome(Chromosome &chromosome);
 	void recordMainProgramStackAndVec(vector<bool> &needADF);
 	void recordADFStackAndVec(const vector<bool> &needADF);
 	double mainProgramDecode();
