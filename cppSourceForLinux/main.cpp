@@ -610,7 +610,11 @@ void test13() {
 
 
 }
-
+void test14(){
+    random_device rd;
+    for(int i = 0 ; i < 40;++i)
+        printf("%d\r\n",rd());
+}
 int main() {
 //    cout<<"hh"<<endl;
 //    test1();
@@ -623,9 +627,10 @@ int main() {
 //    test8();
 //    test9();
 //    beforeTest10();
-    test10();
+//    test10();
 //    test11();
 //    test12();
 //    test13();
+    test14();
     return 0;
 }

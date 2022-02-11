@@ -39,6 +39,7 @@ enum WhichFunction
 bool FunctionPresetSelfCheck();
 bool checkFunctionArgsLen(WhichFunction whichFunction, int len);
 double functionPresetHandler(const double *args, WhichFunction whichFunction);
+double functionPresetHandler(const vector<double> &args, WhichFunction whichFunction);
 double functionPresetHandler(const double *args, const int len, WhichFunction whichFunction);
 
 string getFunctionName(WhichFunction whichFunction);

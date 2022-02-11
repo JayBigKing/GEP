@@ -124,6 +124,102 @@ double functionPresetHandler(const double *args, WhichFunction whichFunction) {
         exit(-1);
     }
 }
+double functionPresetHandler(const vector<double> &args, WhichFunction whichFunction){
+    try {
+        double outVal;
+        switch (whichFunction)
+        {
+            case W_add:
+                return args[0] + args[1];
+            case W_minus:
+                return args[0] - args[1];
+            case W_times:
+                return args[0] * args[1];
+            case W_divide:
+                if (args[1] < 1e-5)
+                    return theMaxReal;
+                else{
+                    outVal = args[0] / args[1];
+                    if(isfinite(outVal))
+                        return theMaxReal;
+                    else
+                        return outVal;
+                }
+
+            case W_sin:
+                return sin(args[0]);
+            case W_cos:
+                return cos(args[0]);
+            case W_tan:
+                outVal = tan(args[0]);
+                if(isinf(outVal) || outVal >= dangerousVal)
+                    return theMaxReal;
+                else
+                    return outVal;
+            case W_asin:
+                if (args[0] > 1 || args[0] < -1)
+                    return theMaxReal;
+                return asin(args[0]);
+            case W_acos:
+                if (args[0] > 1 || args[0] < -1)
+                    return theMaxReal;
+                return acos(args[0]);
+            case  W_atan:
+                return atan(args[0]);
+            case W_atan2:
+                if (args[1] < 1e-5)
+                    return theMaxReal;
+                else{
+                    outVal = atan2(args[0], args[1]);
+                    if(isinf(outVal))
+                        return theMaxReal;
+                    else
+                        return outVal;
+                }
+            case W_pow:
+                return pow(args[0], args[1]);
+            case W_square:
+                return args[0] * args[0];
+            case W_cube:
+                return args[0] * args[0] * args[0];
+            case W_sqrt:
+                return sqrt(args[0]);
+            case W_log2:
+                outVal = log(args[0]);
+                if(isnan(outVal))
+                    return theMaxReal;
+                else
+                    return outVal;
+            case W_log10:
+                outVal = log10(args[0]);
+                if(isnan(outVal))
+                    return theMaxReal;
+                else
+                    return outVal;
+            case W_max:
+                return max(args[0], args[1]);
+            case W_min:
+                return min(args[0], args[1]);
+            case W_ex:
+                outVal = exp(args[0]);
+                if(isinf(outVal) || outVal >= dangerousVal)
+                    return theMaxReal;
+                else
+                    return outVal;
+            default:
+                throw "error : no such function which is preseted!";
+        }
+    }
+    catch (const char* &e) {
+        printf("%s\r\n", e);
+        exit(-1);
+    }
+
+
+
+
+}
+
 double functionPresetHandler(const double *args, const int len, WhichFunction whichFunction) {
     try {
         if (!checkFunctionArgsLen(whichFunction, len))

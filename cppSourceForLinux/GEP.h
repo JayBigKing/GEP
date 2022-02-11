@@ -45,6 +45,30 @@ public:
         int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs, bool ifUseSuspendNum = true, double similarValue = 1e-6
     );
 
+    GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+                  const int &needEpoch, const int &numOfTerminals, const vector<double>&constants,
+                  const vector<WhichFunction>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+                  const bool &ifUseSuspendNum = true,const double &similarValue = 1e-6
+    );
+
+    GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+                  const int &needEpoch, const int &numOfTerminals,
+                  const vector<WhichFunction>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+                   const bool &ifUseSuspendNum = true,const double &similarValue = 1e-6
+    );
+
+    GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+                  const int &needEpoch, const int &numOfTerminals, const vector<double>&constants,
+                  const vector<int>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+                   const bool &ifUseSuspendNum = true,const double &similarValue = 1e-6
+    );
+
+    GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+                  const int &needEpoch, const int &numOfTerminals,
+                  const vector<int>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+                  const bool &ifUseSuspendNum = true,const double &similarValue = 1e-6
+    );
+
     void gepInit(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int needEpoch, int numOfTerminals, double *constants, int numOfConstants,
                  int* presetFunctions, int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs,
                  bool ifUseSuspendNum = true, double similarValue = 1e-6);
@@ -115,6 +139,7 @@ protected:
 
     //初始化GEP
     void initHelp(double *realTermVec, double *ansVec, int* inputADFHs);
+    void initHelp(const vector<vector<double>>&realTermVec, const vector<double>&ansVec,const vector<int>&inputADFHs);            //为输出为vector的提供的
     void initChromosomeSymbolCount();
     void initChromosomeSymbolCount2();
     void initCouldChooseSet();

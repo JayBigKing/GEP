@@ -54,6 +54,51 @@ GEP::GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int ne
 
 }
 
+GEP::GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+    const int &needEpoch, const int &numOfTerminals, const vector<double>&constants,
+    const vector<WhichFunction>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+    const bool &ifUseSuspendNum ,const double &similarValue
+):mainProgramH(mainPH),chromosomesNum(chroNum), chromosomes(chroNum),termAnsPairNum(ansVec.size()),numOfValInTerm(realTermVec[0].size()),
+    epoch(0),needEpoch(needEpoch),ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),minDistance(numeric_limits<double>::max())
+{
+
+    SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals, constants,presetFunctions, argsLenOfADFs);
+    initHelp(realTermVec,ansVec,inputADFHs);
+}
+
+GEP::GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+    const int &needEpoch, const int &numOfTerminals,
+    const vector<WhichFunction>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+    const bool &ifUseSuspendNum ,const double &similarValue
+):mainProgramH(mainPH),chromosomesNum(chroNum), chromosomes(chroNum),termAnsPairNum(ansVec.size()),numOfValInTerm(realTermVec[0].size()),
+  epoch(0),needEpoch(needEpoch),ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),minDistance(numeric_limits<double>::max())
+{
+    SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals, presetFunctions, argsLenOfADFs);
+    initHelp(realTermVec,ansVec,inputADFHs);
+}
+
+GEP::GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+    const int &needEpoch, const int &numOfTerminals, const vector<double>&constants,
+    const vector<int>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+    const bool &ifUseSuspendNum ,const double &similarValue
+):mainProgramH(mainPH),chromosomesNum(chroNum), chromosomes(chroNum),termAnsPairNum(ansVec.size()),numOfValInTerm(realTermVec[0].size()),
+  epoch(0),needEpoch(needEpoch),ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),minDistance(numeric_limits<double>::max())
+  {
+      SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals,constants, presetFunctions, argsLenOfADFs);
+      initHelp(realTermVec,ansVec,inputADFHs);
+  }
+
+GEP::GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+    const int &needEpoch, const int &numOfTerminals,
+    const vector<int>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+    const bool &ifUseSuspendNum ,const double &similarValue
+):mainProgramH(mainPH),chromosomesNum(chroNum), chromosomes(chroNum),termAnsPairNum(ansVec.size()),numOfValInTerm(realTermVec[0].size()),
+  epoch(0),needEpoch(needEpoch),ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),minDistance(numeric_limits<double>::max())
+{
+    SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals,presetFunctions, argsLenOfADFs);
+    initHelp(realTermVec,ansVec,inputADFHs);
+}
+
 void GEP::initHelp(double *realTermVec, double *ansVec , int* inputADFHs) {
     //初始化ADFH
     for (int i = 0; i < ADFH.size(); ++i)
@@ -83,6 +128,23 @@ void GEP::initHelp(double *realTermVec, double *ansVec , int* inputADFHs) {
     initCouldChooseSet();
     initChromosomeSymbolCount2();
 
+}
+void GEP::initHelp(const vector<vector<double>> &realTermVec, const vector<double> &ansVec,
+                   const vector<int> &inputADFHs) {
+    //初始化ADFH、realTermSet 和 ansSet
+    ADFH = inputADFHs;
+    this->realTermSet = realTermVec;
+    this->ansSet = ansVec;
+
+    //初始化ChromosomeRule
+    cr.init(mainProgramH, ADFH, symbolSet);
+
+    //初始化各Chromosome
+    for (int i = 0; i < chromosomesNum; ++i)
+        chromosomes[i].init(cr);
+
+    initCouldChooseSet();
+    initChromosomeSymbolCount2();
 }
 
 

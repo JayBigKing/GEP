@@ -44,7 +44,7 @@ public:
     friend class SL_GEPTester;
 
 private:
-    uint8_t whichRenewSymbolCountWay = ANY_ONE_COUNT_BY_WEIGHT;
+    uint8_t whichRenewSymbolCountWay = BEST_ONE_ONLY;
 
     default_random_engine FGenerator;
     default_random_engine BetaGenerator;
