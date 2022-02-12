@@ -105,7 +105,7 @@ private:
     double EuclideanDis(const Chromosome &c);
     //ManhattanDis ChebyshevDis
 
-    void inheritanceProcess();				//遗传过程，优化单线程的程序，将突变，交叉，自然旋转放在一起
+    void inheritanceProcess();				//遗传过程，优化单线程的程序，将突变，交叉，自然选择放在一起
 
     void recordOneSymbolCount(const int &chroIndex, const double &score = 1);
     //void setOneSymbolCount(const int &chroIndex, const double &score );

@@ -34,13 +34,13 @@ public:
     static void setSymbolSet(SymbolSet &symbolSet, int numOfTerminals,
                              int* presetFunctions, int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs);
 
-    void setSymbolSet(SymbolSet &symbolSet,const int &numOfTerminals,const vector<double>&constants,
+    static void setSymbolSet(SymbolSet &symbolSet,const int &numOfTerminals,const vector<double>&constants,
                                           const vector<WhichFunction> &presetFunctions, const vector<int> &argsLenOfADFs);
-    void setSymbolSet(SymbolSet &symbolSet, const int &numOfTerminals,const vector<double>&constants,
+    static void setSymbolSet(SymbolSet &symbolSet, const int &numOfTerminals,const vector<double>&constants,
                                           const vector<int> &presetFunctions, const vector<int> &argsLenOfADFs) ;
-    void setSymbolSet(SymbolSet &symbolSet,const int &numOfTerminals,
+    static void setSymbolSet(SymbolSet &symbolSet,const int &numOfTerminals,
                                           const vector<WhichFunction> &presetFunctions, const vector<int> &argsLenOfADFs);
-    void setSymbolSet(SymbolSet &symbolSet, const int &numOfTerminals,
+    static void setSymbolSet(SymbolSet &symbolSet, const int &numOfTerminals,
                                           const vector<int> &presetFunctions, const vector<int> &argsLenOfADFs) ;
 private:
     static const int startAlpha = 'a', endAlpha = 'z';
@@ -64,7 +64,7 @@ private:
     static void makeSymbolSetHelp2(SymbolSet &symbolSet, int numOfTerminals,
                                    WhichFunction* presetFunctions, int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs);
 
-    void makeSymbolSetHelp3(SymbolSet &symbolSet,const int &numOfTerminals,const vector<double>&constants,
+    static void makeSymbolSetHelp3(SymbolSet &symbolSet,const int &numOfTerminals,const vector<double>&constants,
                                                 const vector<WhichFunction> &presetFunctions,const vector<int> &argsLenOfADFs);
 
 };

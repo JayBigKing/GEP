@@ -51,6 +51,7 @@ public:
 
     double callFunctionHandler(double *args, int argLen);
     double callFunctionHandler(double *args);
+    double callFunctionHandler(vector<double>args);
     int getNumOfInputArg();
     double getVal();
     int getADFIndex();

@@ -199,13 +199,13 @@ double SL_ChromosomeDecoder_Thread::mainProgramDecode() {
         }
 
         if (tmpDe.symbolType == FUNCTION) {
-            nowDecodeVal = tmpSym.callFunctionHandler(args.get());
+            nowDecodeVal = tmpSym.callFunctionHandler(args);
             if (nowDecodeVal >= getTheMaxReal())
                 return nowDecodeVal;
             outputVec[tmpDe.chroIndex] = nowDecodeVal;
         }
         else if (tmpDe.symbolType == SUB_FUNCTION) {
-            nowDecodeVal = ADFProgramDecode(tmpSym, args.get());
+            nowDecodeVal = ADFProgramDecode(tmpSym, args);
             if (nowDecodeVal >= getTheMaxReal())
                 return nowDecodeVal;
             outputVec[tmpDe.chroIndex] = nowDecodeVal;
@@ -220,15 +220,24 @@ double SL_ChromosomeDecoder_Thread::mainProgramDecode() {
     return outputVec[0];
 }
 
-
-
-
-
-
+void SL_ChromosomeDecoder_Thread::setSymbolSetInputArgs(int num, vector<double> args) {
+    vector<Symbol>& inputArgs = symbolSet.getInputArgSet();
+    try {
+        if (inputArgs.size() < num)
+            throw  "error!num is longer than the size of inputArgs set!";
+    }
+    catch (const char* &e) {
+        printf("%s\r\n", e);
+        exit(-1);
+    }
+    for (int i = 0; i < inputArgs.size(); ++i) {
+        inputArgs[i].setVal(args[i]);
+    }
+}
 
 
 //ADF,即 sub-function
-double SL_ChromosomeDecoder_Thread::ADFProgramDecode(Symbol &subFunctionSym, double* inputArgsVal) {
+double SL_ChromosomeDecoder_Thread::ADFProgramDecode(Symbol &subFunctionSym, vector<double> inputArgsVal){
     int theADFIndex = subFunctionSym.getADFIndex();
     vector<double>outputVec(cr.getADFPR(theADFIndex).totalLen);
     stack<DecodeElement> opStack = ADFOpStacks[theADFIndex];
@@ -258,9 +267,48 @@ double SL_ChromosomeDecoder_Thread::ADFProgramDecode(Symbol &subFunctionSym, dou
             outputVec[tmpDe.chroIndex] = nowDecodeVal;
         }
 
-//        if (tmpDe.symbolType == FUNCTION)
-//            outputVec[tmpDe.chroIndex] = tmpSym.callFunctionHandler(args.get());
     }
 
     return outputVec[0];
+}
+
+
+
+//ADF,即 sub-function
+double SL_ChromosomeDecoder_Thread::ADFProgramDecode(Symbol &subFunctionSym, double* inputArgsVal) {
+    return 0;
+//    int theADFIndex = subFunctionSym.getADFIndex();
+//    vector<double>outputVec(cr.getADFPR(theADFIndex).totalLen);
+//    stack<DecodeElement> opStack = ADFOpStacks[theADFIndex];
+//    DecodeElement tmpDe;
+//    vector<double>args(cr.getU());
+//    double nowDecodeVal = 0.0;
+//
+//    setSymbolSetInputArgs(subFunctionSym.getNumOfInputArg(), inputArgsVal);
+//    for (int i = 0; i < ADFOcVector[theADFIndex].size(); ++i)
+//        outputVec[ADFOcVector[theADFIndex][i].chroIndex] = symbolSet.getSymbol(ADFOcVector[theADFIndex][i].symbolSetIndex).getVal();
+//
+//
+//
+//    while (!opStack.empty()) {
+//        tmpDe = opStack.top();
+//        Symbol tmpSym = symbolSet.getSymbol(tmpDe.symbolSetIndex);
+//        int opLastIndex = tmpDe.pointIndex + tmpDe.opNum - 1;
+//        opStack.pop();
+//
+//        for (int i = tmpDe.pointIndex, j = 0; i < tmpDe.pointIndex + tmpDe.opNum; ++i, ++j) {
+//            args[j] = outputVec[i];
+//        }
+//        if (tmpDe.symbolType == FUNCTION) {
+//            nowDecodeVal = tmpSym.callFunctionHandler(args);
+//            if (nowDecodeVal >= getTheMaxReal())
+//                return nowDecodeVal;
+//            outputVec[tmpDe.chroIndex] = nowDecodeVal;
+//        }
+//
+////        if (tmpDe.symbolType == FUNCTION)
+////            outputVec[tmpDe.chroIndex] = tmpSym.callFunctionHandler(args.get());
+//    }
+//
+//    return outputVec[0];
 }

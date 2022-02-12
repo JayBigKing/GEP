@@ -19,7 +19,8 @@ add_executable(cppSourceForLinux main.cpp Symbol.cpp Symbol.h FunctionPreset.cpp
         initHelp.cpp initHelp.h Chromosome.cpp Chromosome.h ChromosomeDecoder.cpp ChromosomeDecoder.h
         SL_ChromosomeDecoder.cpp SL_ChromosomeDecoder.h SymbolSetGenerator.cpp SymbolSetGenerator.h
         GEP.cpp GEP.h SL_GEP.cpp SL_GEP.h GA_HelpFunc.cpp GA_HelpFunc.h SL_GEPTester.cpp SL_GEPTester.h
-        ChromosomeShower.cpp ChromosomeShower.h ThreadVersion/SL_GEP_Thread.cpp ThreadVersion/SL_GEP_Thread.h ThreadVersion/SL_ChromosomeDecoder_Thread.cpp ThreadVersion/SL_ChromosomeDecoder_Thread.h)
+        ChromosomeShower.cpp ChromosomeShower.h ThreadVersion/SL_GEP_Thread.cpp ThreadVersion/SL_GEP_Thread.h
+        ThreadVersion/SL_ChromosomeDecoder_Thread.cpp ThreadVersion/SL_ChromosomeDecoder_Thread.h ThreadVersion/testThread.cpp ThreadVersion/testThread.h)
 #add_executable(cppSourceForLinux main.cpp)
 
 #target_link_libraries(cppSourceForLinux sm2lib1)

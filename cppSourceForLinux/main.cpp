@@ -9,6 +9,7 @@
 #include "SL_GEP.h"
 #include "GA_HelpFunc.h"
 #include "ChromosomeShower.h"
+#include "ThreadVersion/testThread.h"
 #include<boost/smart_ptr.hpp>
 
 using namespace std;
@@ -615,8 +616,13 @@ void test14(){
     for(int i = 0 ; i < 40;++i)
         printf("%d\r\n",rd());
 }
+
+void testTestThread1(){
+    //testThread1();
+    testThread2(3000);
+}
 int main() {
-//    cout<<"hh"<<endl;
+//   cout<<"hh"<<endl;
 //    test1();
 //    test2();
 //    test3();
@@ -631,6 +637,7 @@ int main() {
 //    test11();
 //    test12();
 //    test13();
-    test14();
+//    test14();
+    testTestThread1();
     return 0;
 }

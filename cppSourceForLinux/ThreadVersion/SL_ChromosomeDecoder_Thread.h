@@ -6,11 +6,12 @@
 #define CPPSOURCEFORLINUX_SL_CHROMOSOMEDECODER_THREAD_H
 
 #include "../ChromosomeDecoder.h"
+#include <stack>
 class SL_ChromosomeDecoder_Thread :public ChromosomeDecoder{
 public:
     SL_ChromosomeDecoder_Thread(){}
     SL_ChromosomeDecoder_Thread(ChromosomeRule &cr){
-        setChromosomeRule(chromosome);
+        setChromosomeRule(cr);
     }
     ~SL_ChromosomeDecoder_Thread(){}
     void setChromosome(Chromosome &chromosome);
@@ -20,6 +21,8 @@ private:
     void recordADFStackAndVec(const vector<bool> &needADF);
     double mainProgramDecode();
     double ADFProgramDecode(Symbol &subFunctionSym, double* inputArgsVal);
+    double ADFProgramDecode(Symbol &subFunctionSym, vector<double> inputArgsVal);
+    void setSymbolSetInputArgs(int num, vector<double> args);
 
 
 

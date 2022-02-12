@@ -53,6 +53,25 @@ double Symbol::callFunctionHandler(double *args, int argLen) {
 double Symbol::callFunctionHandler(double *args) {
     return callFunctionHandler(args, this->numOfInputArg);
 }
+double Symbol::callFunctionHandler(vector<double>args){
+    try{
+        if(args.size() != this->numOfInputArg)
+            throw "error: the vector size is not equal to the reset size";
+        if(symbolType != FUNCTION )
+            throw "it`s no function ";
+        if (functionType == PRESET)
+            return functionPresetHandler(args, whichFunction);
+//        else
+//            return functionHandler(args, argLen);
+    }
+    catch (const char* &e) {
+        printf("%s\r\n", e);
+        exit(-1);
+    }
+
+}
+
+
 int Symbol::getNumOfInputArg() {
     try {
         if (symbolType != FUNCTION && symbolType != SUB_FUNCTION)
