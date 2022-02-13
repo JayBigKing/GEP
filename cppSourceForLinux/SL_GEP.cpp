@@ -323,7 +323,15 @@ void SL_GEP::crossover() {
 }
 */
 
-
+/**
+  * @brief  交叉相关，初始化的时候获得染色体总长度(即点位数)
+  *
+  * @param  None
+  *
+  * @note   因为在交叉的时候需要随机选择某个点位
+  *
+  * @retval None
+  */
 int SL_GEP::getTotalExpressionLen() {
     try {
         if (!cr.getSymbolSet().getSymbolMap().size())
@@ -342,7 +350,17 @@ int SL_GEP::getTotalExpressionLen() {
 
 }
 // 5  4  4
-
+/**
+  * @brief  交叉相关，因为染色体被分成mainProgram部分和多个ADF部分，但是有时需要得到染色体总体上的某个点位
+  *         所以需要根据mainProgram的某个点位或者某个ADF的某个点位转换到其在染色体上的总体上的某个点位
+  *
+  * @param  inThisExIndex:总体点位
+  * @param  ADFIndex:第几个ADF(若是在mainProgram的点位，不需要输入)
+  *
+  * @note   若是在mainProgram的点位，不需要输入第二个参数
+  *
+  * @retval None
+  */
 int SL_GEP::getTotalExpressionIndex(int inThisExIndex, int ADFIndex ) {
     if (ADFIndex == -1)
         return inThisExIndex;

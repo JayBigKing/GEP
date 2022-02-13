@@ -59,6 +59,7 @@ private:
     //vector<Chromosome> UChromosomes;
     Chromosome UChromosome;
 
+    //染色体总长度
     int totalExpressionLen;
 
 

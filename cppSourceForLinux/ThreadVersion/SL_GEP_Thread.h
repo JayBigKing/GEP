@@ -82,11 +82,16 @@ private:
     mutex setChromosomeWeightMutex;
 
 
+    //染色体总长度
+    int totalExpressionLen;
 
-
+    //除零，自变量越界等意外情况的惩罚距离
+    const double defaultMacDistanceByNow = 20000.0;
+    vector<double>maxDistanceByNow;
 
 
     //类初始化相关函数
+    void constructorInitHelp(const int &threadNum0);
     void initThread(const int &threadNum0);
     void initRandGenerator();
 
@@ -109,9 +114,9 @@ private:
 
     virtual void crossover() {}						//交叉
     void individualCrossoverThread(const int &threadIndex,const int &chroIndex , const double &CR);
-    void mainProgramFragmentCrossover(const int &chroIndex, const int &FragmentIndex, const double &CR, const int &K ,
+    void mainProgramFragmentCrossoverThread(const int &threadIndex,const int &chroIndex, const int &FragmentIndex, const double &CR, const int &K ,
                                       const double &randVal , const int &theJVal);
-    void ADFFragmentCrossover(const int &chroIndex, const int &ADFIndex, const int &FragmentIndex, const double &CR, const int &K,
+    void ADFFragmentCrossoverThread(const int &threadIndex,const int &chroIndex, const int &ADFIndex, const int &FragmentIndex, const double &CR, const int &K,
                               const double &randVal, const int &theJVal);
     int getTotalExpressionLen();
     int getTotalExpressionIndex(int inThisExIndex, int ADFIndex = -1);
@@ -121,7 +126,7 @@ private:
     void individualSelection(const int &threadIndex,const int &chroIndex,const double &randVal);
 
 
-    void inheritanceProcess();				//遗传过程，优化单线程的程序，将突变，交叉，自然选择放在一起
+    void inheritanceProcess();				//遗传过程，将突变，交叉，自然选择放在一起
     void inheritanceProcessThreadHelp(const int &index,int &detachDoneCount,mutex &detachDoneCountMutex);
 
 
@@ -132,13 +137,16 @@ private:
 
     void recordOneSymbolCount(const int &threadIndex,const int &chroIndex, const double &score  = 1);               //选择程度的权值相同
     double setChromosomeWeight(const int &threadIndex,const int & chroIndex, const double& distance);            //选择程度权值有区别
+
+    void setOneSymbolCountByRandValThread(const int &threadIndex,const int &chroIndex, const double &randVal);
+    void setOneSymbolCountByRandVal(const int &threadIndex,const int &chroIndex, const double &randVal);
     double adjustTotalWeight(const double &val);
 
     void recordAllCount();
 
     //距离相关函数
-    double calculateDistance(const 	Chromosome &c);
-    double EuclideanDis(const Chromosome &c);
+    double calculateDistanceThread(const int &threadIndex,const 	Chromosome &c);
+    double EuclideanDisThread(const int &threadIndex,const Chromosome &c);
 
     //记录最优解
     void clearBestChromosomeThread();

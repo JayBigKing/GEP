@@ -4,7 +4,7 @@
 
 #include "SL_GEP_Thread.h"
 #include "unistd.h"
-#include"FunctionPreset.h"
+#include "../FunctionPreset.h"
 #include "../GA_HelpFunc.h"
 #include <thread>
 SL_GEP_Thread::SL_GEP_Thread(const int &chroNum, const vector<vector<double>> &realTermVec, const vector<double> &ansVec,
@@ -40,7 +40,29 @@ SL_GEP_Thread::SL_GEP_Thread(const int &chroNum, const vector<vector<double>> &r
 
 
 }
+/**
+  * @brief  类的初始化相关，帮助构造函数的一部分初始化内容
+  *
+  * @param  threadNum0:多少个线程
+  *
+  * @note   构造函数会调用，后面单独的init()函数也会调用
+  *
+  * @retval None
+  */
+void SL_GEP_Thread::constructorInitHelp(const int &threadNum0) {
+    initThread(threadNum0);
 
+    getTotalExpressionLen();
+}
+/**
+  * @brief  类的初始化相关，初始化一些多线程所要用到的变量
+  *
+  * @param  threadNum0:多少个线程
+  *
+  * @note
+  *
+  * @retval None
+  */
 void SL_GEP_Thread::initThread(const int &threadNum0) {
     try{
         if(threadNum0 ==  -1)
@@ -65,6 +87,9 @@ void SL_GEP_Thread::initThread(const int &threadNum0) {
             //初始化每轮的权值相关的函数
             vector<double>tmpWeightVec(chromosomesNum);
             chromosomeWeightThreads.push_back(tmpWeightVec);
+
+            //初始化惩罚距离
+            maxDistanceByNow.push_back(defaultMacDistanceByNow);
 
         }else{
             vector<Chromosome>().swap(chromosomes);             //清空原来的空间
@@ -100,6 +125,9 @@ void SL_GEP_Thread::initThread(const int &threadNum0) {
                 //初始化每轮的权值相关的函数
                 vector<double>tmpWeightVec(nowThreadChromosomeNum);
                 chromosomeWeightThreads.push_back(tmpWeightVec);
+
+                //初始化惩罚距离
+                maxDistanceByNow.push_back(defaultMacDistanceByNow);
             }
         }
 
@@ -107,11 +135,20 @@ void SL_GEP_Thread::initThread(const int &threadNum0) {
 
     }catch (const char * &e){
         printf("%s\r\n",e);
+        exit(-1);
     }
 
 
 }
-
+/**
+  * @brief  类的初始化相关，初始化一些多线程所要用到的rand的generators
+  *
+  * @param  None
+  *
+  * @note
+  *
+  * @retval None
+  */
 void SL_GEP_Thread::initRandGenerator() {
     uniform_int_distribution<uint64_t>initDistribution(0, numeric_limits<uint64_t>::max());
     for(int i = 0 ; i < threadNum ; ++i){
@@ -126,6 +163,16 @@ void SL_GEP_Thread::initRandGenerator() {
     }
 
 }
+/**
+  * @brief  染色体群初始化相关，遍历染色体群，各染色体各点位随机选可用symbol，选完之后，计算欧式距离，记录当前最优解和全局最优解
+  *
+  * @param  None
+  *
+  * @note   函数中会调用多线程线程，各线程分离运行，运行结束之后会对信号量detachDoneCount产生影响（++操作），
+  *         而主线程会阻塞，直到detachDoneCount == threadNum
+  *
+  * @retval None
+  */
 void SL_GEP_Thread::initChromosomes() {
     int detachDoneCount = 0;
     mutex detachDoneCountMutex;
@@ -146,7 +193,17 @@ void SL_GEP_Thread::initChromosomes() {
         recordAllCount();
 
 }
-
+/**
+  * @brief  染色体群初始化相关，遍历各线程的染色体群，各染色体各点位随机选可用symbol，选完之后，计算欧式距离，记录当前最优解和全局最优解
+  *
+  * @param  index:第几个线程
+  * @param  detachDoneCount:线程完成的信号量
+  * @param  detachDoneCountMutex:修改detachDoneCount需要有锁
+  *
+  * @note   结束之后，对detachDoneCount进行++操作，注意要上锁
+  *
+  * @retval None
+  */
 void SL_GEP_Thread::initChromosomesThreadHelp(const int &index, int &detachDoneCount,mutex &detachDoneCountMutex) {
 
     int theMExH = cr.getMainPR().h;
@@ -178,7 +235,7 @@ void SL_GEP_Thread::initChromosomesThreadHelp(const int &index, int &detachDoneC
 
         }
 
-        nowDis = calculateDistance(chromosomes[i]);
+        nowDis = calculateDistanceThread(index,chromosomeThreads[index][i]);
         if(whichRenewSymbolCountWay == ANY_ONE_COUNT_BY_WEIGHT || whichRenewSymbolCountWay == BEST_ONE_ONLY || whichRenewSymbolCountWay == LOW_ONE_FIRST)
             setChromosomeWeightThread(index,i, nowDis);
 
@@ -194,7 +251,16 @@ void SL_GEP_Thread::initChromosomesThreadHelp(const int &index, int &detachDoneC
     detachDoneCount++;
     detachDoneCountMutex.unlock();
 }
-
+/**
+  * @brief  遗传过程，将突变，交叉，自然选择放在一起
+  *
+  * @param  None
+  *
+  * @note   函数中会调用多线程线程，各线程分离运行，运行结束之后会对信号量detachDoneCount产生影响（++操作），
+  *         而主线程会阻塞，直到detachDoneCount == threadNum
+  *
+  * @retval None
+  */
 void SL_GEP_Thread::inheritanceProcess() {
     int detachDoneCount = 0;
     mutex detachDoneCountMutex;
@@ -248,12 +314,12 @@ void SL_GEP_Thread::individualMutationThread(const int &threadIndex, const int &
     uniform_real_distribution<double> distribution(0.0, 1.0);
 
     for (int i = 0; i < mainProgramExLen; ++i)
-        mainProgramFragmentMutationThread(chroIndex, i, r1, r2, F, beta,distribution(YGeneratorThreads[threadIndex]));
+        mainProgramFragmentMutationThread(threadIndex,chroIndex, i, r1, r2, F, beta,distribution(YGeneratorThreads[threadIndex]));
 
     for (int i = 0; i < numOfADFs; ++i) {
         int thisADFLen = chromosomeThreads[threadIndex][chroIndex].ADFEx[i].size();
         for (int j = 0; j < thisADFLen; ++j) {
-            ADFFragmentMutationThread(chroIndex, i, j, r1, r2, F, beta, distribution(YGeneratorThreads[threadIndex]));
+            ADFFragmentMutationThread(threadIndex,chroIndex, i, j, r1, r2, F, beta, distribution(YGeneratorThreads[threadIndex]));
         }
     }
 }
@@ -370,7 +436,223 @@ void SL_GEP_Thread::ADFGetNewFragmentMutationThread(const int &threadIndex, cons
             UChromosomeThreads[threadIndex].ADFEx[ADFIndex][FragmentIndex] = getRandSymbolNum(ADF_SECOND, ADFIndex);
     }
 }
+/************************************************************
+ * 交叉相关
+ ***********************************************************/
+/**
+  * @brief  交叉相关，遍历染色体每一个点位
+  *
+  * @param  threadIndex:属于哪个一个线程的
+  * @param  chroIndex:该线程中第几条染色体
+  * @param  CR: 一个概率参数
+  *
+  * @note   遍历该染色体的每一个点位
+  *
+  * @retval None
+  */
+void SL_GEP_Thread::individualCrossoverThread(const int &threadIndex, const int &chroIndex, const double &CR) {
+    uniform_real_distribution<double> distribution(0.0, 1.0);
+    uniform_int_distribution<int> indexDistribution(0, totalExpressionLen - 1);
+    int mainProgramExLen = chromosomeThreads[threadIndex][chroIndex].mainProgramEx.size();
 
+    int numOfADFs = chromosomeThreads[threadIndex][chroIndex].ADFEx.size();
+    //main program first
+    for (int i = 0; i < mainProgramExLen; ++i)
+        mainProgramFragmentCrossoverThread(threadIndex,chroIndex, i, CR, indexDistribution(KGeneratorThreads[threadIndex]),
+                                     distribution(YGeneratorThreads[threadIndex]),
+                                     indexDistribution(YGeneratorThreads[threadIndex]));
+
+
+    //ADFs second
+    for (int i = 0; i < numOfADFs; ++i) {
+        int thisADFLen = chromosomeThreads[threadIndex][chroIndex].ADFEx[i].size();
+        for (int j = 0; j < thisADFLen; ++j)
+            ADFFragmentCrossoverThread(threadIndex,chroIndex, i, j, CR, indexDistribution(KGeneratorThreads[threadIndex]),
+                                 distribution(YGeneratorThreads[threadIndex]),
+                                 indexDistribution(YGeneratorThreads[threadIndex]));
+    }
+}
+/**
+  * @brief  交叉相关，针对染色体的mainProgram部分的某一个点位进行交叉操作
+  *
+  * @param  threadIndex:属于哪个一个线程的
+  * @param  chroIndex:该线程中第几条染色体
+  * @param  FragmentIndex: 该染色体的mainProgram部分点位
+  * @param  CR:概率参数
+  * @param  K:随机选择的某一个位置，若当前位置和K相同，则不选择那个突变的值
+  * @param  randVal:一个随机获得的在0-1的值，若randVal < CR ， 则不选择突变的那个值
+  * @param  theJVal:？？？？forget now
+  *
+  * @note
+  *
+  * @retval None
+  */
+void SL_GEP_Thread::mainProgramFragmentCrossoverThread(const int &threadIndex, const int &chroIndex,
+                                                       const int &FragmentIndex, const double &CR, const int &K,
+                                                       const double &randVal, const int &theJVal) {
+    if (!(randVal < CR || getTotalExpressionIndex(FragmentIndex) == K))
+        UChromosomeThreads[threadIndex].mainProgramEx[FragmentIndex] = chromosomes[chroIndex].mainProgramEx[FragmentIndex];
+}
+/**
+  * @brief  交叉相关，针对染色体的某个ADF的某一个点位进行交叉操作
+  *
+  * @param  threadIndex:属于哪个一个线程的
+  * @param  chroIndex:该线程中第几条染色体
+  * @param  ADFIndex:哪一个ADF
+  * @param  FragmentIndex: 该染色体的该ADF部分点位
+  * @param  CR:概率参数
+  * @param  K:随机选择的某一个位置，若当前位置和K相同，则不选择那个突变的值
+  * @param  randVal:一个随机获得的在0-1的值，若randVal < CR ， 则不选择突变的那个值
+  * @param  theJVal:？？？？forget now
+  *
+  * @note
+  *
+  * @retval None
+  */
+void SL_GEP_Thread::ADFFragmentCrossoverThread(const int &threadIndex, const int &chroIndex, const int &ADFIndex,
+                                               const int &FragmentIndex, const double &CR, const int &K,
+                                               const double &randVal, const int &theJVal) {
+    if (!(randVal < CR || getTotalExpressionIndex(FragmentIndex, ADFIndex) == K))
+        UChromosomeThreads[threadIndex].ADFEx[ADFIndex][FragmentIndex] = chromosomes[chroIndex].ADFEx[ADFIndex][FragmentIndex];
+
+}
+/**
+  * @brief  交叉相关，初始化的时候获得染色体总长度(即点位数)
+  *
+  * @param  None
+  *
+  * @note   因为在交叉的时候需要随机选择某个点位
+  *
+  * @retval None
+  */
+int SL_GEP_Thread::getTotalExpressionLen() {
+    try {
+        if (!cr.getSymbolSet().getSymbolMap().size())
+            throw "error: cr is not init!";
+        totalExpressionLen = cr.getMainPR().totalLen;
+        for (int i = 0; i < cr.getADFPR().size(); ++i)
+            totalExpressionLen += cr.getADFPR(i).totalLen;
+
+        return totalExpressionLen;
+    }
+    catch (const char *e) {
+        printf("%s\r\n", e);
+        exit(-1);
+    }
+}
+/**
+  * @brief  交叉相关，因为染色体被分成mainProgram部分和多个ADF部分，但是有时需要得到染色体总体上的某个点位
+  *         所以需要根据mainProgram的某个点位或者某个ADF的某个点位转换到其在染色体上的总体上的某个点位
+  *
+  * @param  inThisExIndex:总体点位
+  * @param  ADFIndex:第几个ADF(若是在mainProgram的点位，不需要输入)
+  *
+  * @note   若是在mainProgram的点位，不需要输入第二个参数
+  *
+  * @retval None
+  */
+int SL_GEP_Thread::getTotalExpressionIndex(int inThisExIndex, int ADFIndex) {
+    if (ADFIndex == -1)
+        return inThisExIndex;
+    else {
+        int theIndex = cr.getMainPR().totalLen;
+        for (int i = 0; i < ADFIndex - 1; ++i)
+            theIndex += cr.getADFPR(i).totalLen;
+        return theIndex + inThisExIndex;
+    }
+}
+/************************************************************
+ * 交叉相关
+ ***********************************************************/
+
+
+/************************************************************
+ * 选择相关
+ ***********************************************************/
+
+/**
+  * @brief  选择相关，计算原染色体和经过变异、交叉的染色体的求解欧式距离，选择欧式距离小的作为下一代染色体
+  *
+  * @param  threadIndex:哪个线程
+  * @param  chroIndex:该线程的哪个染色体
+  *
+  * @note   whichRenewSymbolCountWay == ANY_ONE_EQUAL_WAY 使用该选择函数
+  *
+  * @retval None
+  */
+void SL_GEP_Thread::individualSelection(const int &threadIndex, const int &chroIndex) {
+    double xDistance = 0.0, uDistance = 0.0;
+    double nowMinDistance = 0.0;
+    //cdPtr->setChromosome(chromosomes[chroIndex]);
+    xDistance = calculateDistanceThread(threadIndex,chromosomeThreads[threadIndex][chroIndex]);
+    uDistance = calculateDistanceThread(threadIndex,UChromosomeThreads[threadIndex]);
+    if (uDistance < xDistance) {
+        chromosomes[chroIndex] = UChromosomeThreads[threadIndex];
+        nowMinDistance = uDistance;
+    }
+    else
+        nowMinDistance = xDistance;
+
+    recordBestChromosomeThread(threadIndex,chroIndex, nowMinDistance);
+}
+/**
+  * @brief  选择相关，计算原染色体和经过变异、交叉的染色体的求解欧式距离，选择欧式距离小的作为下一代染色体
+  *         确定好下一代后，根据下一代的染色体的各个点位选择的symbol，衰减基因库中该点位的可选symbol集中
+  *         该symbol对应的权值
+  *
+  * @param  threadIndex:哪个线程
+  * @param  chroIndex:该线程的哪个染色体
+  * @param  randVal:随机获得的衰减值
+  *
+  * @note   whichRenewSymbolCountWay == ANY_ONE_COUNT_BY_WEIGHT ||
+  *         whichRenewSymbolCountWay == BEST_ONE_ONLY ||
+  *         whichRenewSymbolCountWay == LOW_ONE_FIRST 使用该选择函数
+  *
+  * @retval None
+  */
+void SL_GEP_Thread::individualSelection(const int &threadIndex, const int &chroIndex, const double &randVal) {
+    double xDistance = 0.0, uDistance = 0.0;
+    double nowMinDistance = 0.0;
+    //cdPtr->setChromosome(chromosomes[chroIndex]);
+    xDistance = calculateDistanceThread(threadIndex,chromosomeThreads[threadIndex][chroIndex]);
+    uDistance = calculateDistanceThread(threadIndex,UChromosomeThreads[threadIndex]);
+    if (uDistance < xDistance) {
+        chromosomes[chroIndex] = UChromosomeThreads[threadIndex];
+        nowMinDistance = uDistance;
+    }
+    else
+        nowMinDistance = xDistance;
+
+    recordBestChromosomeThread(threadIndex,chroIndex, nowMinDistance);
+    setChromosomeWeightThread(threadIndex,chroIndex, nowMinDistance);
+
+    setOneSymbolCountByRandValThread(threadIndex,chroIndex, randVal);				//片段的信息素衰减
+
+}
+
+double SL_GEP_Thread::calculateDistanceThread(const int &threadIndex,const 	Chromosome &c){
+    return EuclideanDisThread(threadIndex,c);
+}
+double SL_GEP_Thread::EuclideanDisThread(const int &threadIndex,const Chromosome &c){
+    double count = 0.0;
+    double decodeVal;
+    cdPtr->setChromosome(const_cast<Chromosome&>(c));
+    for (int i = 0; i < termAnsPairNum; ++i) {
+        decodeVal = (chromosomeDecoderThreads[threadIndex].decode(realTermSet[i]));
+        if (decodeVal >= getTheMaxReal())
+            return maxDistanceByNow[threadIndex];
+        count += pow((decodeVal - ansSet[i]), 2);
+    }
+    count = sqrt(count);
+    if (count > maxDistanceByNow[threadIndex])
+        maxDistanceByNow[threadIndex] = count;
+
+    return  count;
+}
+
+/************************************************************
+ * 选择相关
+ ***********************************************************/
 
 void SL_GEP_Thread::recordOneSymbolCountThread(const int &threadIndex,const int &chroIndex, const double &score) {
     recordOneSymbolCountMutex.lock();
@@ -403,6 +685,29 @@ void SL_GEP_Thread::setChromosomeWeightThread(const int &threadIndex, const int 
 double SL_GEP_Thread::setChromosomeWeight(const int &threadIndex, const int &chroIndex, const double &distance) {
     chromosomeWeightThreads[threadIndex][chroIndex] = distance;
     totalWeightThreads[threadIndex] = adjustTotalWeight(totalWeightThreads[threadIndex] + distance );
+}
+
+void SL_GEP_Thread::setOneSymbolCountByRandValThread(const int &threadIndex, const int &chroIndex,
+                                                     const double &randVal) {
+    recordOneSymbolCountMutex.lock();
+    setOneSymbolCountByRandVal(threadIndex,chroIndex,randVal);
+    recordOneSymbolCountMutex.unlock();
+
+}
+
+void SL_GEP_Thread::setOneSymbolCountByRandVal(const int &threadIndex,const int &chroIndex, const double &randVal) {
+    int mainPSize = chromosomeThreads[threadIndex][chroIndex].mainProgramEx.size();
+    int numOfADF = chromosomeThreads[threadIndex][chroIndex].ADFEx.size();
+    for (int i = 0; i < mainPSize; ++i) {
+        setSymbolCountByRandVal(chromosomeThreads[threadIndex][chroIndex].mainProgramEx[i], i, randVal);
+    }
+
+    for (int i = 0; i < numOfADF; ++i) {
+        int ADFLen = chromosomeThreads[threadIndex][chroIndex].ADFEx[i].size();
+        for (int j = 0; j < ADFLen; ++j) {
+            setSymbolCountByRandVal(chromosomeThreads[threadIndex][chroIndex].ADFEx[i][j], j, randVal, i);
+        }
+    }
 }
 
 double SL_GEP_Thread::adjustTotalWeight(const double &val) {

@@ -3,7 +3,6 @@
 //
 
 #include "../ThreadVersion/testThread.h"
-#include <mutex>
 #include <ctime>
 #include "unistd.h"
 
@@ -55,11 +54,13 @@ void testThread2Help0(const vector<int>& vec,int &res){
     }
 
 }
-void testThread2Help0_1(const vector<int>& vec,vector<int>&res,int index,int &detachNum){
+void testThread2Help0_1(const vector<int>& vec,vector<int>&res,int index,int &detachNum,mutex &detachNumMutex){
     for(int i = 0; i < vec.size(); ++i)
         res[index] += vec[i];
 
+    detachNumMutex.lock();
     detachNum ++;
+    detachNumMutex.unlock();
 }
 void testThread2(int num){
     clock_t startTime,endTime;
@@ -111,7 +112,7 @@ void testThread2Help1(int num){
 //    printf("%d\r\n",count);
 
     for(int i = 0 ; i < threadNum ; ++i){
-        myThread.push_back(thread(testThread2Help0_1,std::ref(vecVec[i]),std::ref(resVec),i,std::ref(detachNum)));
+        myThread.push_back(thread(testThread2Help0_1,std::ref(vecVec[i]),std::ref(resVec),i,std::ref(detachNum),std::ref(mtx)));
         myThread[i].detach();
     }
 
