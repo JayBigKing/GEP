@@ -33,6 +33,31 @@ public:
            int* presetFunctions, int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs,
            bool ifUseSuspendNum = true, double similarValue = 1e-6);
 
+
+    SL_GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+                  const int &needEpoch, const int &numOfTerminals, const vector<double>&constants,
+                  const vector<WhichFunction>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+                   const bool &ifUseSuspendNum = true,const double &similarValue = 1e-6
+    );
+
+    SL_GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+                  const int &needEpoch, const int &numOfTerminals,
+                  const vector<WhichFunction>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+                  const bool &ifUseSuspendNum = true,const double &similarValue = 1e-6
+    );
+
+    SL_GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+                  const int &needEpoch, const int &numOfTerminals, const vector<double>&constants,
+                  const vector<int>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+                   const bool &ifUseSuspendNum = true,const double &similarValue = 1e-6
+    );
+
+    SL_GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+                  const int &needEpoch, const int &numOfTerminals,
+                  const vector<int>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+                  const bool &ifUseSuspendNum = true,const double &similarValue = 1e-6
+    );
+
     double test1();
 
     pair<Chromosome, ChromosomeRule> train();
@@ -68,6 +93,7 @@ private:
     double maxWeightScore = 0;
     double maxDistanceByNow = 20000.0;
 
+    void constructorInitHelp();
     void initRandGenerator();
 
 

@@ -9,7 +9,8 @@
 #include "SL_GEP.h"
 #include "GA_HelpFunc.h"
 #include "ChromosomeShower.h"
-#include "ThreadVersion/ThreadVersionTestCase.h"
+#include "testCases/ThreadVersionTestCase.h"
+#include "testCases/GEPTestCase.h"
 #include<boost/smart_ptr.hpp>
 
 using namespace std;
@@ -663,6 +664,7 @@ int main() {
 //    test14();
 //    ThreadVersionTestCase::testTestThread1();
 //    ThreadVersionTestCase::testSgVector();
-    ThreadVersionTestCase::testSL_GEP_Thread();
+//    ThreadVersionTestCase::testSL_GEP_Thread();
+    GEPTestCase::testSL_GEP_vector();
     return 0;
 }

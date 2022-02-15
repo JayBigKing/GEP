@@ -11,13 +11,14 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
                bool ifUseSuspendNum , double similarValue ) :
         GEP(chroNum, realTermVec, ansVec, TAPairNum, needEpoch, numOfTerminals, constants, numOfConstants, presetFunctions, numOfPresetFunctions,
             argsLenOfADFs, numOfADFs, mainPH, inputADFHs, ifUseSuspendNum, similarValue),totalWeight(0.0),chromosomeWeight(chroNum) {
-    cdPtr = boost::make_shared<SL_ChromosomeDecoder>();
-    cdPtr->setChromosomeRule(cr);
-
-    UChromosome.init(cr);
-
-    initRandGenerator();
-    getTotalExpressionLen();
+//    cdPtr = boost::make_shared<SL_ChromosomeDecoder>();
+//    cdPtr->setChromosomeRule(cr);
+//
+//    UChromosome.init(cr);
+//
+//    initRandGenerator();
+//    getTotalExpressionLen();
+    constructorInitHelp();
 }
 
 SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int needEpoch, int numOfTerminals,
@@ -25,12 +26,13 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
                bool ifUseSuspendNum , double similarValue ) :
         GEP(chroNum, realTermVec, ansVec, TAPairNum, needEpoch, numOfTerminals, presetFunctions, numOfPresetFunctions,
             argsLenOfADFs, numOfADFs, mainPH, inputADFHs, ifUseSuspendNum, similarValue), totalWeight(0.0), chromosomeWeight(chroNum) {
-    cdPtr = boost::make_shared<SL_ChromosomeDecoder>();
-    cdPtr->setChromosomeRule(cr);
-    UChromosome.init(cr);
-
-    initRandGenerator();
-    getTotalExpressionLen();
+//    cdPtr = boost::make_shared<SL_ChromosomeDecoder>();
+//    cdPtr->setChromosomeRule(cr);
+//    UChromosome.init(cr);
+//
+//    initRandGenerator();
+//    getTotalExpressionLen();
+    constructorInitHelp();
 }
 
 
@@ -40,12 +42,13 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
                bool ifUseSuspendNum , double similarValue ) :
         GEP(chroNum, realTermVec, ansVec, TAPairNum, needEpoch, numOfTerminals, constants, numOfConstants, presetFunctions, numOfPresetFunctions,
             argsLenOfADFs, numOfADFs, mainPH, inputADFHs, ifUseSuspendNum, similarValue), totalWeight(0.0), chromosomeWeight(chroNum) {
-    cdPtr = boost::make_shared<SL_ChromosomeDecoder>();
-    cdPtr->setChromosomeRule(cr);
-    UChromosome.init(cr);
-
-    initRandGenerator();
-    getTotalExpressionLen();
+//    cdPtr = boost::make_shared<SL_ChromosomeDecoder>();
+//    cdPtr->setChromosomeRule(cr);
+//    UChromosome.init(cr);
+//
+//    initRandGenerator();
+//    getTotalExpressionLen();
+    constructorInitHelp();
 }
 
 
@@ -54,6 +57,58 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
                bool ifUseSuspendNum , double similarValue) :
         GEP(chroNum, realTermVec, ansVec, TAPairNum, needEpoch, numOfTerminals, presetFunctions, numOfPresetFunctions,
             argsLenOfADFs, numOfADFs, mainPH, inputADFHs, ifUseSuspendNum, similarValue), totalWeight(0.0), chromosomeWeight(chroNum) {
+    constructorInitHelp();
+}
+
+SL_GEP::SL_GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+       const int &needEpoch, const int &numOfTerminals, const vector<double>&constants,
+       const vector<WhichFunction>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+       const bool &ifUseSuspendNum ,const double &similarValue
+):GEP(chroNum,realTermVec,ansVec,needEpoch,numOfTerminals,constants,presetFunctions,
+      argsLenOfADFs,mainPH,inputADFHs,ifUseSuspendNum,similarValue), totalWeight(0.0), chromosomeWeight(chroNum)
+{
+    constructorInitHelp();
+}
+
+SL_GEP::SL_GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+       const int &needEpoch, const int &numOfTerminals,
+       const vector<WhichFunction>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+       const bool &ifUseSuspendNum ,const double &similarValue
+):GEP(chroNum,realTermVec,ansVec,needEpoch,numOfTerminals,presetFunctions,
+      argsLenOfADFs,mainPH,inputADFHs,ifUseSuspendNum,similarValue), totalWeight(0.0), chromosomeWeight(chroNum)
+{
+    constructorInitHelp();
+}
+
+SL_GEP::SL_GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+       const int &needEpoch, const int &numOfTerminals, const vector<double>&constants,
+       const vector<int>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+       const bool &ifUseSuspendNum ,const double &similarValue
+):GEP(chroNum,realTermVec,ansVec,needEpoch,numOfTerminals,constants,presetFunctions,
+      argsLenOfADFs,mainPH,inputADFHs,ifUseSuspendNum,similarValue), totalWeight(0.0), chromosomeWeight(chroNum)
+{
+    constructorInitHelp();
+}
+
+SL_GEP::SL_GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+       const int &needEpoch, const int &numOfTerminals,
+       const vector<int>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
+       const bool &ifUseSuspendNum ,const double &similarValue
+):GEP(chroNum,realTermVec,ansVec,needEpoch,numOfTerminals,presetFunctions,
+      argsLenOfADFs,mainPH,inputADFHs,ifUseSuspendNum,similarValue), totalWeight(0.0), chromosomeWeight(chroNum)
+{
+    constructorInitHelp();
+}
+/**
+  * @brief  类的初始化相关，帮助构造函数的一部分初始化内容
+  *
+  * @param  threadNum0:多少个线程
+  *
+  * @note   构造函数会调用，后面单独的init()函数也会调用
+  *
+  * @retval None
+  */
+void SL_GEP::constructorInitHelp() {
     cdPtr = boost::make_shared<SL_ChromosomeDecoder>();
     cdPtr->setChromosomeRule(cr);
     UChromosome.init(cr);
@@ -61,8 +116,6 @@ SL_GEP::SL_GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, 
     initRandGenerator();
     getTotalExpressionLen();
 }
-
-
 
 void SL_GEP::initRandGenerator() {
     uniform_int_distribution<uint64_t>initDistribution(0, numeric_limits<uint64_t>::max());
@@ -94,6 +147,7 @@ double SL_GEP::test1() {
 }
 
 void SL_GEP::reInit() {
+    return;
     generator.seed(time(NULL));
     initRandGenerator();
     minDistance = numeric_limits<double>::max();

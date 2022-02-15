@@ -4,9 +4,9 @@
 
 #ifndef CPPSOURCEFORLINUX_THREADVERSIONTESTCASE_H
 #define CPPSOURCEFORLINUX_THREADVERSIONTESTCASE_H
-#include "testThread.h"
-#include "SL_ChromosomeDecoder_Thread.h"
-#include "SL_GEP_Thread.h"
+#include "../ThreadVersion/testThread.h"
+#include "../ThreadVersion/SL_ChromosomeDecoder_Thread.h"
+#include "../ThreadVersion/SL_GEP_Thread.h"
 #include <vector>
 
 class ThreadVersionTestCase {
