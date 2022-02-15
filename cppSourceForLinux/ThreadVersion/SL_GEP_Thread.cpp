@@ -7,6 +7,7 @@
 #include "../FunctionPreset.h"
 #include "../GA_HelpFunc.h"
 #include <thread>
+#include <iostream>
 SL_GEP_Thread::SL_GEP_Thread(const int &chroNum, const vector<vector<double>> &realTermVec, const vector<double> &ansVec,
                              const int &needEpoch, const int &numOfTerminals, const vector<double> &constants,
                              const vector<WhichFunction> &presetFunctions, const vector<int> &argsLenOfADFs,
@@ -15,30 +16,37 @@ SL_GEP_Thread::SL_GEP_Thread(const int &chroNum, const vector<vector<double>> &r
                              :GEP(chroNum,realTermVec,ansVec,needEpoch,numOfTerminals,constants,presetFunctions,
                                   argsLenOfADFs,mainPH,inputADFHs,ifUseSuspendNum,similarValue)
 {
-
+    constructorInitHelp(threadNum);
 }
 SL_GEP_Thread::SL_GEP_Thread(const int &chroNum, const vector<vector<double>> &realTermVec, const vector<double> &ansVec,
                              const int &needEpoch, const int &numOfTerminals,
                              const vector<WhichFunction> &presetFunctions, const vector<int> &argsLenOfADFs,
                              const int &mainPH, const vector<int> &inputADFHs, const int &threadNum,
-                             const bool &ifUseSuspendNum, const double &similarValue) {
-
+                             const bool &ifUseSuspendNum, const double &similarValue)
+                             :GEP(chroNum,realTermVec,ansVec,needEpoch,numOfTerminals,presetFunctions,
+                                  argsLenOfADFs,mainPH,inputADFHs,ifUseSuspendNum,similarValue)
+{
+    constructorInitHelp(threadNum);
 }
 SL_GEP_Thread::SL_GEP_Thread(const int &chroNum, const vector<vector<double>> &realTermVec, const vector<double> &ansVec,
                              const int &needEpoch, const int &numOfTerminals, const vector<double> &constants,
                              const vector<int> &presetFunctions, const vector<int> &argsLenOfADFs, const int &mainPH,
                              const vector<int> &inputADFHs, const int &threadNum, const bool &ifUseSuspendNum,
-                             const double &similarValue) {
-
+                             const double &similarValue)
+                            :GEP(chroNum,realTermVec,ansVec,needEpoch,numOfTerminals,constants,presetFunctions,
+                                argsLenOfADFs,mainPH,inputADFHs,ifUseSuspendNum,similarValue)
+{
+    constructorInitHelp(threadNum);
 }
 
 SL_GEP_Thread::SL_GEP_Thread(const int &chroNum, const vector<vector<double>> &realTermVec, const vector<double> &ansVec,
                              const int &needEpoch, const int &numOfTerminals, const vector<int> &presetFunctions,
                              const vector<int> &argsLenOfADFs, const int &mainPH, const vector<int> &inputADFHs,
-                             const int &threadNum, const bool &ifUseSuspendNum, const double &similarValue) {
-
-
-
+                             const int &threadNum, const bool &ifUseSuspendNum, const double &similarValue)
+                            :GEP(chroNum,realTermVec,ansVec,needEpoch,numOfTerminals,presetFunctions,
+                                argsLenOfADFs,mainPH,inputADFHs,ifUseSuspendNum,similarValue)
+{
+    constructorInitHelp(threadNum);
 }
 /**
   * @brief  类的初始化相关，帮助构造函数的一部分初始化内容
@@ -152,17 +160,53 @@ void SL_GEP_Thread::initThread(const int &threadNum0) {
 void SL_GEP_Thread::initRandGenerator() {
     uniform_int_distribution<uint64_t>initDistribution(0, numeric_limits<uint64_t>::max());
     for(int i = 0 ; i < threadNum ; ++i){
-        FGeneratorThreads[i].seed(initDistribution(generator));
-        BetaGeneratorThreads[i].seed(initDistribution(generator));
-        SelectGeneratorThreads[i].seed(initDistribution(generator));
-        YGeneratorThreads[i].seed(initDistribution(generator));
-        GambleGeneratorThreads[i].seed(initDistribution(generator));
-        CRGeneratorThreads[i].seed(initDistribution(generator));
-        KGeneratorThreads[i].seed(initDistribution(generator));
-        ACSGeneratorThreads[i].seed(initDistribution(generator));
+        FGeneratorThreads.push_back(default_random_engine(initDistribution(generator)));
+        BetaGeneratorThreads.push_back(default_random_engine(initDistribution(generator)));
+        SelectGeneratorThreads.push_back(default_random_engine(initDistribution(generator)));
+        YGeneratorThreads.push_back(default_random_engine(initDistribution(generator)));
+        GambleGeneratorThreads.push_back(default_random_engine(initDistribution(generator)));
+        CRGeneratorThreads.push_back(default_random_engine(initDistribution(generator)));
+        KGeneratorThreads.push_back(default_random_engine(initDistribution(generator)));
+        ACSGeneratorThreads.push_back(default_random_engine(initDistribution(generator)));
+
+//        FGeneratorThreads[i].seed(initDistribution(generator));
+//        BetaGeneratorThreads[i].seed(initDistribution(generator));
+//        SelectGeneratorThreads[i].seed(initDistribution(generator));
+//        YGeneratorThreads[i].seed(initDistribution(generator));
+//        GambleGeneratorThreads[i].seed(initDistribution(generator));
+//        CRGeneratorThreads[i].seed(initDistribution(generator));
+//        KGeneratorThreads[i].seed(initDistribution(generator));
+//        ACSGeneratorThreads[i].seed(initDistribution(generator));
     }
 
 }
+/**
+  * @brief  进行基因染色体训练，返回最优染色体和染色体规则
+  *
+  * @param  None
+  *
+  * @note
+  *
+  * @retval 返回最优染色体和染色体规则
+  */
+
+pair<Chromosome, ChromosomeRule> SL_GEP_Thread::train() {
+    pair<Chromosome, ChromosomeRule> outPair;
+//    const int theSetWs[2] = { 30,30 };
+    initChromosomes();
+    printf("%s:%30s,%30s\r\n", "epoch", "thisEpochBestDis","bestDis");		//602  (>2200)
+    for (; shouldContiue();) {
+        inheritanceProcess();
+        //printf("%d:%f\r\n", epoch, minDistance);		//602  (>2200)
+        printf("%d:%30f,%30f\r\n", epoch, nowMinDistance,minDistance);		//602  (>2200)
+    }
+    outPair.first = bestChromosomeAndIndex.first;
+    outPair.second = cr;
+
+    return outPair;
+}
+
+
 /**
   * @brief  染色体群初始化相关，遍历染色体群，各染色体各点位随机选可用symbol，选完之后，计算欧式距离，记录当前最优解和全局最优解
   *
@@ -636,7 +680,8 @@ double SL_GEP_Thread::calculateDistanceThread(const int &threadIndex,const 	Chro
 double SL_GEP_Thread::EuclideanDisThread(const int &threadIndex,const Chromosome &c){
     double count = 0.0;
     double decodeVal;
-    cdPtr->setChromosome(const_cast<Chromosome&>(c));
+    chromosomeDecoderThreads[threadIndex].setChromosome(const_cast<Chromosome&>(c));
+//    cdPtr->setChromosome(const_cast<Chromosome&>(c));
     for (int i = 0; i < termAnsPairNum; ++i) {
         decodeVal = (chromosomeDecoderThreads[threadIndex].decode(realTermSet[i]));
         if (decodeVal >= getTheMaxReal())

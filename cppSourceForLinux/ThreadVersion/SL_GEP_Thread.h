@@ -22,6 +22,7 @@ struct SL_GEP_Thread_Index{
 };
 
 class SL_GEP_Thread : public GEP{
+public:
     SL_GEP_Thread(const int &chroNum,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
                   const int &needEpoch, const int &numOfTerminals, const vector<double>&constants,
                   const vector<WhichFunction>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
@@ -45,7 +46,7 @@ class SL_GEP_Thread : public GEP{
                   const vector<int>&presetFunctions, const vector<int>&argsLenOfADFs,const int &mainPH, const vector<int>&inputADFHs,
                   const int &threadNum = -1 , const bool &ifUseSuspendNum = true,const double &similarValue = 1e-6
     );
-
+    pair<Chromosome, ChromosomeRule> train();
 private:
     int threadNum;
     uint8_t whichRenewSymbolCountWay = ANY_ONE_EQUAL_WAY;

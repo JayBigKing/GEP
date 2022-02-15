@@ -9,7 +9,7 @@
 #include "SL_GEP.h"
 #include "GA_HelpFunc.h"
 #include "ChromosomeShower.h"
-#include "ThreadVersion/testThread.h"
+#include "ThreadVersion/ThreadVersionTestCase.h"
 #include<boost/smart_ptr.hpp>
 
 using namespace std;
@@ -22,7 +22,15 @@ double  minusHandler(const double *args, const int len) {
 double timesHandler(const double *args, const int len) {
     return args[0] * args[1];
 }
-
+/**
+  * @brief  测试SymbolSet
+  *
+  * @param  None
+  *
+  * @note
+  *
+  * @retval None
+  */
 void test1() {
     SymbolSet symbolSet;
     boost::shared_array<double> args(new double[2]);
@@ -55,6 +63,15 @@ void test1() {
 
     //printf("%f\r\n", symbolSet.getSymbolMap["minus"].callFunctionHandler(args.get(), 2));
 }
+/**
+  * @brief  测试ChromosomeRule
+  *
+  * @param  None
+  *
+  * @note
+  *
+  * @retval None
+  */
 void test2() {
     SymbolSet symbolSet;
     boost::shared_array<double> args(new double[2]);
@@ -240,7 +257,15 @@ void test6() {
 
 }
 
-
+/**
+  * @brief  测试SymbolSet、SymbolSetGenerator、ChromosomeDecoder
+  *
+  * @param  None
+  *
+  * @note
+  *
+  * @retval None
+  */
 void test6_5() {
 
     //a  0
@@ -617,12 +642,10 @@ void test14(){
         printf("%d\r\n",rd());
 }
 
-void testTestThread1(){
-    //testThread1();
-    testThread2(3000);
-}
+
+
 int main() {
-//   cout<<"hh"<<endl;
+//    cout<<"hh"<<endl;
 //    test1();
 //    test2();
 //    test3();
@@ -638,6 +661,8 @@ int main() {
 //    test12();
 //    test13();
 //    test14();
-    testTestThread1();
+//    ThreadVersionTestCase::testTestThread1();
+//    ThreadVersionTestCase::testSgVector();
+    ThreadVersionTestCase::testSL_GEP_Thread();
     return 0;
 }
