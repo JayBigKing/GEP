@@ -9,7 +9,7 @@ GEP::GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int ne
          double similarValue) :
         ADFH(numOfADFs), mainProgramH(mainPH), chromosomesNum(chroNum), chromosomes(chroNum), termAnsPairNum(TAPairNum), numOfValInTerm(numOfTerminals),
         realTermSet(TAPairNum),ansSet(TAPairNum), epoch(0), needEpoch(needEpoch) ,ifUseSuspendNum(ifUseSuspendNum),similarValue(similarValue),generator(time(NULL)),
-        minDistance(numeric_limits<double>::max()){
+        minDistance(numeric_limits<double>::max()),minDistanceOfThisEpoch(minDistance){
 
     //初始化symbolSet
     SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals, constants, numOfConstants, presetFunctions, numOfPresetFunctions, argsLenOfADFs, numOfADFs);
@@ -20,7 +20,7 @@ GEP::GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int ne
          int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs, bool ifUseSuspendNum , double similarValue
 ) : ADFH(numOfADFs), mainProgramH(mainPH), chromosomesNum(chroNum), chromosomes(chroNum), termAnsPairNum(TAPairNum), numOfValInTerm(numOfTerminals),
     realTermSet(TAPairNum),ansSet(TAPairNum), epoch(0), needEpoch(needEpoch), ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),
-    minDistance(numeric_limits<double>::max()) {
+    minDistance(numeric_limits<double>::max()),minDistanceOfThisEpoch(minDistance) {
 
     //初始化symbolSet
     SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals,  presetFunctions, numOfPresetFunctions, argsLenOfADFs, numOfADFs);
@@ -34,7 +34,7 @@ GEP::GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int ne
 ) :
         ADFH(numOfADFs), mainProgramH(mainPH), chromosomesNum(chroNum), chromosomes(chroNum), termAnsPairNum(TAPairNum), numOfValInTerm(numOfTerminals),
         realTermSet(TAPairNum), ansSet(TAPairNum), epoch(0), needEpoch(needEpoch), ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),
-        minDistance(numeric_limits<double>::max()) {
+        minDistance(numeric_limits<double>::max()) ,minDistanceOfThisEpoch(minDistance){
 
     //初始化symbolSet
     SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals, constants, numOfConstants, presetFunctions, numOfPresetFunctions, argsLenOfADFs, numOfADFs);
@@ -46,7 +46,7 @@ GEP::GEP(int chroNum, double *realTermVec, double *ansVec, int TAPairNum, int ne
          int numOfPresetFunctions, int *argsLenOfADFs, int numOfADFs, int mainPH, int* inputADFHs, bool ifUseSuspendNum , double similarValue
 ) : ADFH(numOfADFs), mainProgramH(mainPH), chromosomesNum(chroNum), chromosomes(chroNum), termAnsPairNum(TAPairNum), numOfValInTerm(numOfTerminals),
     realTermSet(TAPairNum), ansSet(TAPairNum), epoch(0), needEpoch(needEpoch), ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),
-    minDistance(numeric_limits<double>::max()) {
+    minDistance(numeric_limits<double>::max()) ,minDistanceOfThisEpoch(minDistance){
 
     //初始化symbolSet
     SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals, presetFunctions, numOfPresetFunctions, argsLenOfADFs, numOfADFs);
@@ -60,6 +60,7 @@ GEP::GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vect
     const bool &ifUseSuspendNum ,const double &similarValue
 ):mainProgramH(mainPH),chromosomesNum(chroNum), chromosomes(chroNum),termAnsPairNum(ansVec.size()),numOfValInTerm(realTermVec[0].size()),
     epoch(0),needEpoch(needEpoch),ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),minDistance(numeric_limits<double>::max())
+        ,minDistanceOfThisEpoch(minDistance)
 {
 
     SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals, constants,presetFunctions, argsLenOfADFs);
@@ -72,6 +73,7 @@ GEP::GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vect
     const bool &ifUseSuspendNum ,const double &similarValue
 ):mainProgramH(mainPH),chromosomesNum(chroNum), chromosomes(chroNum),termAnsPairNum(ansVec.size()),numOfValInTerm(realTermVec[0].size()),
   epoch(0),needEpoch(needEpoch),ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),minDistance(numeric_limits<double>::max())
+        ,minDistanceOfThisEpoch(minDistance)
 {
     SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals, presetFunctions, argsLenOfADFs);
     initHelp(realTermVec,ansVec,inputADFHs);
@@ -83,6 +85,7 @@ GEP::GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vect
     const bool &ifUseSuspendNum ,const double &similarValue
 ):mainProgramH(mainPH),chromosomesNum(chroNum), chromosomes(chroNum),termAnsPairNum(ansVec.size()),numOfValInTerm(realTermVec[0].size()),
   epoch(0),needEpoch(needEpoch),ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),minDistance(numeric_limits<double>::max())
+        ,minDistanceOfThisEpoch(minDistance)
   {
       SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals,constants, presetFunctions, argsLenOfADFs);
       initHelp(realTermVec,ansVec,inputADFHs);
@@ -94,6 +97,7 @@ GEP::GEP(const int &chroNum,const vector<vector<double>>&realTermVec, const vect
     const bool &ifUseSuspendNum ,const double &similarValue
 ):mainProgramH(mainPH),chromosomesNum(chroNum), chromosomes(chroNum),termAnsPairNum(ansVec.size()),numOfValInTerm(realTermVec[0].size()),
   epoch(0),needEpoch(needEpoch),ifUseSuspendNum(ifUseSuspendNum), similarValue(similarValue), generator(time(NULL)),minDistance(numeric_limits<double>::max())
+        ,minDistanceOfThisEpoch(minDistance)
 {
     SymbolSetGenerator::setSymbolSet(symbolSet, numOfTerminals,presetFunctions, argsLenOfADFs);
     initHelp(realTermVec,ansVec,inputADFHs);

@@ -8,6 +8,7 @@
 #include "GEP.h"
 #include "SL_ChromosomeDecoder.h"
 #include "SL_GEPTester.h"
+#include "dataSaveAndLoad/SL_GEP_dataProcessor.h"
 #define ANY_ONE_EQUAL_WAY 0
 #define LOW_ONE_FIRST 1
 #define BEST_ONE_ONLY 2
@@ -67,6 +68,8 @@ public:
     ~SL_GEP(){}
 
     friend class SL_GEPTester;
+    friend class SL_GEP_dataProcessor;
+
 
 private:
     uint8_t whichRenewSymbolCountWay = BEST_ONE_ONLY;

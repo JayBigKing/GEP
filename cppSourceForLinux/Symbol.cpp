@@ -71,6 +71,16 @@ double Symbol::callFunctionHandler(vector<double>args){
 
 }
 
+WhichFunction Symbol::getWhichFunction() {
+    try{
+        if(this->symbolType != FUNCTION || this->functionType != PRESET)
+            throw "error : it`s no function of the function`s type is no preset!";
+        return this->whichFunction;
+    }catch (const char * &e){
+        printf("%s\r\n", e);
+        exit(-1);
+    }
+}
 
 int Symbol::getNumOfInputArg() {
     try {

@@ -11,6 +11,7 @@
 #include "ChromosomeShower.h"
 #include "testCases/ThreadVersionTestCase.h"
 #include "testCases/GEPTestCase.h"
+#include "testCases/dataProcessorTestCase.h"
 #include<boost/smart_ptr.hpp>
 
 using namespace std;
@@ -665,6 +666,9 @@ int main() {
 //    ThreadVersionTestCase::testTestThread1();
 //    ThreadVersionTestCase::testSgVector();
 //    ThreadVersionTestCase::testSL_GEP_Thread();
-    GEPTestCase::testSL_GEP_vector();
+//    GEPTestCase::testSL_GEP_vector();
+//    dataProcessorTestCase::testSaveCSV();
+//    dataProcessorTestCase::testLoadCSV();
+    GEPTestCase::testSL_GEP_save1();
     return 0;
 }

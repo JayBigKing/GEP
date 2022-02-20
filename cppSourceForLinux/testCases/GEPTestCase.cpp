@@ -5,6 +5,7 @@
 #include "GEPTestCase.h"
 #include "../SL_GEP.h"
 #include "../ChromosomeShower.h"
+#include "../dataSaveAndLoad/SL_GEP_dataProcessor.h"
 
 /**
   * @brief  对应某一个函数，根据传入的自变量返回因变量值
@@ -48,7 +49,15 @@ void GEPTestCase::fitFunctionOutVec(vector<vector<double>>&realTermVec,vector<do
         ansVec[i] = fitFunctionVec(realTermVec[i]);
     }
 }
-
+/**
+  * @brief  测试输出vector的构造函数的SL_GEP
+  *
+  * @param
+  *
+  * @note
+  *
+  * @retval
+  */
 void GEPTestCase::testSL_GEP_vector() {
     int chroNum = 50;
     int numOfTerminals = 2;
@@ -101,4 +110,68 @@ void GEPTestCase::testSL_GEP_vector() {
     pair<Chromosome, ChromosomeRule> thePair = slgep.train();
 
     cs.simpleShow(thePair.first);
+}
+/**
+  * @brief  测试保存SL_GEP
+  *
+  * @param
+  *
+  * @note
+  *
+  * @retval
+  */
+void GEPTestCase::testSL_GEP_save1() {
+    int chroNum = 50;
+    int numOfTerminals = 2;
+    int numOfPresetFunctions = 7;
+    int numOfADFs = 1;
+
+    int mainProgramH = 16;
+
+    int TAPairNum = 50;
+    int needEpoch = 100;
+
+    vector<int> presetFunctions(numOfPresetFunctions);
+    vector<int> argsLenOfADFs(numOfADFs);
+    vector<vector<double>> realTermVec;
+    vector<double> ansVec(TAPairNum);
+
+    for(int i = 0 ; i < TAPairNum ;++i){
+        vector<double> tmp(numOfTerminals);
+        realTermVec.push_back(tmp);
+    }
+
+
+    fitFunctionOutVec(realTermVec, ansVec);
+
+    for (int i = 0, j = 0; i < numOfPresetFunctions; i++, j++) {
+//        if (j == (int)W_divide)
+//            j++;
+        presetFunctions[i] = j;
+    }
+    //presetFunctions[0] = (int)W_times;
+    //presetFunctions[1] = (int)W_add;
+    //presetFunctions[2] = (int)W_sin;
+    //presetFunctions[3] = (int)W_cos;
+    //presetFunctions[4] = (int)W_minus;
+
+    argsLenOfADFs[0] = 2;
+    //argsLenOfADFs[1] = 3;
+
+
+    vector<int> ADFH(numOfADFs);
+    ADFH[0] = 5;
+    //ADFH[1] = 8;
+
+
+    SL_GEP slgep(chroNum, realTermVec, ansVec,needEpoch, numOfTerminals, presetFunctions,  argsLenOfADFs,
+                 mainProgramH, ADFH);
+
+    ChromosomeShower cs(slgep.getChromosomeRule());
+
+    pair<Chromosome, ChromosomeRule> thePair = slgep.train();
+
+    cs.simpleShow(thePair.first);
+
+    SL_GEP_dataProcessor::saveSL_GEP(slgep);
 }

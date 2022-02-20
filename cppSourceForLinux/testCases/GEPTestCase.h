@@ -11,10 +11,12 @@ using namespace std;
 class GEPTestCase {
 public:
     static void testSL_GEP_vector();
+    static void testSL_GEP_save1();
 
 private:
     static double fitFunctionVec(const vector<double>&args);
     static void fitFunctionOutVec(vector<vector<double>>&realTermVec,vector<double>&ansVec);
+
 };
 
 
