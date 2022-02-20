@@ -24,6 +24,12 @@ private:
     static const int startYearInSLDat;
     static const int startMonInSLDat;
     static const string defaultSL_GEPNameHeadStr;
+
+    static const char inTheSecondFlagChar;
+    static const char oneReadDoneFlagChar;
+    static const char setReadDoneFlagChar;
+    static const char mapKeyFlagChar;
+    static const char mapValFlagChar;
     static string getFileNameByDateTime(string nameHeadStr, bool useRelativePath = true);
 
 

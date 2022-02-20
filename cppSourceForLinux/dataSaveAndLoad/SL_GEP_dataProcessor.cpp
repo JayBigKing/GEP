@@ -24,6 +24,11 @@
 const int SL_GEP_dataProcessor::startYearInSLDat = 1900;
 const int SL_GEP_dataProcessor::startMonInSLDat = 1;
 const string SL_GEP_dataProcessor::defaultSL_GEPNameHeadStr = "theSL_GEPs/SL_GEP";
+const char SL_GEP_dataProcessor::inTheSecondFlagChar = '+';
+const char SL_GEP_dataProcessor::oneReadDoneFlagChar = '-';
+const char SL_GEP_dataProcessor::setReadDoneFlagChar = '*';
+const char SL_GEP_dataProcessor::mapKeyFlagChar = 's';
+const char SL_GEP_dataProcessor::mapValFlagChar = 'c';
 
 string SL_GEP_dataProcessor::getFileNameByDateTime(string nameHeadStr, bool useRelativePath) {
     time_t now = time(NULL);
@@ -205,43 +210,112 @@ void SL_GEP_dataProcessor::saveSL_GEP(const SL_GEP &slGep,const string &saveFile
   *
   * @retval None
   */
-  /*
-   *   * @note   第一行：chroNum，第二行：numOfTerminals，第三行：PresetFunctions（多个）
-  * @note   第四行：ADF需要的参数（多个），第五行：mainProgramH，第六行：ADFHs（多个）
-  * @note   第七行：TAPairNum，即数据集条数，第八行：needEpoch
-  * @note   第八行：maxWeightScore，第九行：maxDistanceByNow*/
+/*
+ *   * @note   两行为一对，第一行为mainProgramSymbolCount的各点位的可选符号（最开始用‘s’标识），第二行为其对应的count（最开始用'c‘标识），
+  *         全部结束之后输出一行，首个字母为’*‘，用来标识存储完毕
+  * @note   两行为一对，第一行为ADFSymbolCounts的各点位的可选符号（最开始用‘s’标识），第二行为其对应的count（最开始用'c‘标识），
+  *         每一个ADFSymbolCount结束之后，输出一行，首个字母为’-‘，用来分割
+  *         全部结束之后输出一行，首个字母为’*‘，用来标识存储完毕
+  * @note   最优的染色体的mainProgram的各个symbol
+  * @note   最优的染色体的ADFs的各个symbol
+  *         全部结束之后输出一行，首个字母为’*‘，用来标识存储完毕
+  * @note   最优距离
+  * @note   count的方式
+ * */
+
+
 SL_GEP SL_GEP_dataProcessor::loadSL_GEP(const string &loadFileName,const int &chroNum, const int &TAPairNum,
                                         const int &needEpoch ,const bool &useTheCount,const uint8_t& whichRenewSymbolCountWay) {
-    ifstream inFile(loadFileName, ios::in);
-    string lineStr;
-    vector<vector<string>> strArray;
-    while (getline(inFile, lineStr))
-    {
-        // 存成二维表结构
-        stringstream ss(lineStr);
-        string str;
-        vector<string> lineArray;
-        // 按照逗号分隔
-        while (getline(ss, str, ','))
-            lineArray.push_back(str);
-        strArray.push_back(lineArray);
+    try{
+        ifstream inFile(loadFileName, ios::in);
+        string lineStr;
+        vector<vector<string>> strArray;
+        while (getline(inFile, lineStr))
+        {
+            // 存成二维表结构
+            stringstream ss(lineStr);
+            string str;
+            vector<string> lineArray;
+            // 按照逗号分隔
+            while (getline(ss, str, ','))
+                lineArray.push_back(str);
+            strArray.push_back(lineArray);
+        }
+        int theChroNum = (chroNum == -1)? atoi(strArray[0][0]):chroNum;
+        int numOfTerminal = atoi(strArray[1][0]);
+        vector<int>PresetFunctions;
+        vector<int>NumOfInputArgOfADF;
+        vector<int>ADFHs;
+        vector<unordered_map<int, double>>mainProgramSymbolCount = slGep.mainProgramSymbolCount;
+        vector<vector<unordered_map<int, double>>>ADFSymbolCount = slGep.ADFSymbolCount;
+
+        for(auto item : strArray[2])
+            PresetFunctions.push_back(atoi(item));
+        for(auto item : strArray[3])
+            NumOfInputArgOfADF.push_back(atoi(item));
+        int mainProgramH = atoi(strArray[4][0]);
+        for(auto item : strArray[5])
+            ADFHs.push_back(atoi(item));
+        int theTAPairNum = (TAPairNum == -1)? atoi(strArray[6][0]) : TAPairNum;
+        int theNeedEpoch = (needEpoch == -1)  ? atoi(strArray[7][0]) : needEpoch;
+        double maxWeightScore = atof(strArray[8][0]);
+        double maxDistanceByNow = atof(strArray[9][0]);
+
+        bool ifInSecond = false;
+        int index = 10;
+        for(; strArray[index][0] != setReadDoneFlagChar;++index){
+//            if(strArray[index][0] == inTheSecondFlagChar){
+//                ifInSecond = !ifInSecond;
+//                continue;
+//            }
+            if(strArray[index][0] == mapKeyFlagChar){
+                unordered_map<int, double>tmpMap;
+                if(strArray[index+1][0] != mapKeyFlagChar || strArray[index].size() != strArray[index+1].size())
+                    throw "error:no match the mainProgram map value";
+                for(int j = 0; j < strArray[index].size();++j){
+                    tmpMap[atoi(strArray[index][j])] = atof(strArray[index+1][j]);
+                }
+                mainProgramSymbolCount.push_back(tmpMap);
+                ++index;
+            }else if(strArray[index][0] == mapValFlagChar){
+                ++index;
+            }else{
+                throw "error:no match the mainProgram map value";
+            }
+
+
+        }
+
+        vector<unordered_map<int, double>>tmpADFSymbolCount;
+        for(; strArray[index][0] != setReadDoneFlagChar;++index){
+            ifInSecond = false;
+            if(strArray[index][0] == oneReadDoneFlagChar){
+                ADFSymbolCount.push_back(tmpADFSymbolCount);
+                tmpADFSymbolCount.clear();
+            }else{
+                if(strArray[index][0] == mapKeyFlagChar){
+                    unordered_map<int, double>tmpMap;
+                    if(strArray[index+1][0] != mapKeyFlagChar || strArray[index].size() != strArray[index+1].size())
+                        throw "error:no match the ADF map value";
+                    for(int j = 0; j < strArray[index].size();++j){
+                        tmpMap[atoi(strArray[index][j])] = atof(strArray[index+1][j]);
+                    }
+                    tmpADFSymbolCount.push_back(tmpMap);
+                    ++index;
+                }else if(strArray[index][0] == mapValFlagChar){
+                    ++index;
+                }else{
+                    throw "error:no match the ADF map value";
+                }
+
+            }
+        }
+
+
+    }catch (const char * &e){
+        printf("%s\r\n",e);
+        exit(-1);
     }
-    int theChroNum = (chroNum == -1)? atoi(strArray[0][0]):chroNum;
-    int numOfTerminal = atoi(strArray[1][0]);
-    vector<int>PresetFunctions;
-    vector<int>NumOfInputArgOfADF;
-    vector<int>ADFHs;
-    for(auto item : strArray[2])
-        PresetFunctions.push_back(atoi(item));
-    for(auto item : strArray[3])
-        NumOfInputArgOfADF.push_back(atoi(item));
-    int mainProgramH = atoi(strArray[4][0]);
-    for(auto item : strArray[5])
-        ADFHs.push_back(atoi(item));
-    int theTAPairNum = (TAPairNum == -1)? atoi(strArray[6][0]) : TAPairNum;
-    int theNeedEpoch = (needEpoch == -1)  ? atoi(strArray[7][0]) : needEpoch;
-    double maxWeightScore = atof(strArray[8][0]);
-    double maxDistanceByNow = atof(strArray[9][0]);
 
   }
 
