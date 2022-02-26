@@ -12,6 +12,9 @@ class GEPTestCase {
 public:
     static void testSL_GEP_vector();
     static void testSL_GEP_save1();
+    static void testSL_GEP_load1();
+    static void testLoadDataSet1();
+    static void testTrainDataset1();
 
 private:
     static double fitFunctionVec(const vector<double>&args);

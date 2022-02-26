@@ -133,6 +133,7 @@ protected:
 
     double minDistance = 0;
     double minDistanceOfThisEpoch = 0;
+
 //	uniform_int_distribution<int>MPFirstDistribution;
 //	uniform_int_distribution<int>MPSecondDistribution;
 //	vector<uniform_int_distribution<int>>ADFFirstDistribution;

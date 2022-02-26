@@ -22,7 +22,9 @@ add_executable(cppSourceForLinux main.cpp Symbol.cpp Symbol.h FunctionPreset.cpp
         ChromosomeShower.cpp ChromosomeShower.h ThreadVersion/SL_GEP_Thread.cpp ThreadVersion/SL_GEP_Thread.h
         ThreadVersion/SL_ChromosomeDecoder_Thread.cpp ThreadVersion/SL_ChromosomeDecoder_Thread.h ThreadVersion/testThread.cpp ThreadVersion/testThread.h
         testCases/ThreadVersionTestCase.cpp testCases/ThreadVersionTestCase.h testCases/GEPTestCase.cpp testCases/GEPTestCase.h
-        dataSaveAndLoad/SL_GEP_dataProcessor.cpp dataSaveAndLoad/SL_GEP_dataProcessor.h testCases/dataProcessorTestCase.cpp testCases/dataProcessorTestCase.h)
+        dataSaveAndLoad/SL_GEP_dataProcessor.cpp dataSaveAndLoad/SL_GEP_dataProcessor.h
+        testCases/dataProcessorTestCase.cpp testCases/dataProcessorTestCase.h)
+
 #add_executable(cppSourceForLinux main.cpp)
 
 #target_link_libraries(cppSourceForLinux sm2lib1)

@@ -36,14 +36,17 @@ public:
         }
         return ADFPR[index];
     }
-    int getU() { return u; }
+    int getMainU() { return mainU; }
+    int getADFU()   {return ADFU ; }
     SymbolSet& getSymbolSet() { return symbolSet; }
 
     ChromosomeRule& operator = (const ChromosomeRule &cr);
 private:
     ProgramRule mainPR;
     vector<ProgramRule> ADFPR;
-    int u;
+    int mainU;
+    int ADFU;
+    //int u;
     SymbolSet symbolSet;
 
     void initHelp(int mainProgramH, vector<int>&ADFH);

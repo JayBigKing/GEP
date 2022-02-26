@@ -182,7 +182,7 @@ double SL_ChromosomeDecoder_Thread::mainProgramDecode() {
     stack<DecodeElement> opStack = mainOpStack;
     DecodeElement tmpDe;
     DecodeElement lastDe;
-    vector<double>args(cr.getU());
+    vector<double>args(cr.getMainU());
     double nowDecodeVal = 0.0;
     for(int i = 0 ; i < mainOcVector.size() ; ++i)
         outputVec[mainOcVector[i].chroIndex] = symbolSet.getSymbol(mainOcVector[i].symbolSetIndex).getVal();
@@ -242,7 +242,7 @@ double SL_ChromosomeDecoder_Thread::ADFProgramDecode(Symbol &subFunctionSym, vec
     vector<double>outputVec(cr.getADFPR(theADFIndex).totalLen);
     stack<DecodeElement> opStack = ADFOpStacks[theADFIndex];
     DecodeElement tmpDe;
-    vector<double>args(cr.getU());
+    vector<double>args(cr.getADFU());
     double nowDecodeVal = 0.0;
 
     setSymbolSetInputArgs(subFunctionSym.getNumOfInputArg(), inputArgsVal);

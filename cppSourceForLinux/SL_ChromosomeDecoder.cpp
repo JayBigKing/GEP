@@ -182,7 +182,7 @@ double SL_ChromosomeDecoder::mainProgramDecode() {
     stack<DecodeElement> opStack = mainOpStack;
     DecodeElement tmpDe;
     DecodeElement lastDe;
-    boost::shared_array<double> args(new double[cr.getU()]);
+    boost::shared_array<double> args(new double[cr.getMainU()]);
     double nowDecodeVal = 0.0;
     for(int i = 0 ; i < mainOcVector.size() ; ++i)
         outputVec[mainOcVector[i].chroIndex] = symbolSet.getSymbol(mainOcVector[i].symbolSetIndex).getVal();
@@ -233,7 +233,7 @@ double SL_ChromosomeDecoder::ADFProgramDecode(Symbol &subFunctionSym, double* in
     vector<double>outputVec(cr.getADFPR(theADFIndex).totalLen);
     stack<DecodeElement> opStack = ADFOpStacks[theADFIndex];
     DecodeElement tmpDe;
-    boost::shared_array<double> args(new double[cr.getU()]);
+    boost::shared_array<double> args(new double[cr.getADFU()]);
     double nowDecodeVal = 0.0;
 
     setSymbolSetInputArgs(subFunctionSym.getNumOfInputArg(), inputArgsVal);
@@ -286,7 +286,7 @@ double SL_ChromosomeDecoder::mainProgramDecodeOrigin() {
     DecodeElement tmpDe;
     DecodeElement lastDe;
     //	vector<double> optNum(cr.getU());
-    boost::shared_array<double> args(new double[cr.getU()]);
+    boost::shared_array<double> args(new double[cr.getMainU()]);
     int queuePtr = 0;
     int globalPointIndex = 0;
     try {
@@ -369,7 +369,7 @@ double SL_ChromosomeDecoder::ADFProgramDecodeOrigin(Symbol &subFunctionSym, doub
     DecodeElement tmpDe;
     DecodeElement lastDe;
     //	vector<double> optNum(cr.getU());
-    boost::shared_array<double> args(new double[cr.getU()]);
+    boost::shared_array<double> args(new double[cr.getADFU()]);
     int queuePtr = 0;
     int globalPointIndex = 0;
 

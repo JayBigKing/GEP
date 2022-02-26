@@ -10,6 +10,7 @@ class dataProcessorTestCase {
 public:
     static void testSaveCSV();
     static void testLoadCSV();
+    static void testLoadCTCSV();
 };
 
 

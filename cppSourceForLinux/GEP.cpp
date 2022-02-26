@@ -236,7 +236,7 @@ void GEP::initChromosomeSymbolCount() {
 
 void GEP::initChromosomeSymbolCount2() {
     int theExH = 0;
-    int theExU = 0;
+//    int theExU = 0;
     int theExL = 0;
     //double meanVal = 1.0 / chromosomesNum;
     theMinSymbolCount = 1.0 / chromosomesNum;
@@ -330,11 +330,11 @@ void GEP::initCouldChooseSet() {
     initVectorHelp(couldChooseSetOfADFSecond, numOfADF);
 
     for (int i = 0; i < numOfADF; ++i) {
-        int theExU = cr.getADFPR(i).u;
+        int inputArgSetSize = inputArgSet.size();
         for (int j = 0; j < functionSet.size(); ++j)
             couldChooseSetOfADFFirst[i].push_back(functionSet[j].getNum());
 
-        for (int j = 0; j < theExU; ++j) {
+        for (int j = 0; j < inputArgSetSize; ++j) {
             couldChooseSetOfADFFirst[i].push_back(inputArgSet[j].getNum());
             couldChooseSetOfADFSecond[i].push_back(inputArgSet[j].getNum());
         }

@@ -121,7 +121,7 @@ void GEPTestCase::testSL_GEP_vector() {
   * @retval
   */
 void GEPTestCase::testSL_GEP_save1() {
-    int chroNum = 50;
+    int chroNum = 5;
     int numOfTerminals = 2;
     int numOfPresetFunctions = 7;
     int numOfADFs = 1;
@@ -165,6 +165,84 @@ void GEPTestCase::testSL_GEP_save1() {
 
 
     SL_GEP slgep(chroNum, realTermVec, ansVec,needEpoch, numOfTerminals, presetFunctions,  argsLenOfADFs,
+                 mainProgramH, ADFH);
+
+    ChromosomeShower cs(slgep.getChromosomeRule());
+
+    pair<Chromosome, ChromosomeRule> thePair = slgep.train();
+
+    cs.simpleShow(thePair.first);
+
+    SL_GEP_dataProcessor::saveSL_GEP(slgep);
+}
+
+void GEPTestCase::testSL_GEP_load1() {
+    int numOfTerminals = 2;
+    int TAPairNum = 50;
+    vector<vector<double>> realTermVec;
+    vector<double> ansVec(TAPairNum);
+
+    for(int i = 0 ; i < TAPairNum ;++i){
+        vector<double> tmp(numOfTerminals);
+        realTermVec.push_back(tmp);
+    }
+
+
+    fitFunctionOutVec(realTermVec, ansVec);
+
+
+
+
+    SL_GEP slgep = SL_GEP_dataProcessor::loadSL_GEP("./theSL_GEPs/SL_GEP_2022_2_26_15_3_59.csv",realTermVec, ansVec,50,500);
+
+    ChromosomeShower cs(slgep.getChromosomeRule());
+
+    pair<Chromosome, ChromosomeRule> thePair = slgep.train();
+
+    cs.simpleShow(thePair.first);
+
+}
+
+
+
+void GEPTestCase::testLoadDataSet1() {
+    SL_GEP_dataProcessor::testLoadDataSet();
+
+}
+
+void GEPTestCase::testTrainDataset1() {
+    int chroNum = 50;
+    int numOfPresetFunctions = 13;
+    int numOfADFs = 2;
+
+    int mainProgramH = 20;
+
+    int needEpoch = 100000;
+
+    vector<int> presetFunctions(numOfPresetFunctions);
+    vector<int> argsLenOfADFs(numOfADFs);
+
+    int functionIndex = 0;
+    for (;functionIndex < 11; ++functionIndex) {
+//        if (j == (int)W_divide)
+//            j++;
+        presetFunctions[functionIndex] = functionIndex;
+    }
+    presetFunctions[functionIndex ++] =  (int)W_sqrt;
+    presetFunctions[functionIndex ++] = (int)W_log2;
+
+
+    argsLenOfADFs[0] = 2;
+    argsLenOfADFs[1] = 2;
+
+    vector<int> ADFH(numOfADFs);
+    ADFH[0] = 6;
+    ADFH[1] = 10;
+
+    pair<vector<vector<double>>, vector<double>> theDataSet = SL_GEP_dataProcessor::loadDataSetOut("./datasets/dataSetCSV.csv",0);
+
+
+    SL_GEP slgep(chroNum, theDataSet.first, theDataSet.second,needEpoch, theDataSet.first[0].size(), presetFunctions,  argsLenOfADFs,
                  mainProgramH, ADFH);
 
     ChromosomeShower cs(slgep.getChromosomeRule());

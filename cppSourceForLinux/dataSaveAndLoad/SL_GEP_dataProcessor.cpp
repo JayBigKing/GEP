@@ -29,6 +29,8 @@ const char SL_GEP_dataProcessor::oneReadDoneFlagChar = '-';
 const char SL_GEP_dataProcessor::setReadDoneFlagChar = '*';
 const char SL_GEP_dataProcessor::mapKeyFlagChar = 's';
 const char SL_GEP_dataProcessor::mapValFlagChar = 'c';
+const char SL_GEP_dataProcessor::inTheLabelDataChar = 'l';
+pair<vector<vector<double>>,vector<double>> SL_GEP_dataProcessor::theDataSet = pair<vector<vector<double>>,vector<double>>();
 
 string SL_GEP_dataProcessor::getFileNameByDateTime(string nameHeadStr, bool useRelativePath) {
     time_t now = time(NULL);
@@ -54,16 +56,16 @@ string SL_GEP_dataProcessor::getFileNameByDateTime(string nameHeadStr, bool useR
   * @note   第四行：ADF需要的参数（多个），第五行：mainProgramH，第六行：ADFHs（多个）
   * @note   第七行：TAPairNum，即数据集条数，第八行：needEpoch
   * @note   第八行：maxWeightScore，第九行：maxDistanceByNow
-  * @note   两行为一对，第一行为mainProgramSymbolCount的各点位的可选符号（最开始用‘s’标识），第二行为其对应的count（最开始用'c‘标识），
-  *         全部结束之后输出一行，首个字母为’*‘，用来标识存储完毕
-  * @note   两行为一对，第一行为ADFSymbolCounts的各点位的可选符号（最开始用‘s’标识），第二行为其对应的count（最开始用'c‘标识），
-  *         每一个ADFSymbolCount结束之后，输出一行，首个字母为’-‘，用来分割
-  *         全部结束之后输出一行，首个字母为’*‘，用来标识存储完毕
   * @note   最优的染色体的mainProgram的各个symbol
   * @note   最优的染色体的ADFs的各个symbol
   *         全部结束之后输出一行，首个字母为’*‘，用来标识存储完毕
   * @note   最优距离
   * @note   count的方式
+  * @note   两行为一对，第一行为mainProgramSymbolCount的各点位的可选符号（最开始用‘s’标识），第二行为其对应的count（最开始用'c‘标识），
+  *         全部结束之后输出一行，首个字母为’*‘，用来标识存储完毕
+  * @note   两行为一对，第一行为ADFSymbolCounts的各点位的可选符号（最开始用‘s’标识），第二行为其对应的count（最开始用'c‘标识），
+  *         每一个ADFSymbolCount结束之后，输出一行，首个字母为’-‘，用来分割
+  *         全部结束之后输出一行，首个字母为’*‘，用来标识存储完毕
   *
   * @retval None
   */
@@ -110,6 +112,27 @@ void SL_GEP_dataProcessor::saveSL_GEP(const SL_GEP &slGep,const string &saveFile
     outFile<<slGep.maxWeightScore<<endl;
     outFile<<slGep.maxDistanceByNow<<endl;
 
+
+    //最优的染色体的mainProgram的各个symbol
+    for(auto item : bestChromosome.mainProgramEx){
+        outFile<<item<<",";
+    }
+        outFile<<endl;
+
+    //最优的染色体的ADFs的各个symbol
+    for(int i = 0 ; i < bestChromosome.ADFEx.size() ; ++i){
+        for(auto item : bestChromosome.ADFEx[i])
+            outFile<<item<<",";
+        outFile<<endl;
+    }
+
+    outFile<<setReadDoneFlagChar<<endl;
+
+    outFile<<minDistance<<endl;
+
+    outFile<<(int)slGep.whichRenewSymbolCountWay<<endl;
+
+
     //mainProgramSymbolCount
     bool ifInSecond = false;
     for(int i = 0 ; i < mainProgramSymbolCount.size() ; ++i){
@@ -117,7 +140,7 @@ void SL_GEP_dataProcessor::saveSL_GEP(const SL_GEP &slGep,const string &saveFile
             outFile<<"+"<<endl;
             ifInSecond = !ifInSecond;
         }
-        outFile<<"s"<<",";
+        outFile<<mapKeyFlagChar<<",";
         if(i < cr.getMainPR().h){
             for(auto item : couldChooseSetOfMainProgramFirst)
                 outFile<<item <<",";
@@ -126,7 +149,7 @@ void SL_GEP_dataProcessor::saveSL_GEP(const SL_GEP &slGep,const string &saveFile
                 outFile<<item.getNum()<<",";
         }
         outFile<<endl;
-        outFile<<"c"<<",";
+        outFile<<mapValFlagChar<<",";
         if(i < cr.getMainPR().h){
             for(int j = 0 ; j <couldChooseSetOfMainProgramFirst.size(); ++j)
                 outFile<<mainProgramSymbolCount[i][couldChooseSetOfMainProgramFirst[j]] <<",";
@@ -138,7 +161,7 @@ void SL_GEP_dataProcessor::saveSL_GEP(const SL_GEP &slGep,const string &saveFile
         }
         outFile<<endl;
     }
-    outFile<<"*"<<endl;
+    outFile<<setReadDoneFlagChar<<endl;
     //ADFSymbolCounts
     int numOfADF = cr.getADFPR().size();
     for (int i = 0; i < numOfADF; ++i) {
@@ -150,7 +173,7 @@ void SL_GEP_dataProcessor::saveSL_GEP(const SL_GEP &slGep,const string &saveFile
                 outFile<<"+"<<endl;
                 ifInSecond = !ifInSecond;
             }
-            outFile<<"s"<<",";
+            outFile<<mapKeyFlagChar<<",";
             if(j < theExH){
                 for(auto item : couldChooseSetOfADFFirst[i])
                     outFile<<item<<",";
@@ -160,7 +183,7 @@ void SL_GEP_dataProcessor::saveSL_GEP(const SL_GEP &slGep,const string &saveFile
             }
             outFile<<endl;
 
-            outFile<<"c"<<",";
+            outFile<<mapValFlagChar<<",";
             if(j < theExH){
                 for(int k = 0 ; k < couldChooseSetOfADFFirst[i].size() ; ++k)
                     outFile << ADFSymbolCount[i][j][couldChooseSetOfADFFirst[i][k]]<<",";
@@ -174,26 +197,9 @@ void SL_GEP_dataProcessor::saveSL_GEP(const SL_GEP &slGep,const string &saveFile
             }
             outFile<<endl;
         }
-        outFile<<"-"<<endl;
+        outFile<<oneReadDoneFlagChar<<endl;
     }
-    outFile<<"*"<<endl;
-
-    //最优的染色体的mainProgram的各个symbol
-    for(auto item : bestChromosome.mainProgramEx){
-        outFile<<item<<",";
-    }
-        outFile<<endl;
-    for(int i = 0 ; i < bestChromosome.ADFEx.size() ; ++i){
-        for(auto item : bestChromosome.ADFEx[i])
-            outFile<<item<<",";
-        outFile<<endl;
-    }
-
-    outFile<<"*"<<endl;
-
-    outFile<<minDistance<<endl;
-
-    outFile<<slGep.whichRenewSymbolCountWay<<endl;
+    outFile<<setReadDoneFlagChar<<endl;
 
     outFile.close();
 }
@@ -224,60 +230,73 @@ void SL_GEP_dataProcessor::saveSL_GEP(const SL_GEP &slGep,const string &saveFile
  * */
 
 
-SL_GEP SL_GEP_dataProcessor::loadSL_GEP(const string &loadFileName,const int &chroNum, const int &TAPairNum,
-                                        const int &needEpoch ,const bool &useTheCount,const uint8_t& whichRenewSymbolCountWay) {
+SL_GEP SL_GEP_dataProcessor::loadSL_GEP(const string &loadFileName,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,
+                                        const int &chroNum, const int &needEpoch ,const bool &useTheCount,
+                                        const uint8_t& whichRenewSymbolCountWay) {
     try{
-        ifstream inFile(loadFileName, ios::in);
-        string lineStr;
-        vector<vector<string>> strArray;
-        while (getline(inFile, lineStr))
-        {
-            // 存成二维表结构
-            stringstream ss(lineStr);
-            string str;
-            vector<string> lineArray;
-            // 按照逗号分隔
-            while (getline(ss, str, ','))
-                lineArray.push_back(str);
-            strArray.push_back(lineArray);
-        }
-        int theChroNum = (chroNum == -1)? atoi(strArray[0][0]):chroNum;
-        int numOfTerminal = atoi(strArray[1][0]);
+        vector<vector<string>> strArray = readCSV(loadFileName);
+
+        int theChroNum = (chroNum == -1)? atoi(strArray[0][0].c_str()) : chroNum;
+        int numOfTerminal = atoi(strArray[1][0].c_str());
         vector<int>PresetFunctions;
         vector<int>NumOfInputArgOfADF;
         vector<int>ADFHs;
-        vector<unordered_map<int, double>>mainProgramSymbolCount = slGep.mainProgramSymbolCount;
-        vector<vector<unordered_map<int, double>>>ADFSymbolCount = slGep.ADFSymbolCount;
+        vector<unordered_map<int, double>>mainProgramSymbolCount ;
+        vector<vector<unordered_map<int, double>>>ADFSymbolCount ;
+        vector<int>bestChroMainProgram;
+        vector<vector<int>>bestChroADFs;
+        double minDistance;
+        uint8_t whichRenewSymbolCountWay;
 
         for(auto item : strArray[2])
-            PresetFunctions.push_back(atoi(item));
+            PresetFunctions.push_back(atoi(item.c_str()));
         for(auto item : strArray[3])
-            NumOfInputArgOfADF.push_back(atoi(item));
-        int mainProgramH = atoi(strArray[4][0]);
+            NumOfInputArgOfADF.push_back(atoi(item.c_str()));
+        int mainProgramH = atoi(strArray[4][0].c_str());
         for(auto item : strArray[5])
-            ADFHs.push_back(atoi(item));
-        int theTAPairNum = (TAPairNum == -1)? atoi(strArray[6][0]) : TAPairNum;
-        int theNeedEpoch = (needEpoch == -1)  ? atoi(strArray[7][0]) : needEpoch;
-        double maxWeightScore = atof(strArray[8][0]);
-        double maxDistanceByNow = atof(strArray[9][0]);
+            ADFHs.push_back(atoi(item.c_str()));
+        int theNeedEpoch = (needEpoch == -1)  ? atoi(strArray[7][0].c_str()) : needEpoch;
+        double maxWeightScore = atof(strArray[8][0].c_str());
+        double maxDistanceByNow = atof(strArray[9][0].c_str());
+
+
+        int index = 10;
+
+
+        //最优染色体的mainProgram各个symbols
+        for(auto item : strArray[index])
+            bestChroMainProgram.push_back(atoi(item.c_str()));
+        index++;
+
+        //最优染色体的ADF的各个Symbols
+        for(;strArray[index][0][0] != setReadDoneFlagChar;++index){
+            vector<int>tmpADF;
+            for(auto item : strArray[index])
+                tmpADF.push_back(atoi(item.c_str()));
+            bestChroADFs.push_back(tmpADF);
+        }
+
+
+        minDistance = atof(strArray[++index][0].c_str());                   //因为现在是setReadDoneFlagChar，所以先++
+        whichRenewSymbolCountWay = atoi(strArray[++index][0].c_str());
+        ++index;
 
         bool ifInSecond = false;
-        int index = 10;
-        for(; strArray[index][0] != setReadDoneFlagChar;++index){
-//            if(strArray[index][0] == inTheSecondFlagChar){
-//                ifInSecond = !ifInSecond;
-//                continue;
-//            }
-            if(strArray[index][0] == mapKeyFlagChar){
+        for(; strArray[index][0][0] != setReadDoneFlagChar;++index){
+            if(strArray[index][0][0] == inTheSecondFlagChar){
+                ifInSecond = !ifInSecond;
+                continue;
+            }
+            if(strArray[index][0][0] == mapKeyFlagChar){
                 unordered_map<int, double>tmpMap;
-                if(strArray[index+1][0] != mapKeyFlagChar || strArray[index].size() != strArray[index+1].size())
+                if(strArray[index+1][0][0] != mapValFlagChar || strArray[index].size() != strArray[index+1].size())
                     throw "error:no match the mainProgram map value";
-                for(int j = 0; j < strArray[index].size();++j){
-                    tmpMap[atoi(strArray[index][j])] = atof(strArray[index+1][j]);
+                for(int j = 1; j < strArray[index].size();++j){
+                    tmpMap[atoi(strArray[index][j].c_str())] = atof(strArray[index+1][j].c_str());
                 }
                 mainProgramSymbolCount.push_back(tmpMap);
                 ++index;
-            }else if(strArray[index][0] == mapValFlagChar){
+            }else if(strArray[index][0][0] == mapValFlagChar){
                 ++index;
             }else{
                 throw "error:no match the mainProgram map value";
@@ -286,23 +305,27 @@ SL_GEP SL_GEP_dataProcessor::loadSL_GEP(const string &loadFileName,const int &ch
 
         }
 
+        ++index;                                                         //因为现在是setReadDoneFlagChar，所以先++
         vector<unordered_map<int, double>>tmpADFSymbolCount;
-        for(; strArray[index][0] != setReadDoneFlagChar;++index){
+        for(; strArray[index][0][0] != setReadDoneFlagChar;++index){
             ifInSecond = false;
-            if(strArray[index][0] == oneReadDoneFlagChar){
+            if(strArray[index][0][0] == oneReadDoneFlagChar){
                 ADFSymbolCount.push_back(tmpADFSymbolCount);
                 tmpADFSymbolCount.clear();
             }else{
-                if(strArray[index][0] == mapKeyFlagChar){
+                if(strArray[index][0][0] == inTheSecondFlagChar){
+                    index++;
+                }
+                if(strArray[index][0][0] == mapKeyFlagChar){
                     unordered_map<int, double>tmpMap;
-                    if(strArray[index+1][0] != mapKeyFlagChar || strArray[index].size() != strArray[index+1].size())
+                    if(strArray[index+1][0][0] != mapValFlagChar || strArray[index].size() != strArray[index+1].size())
                         throw "error:no match the ADF map value";
-                    for(int j = 0; j < strArray[index].size();++j){
-                        tmpMap[atoi(strArray[index][j])] = atof(strArray[index+1][j]);
+                    for(int j = 1; j < strArray[index].size();++j){
+                        tmpMap[atoi(strArray[index][j].c_str())] = atof(strArray[index+1][j].c_str());
                     }
                     tmpADFSymbolCount.push_back(tmpMap);
                     ++index;
-                }else if(strArray[index][0] == mapValFlagChar){
+                }else if(strArray[index][0][0] == mapValFlagChar){
                     ++index;
                 }else{
                     throw "error:no match the ADF map value";
@@ -311,6 +334,23 @@ SL_GEP SL_GEP_dataProcessor::loadSL_GEP(const string &loadFileName,const int &ch
             }
         }
 
+        SL_GEP slGep(theChroNum,realTermVec,ansVec,theNeedEpoch,numOfTerminal,PresetFunctions,NumOfInputArgOfADF,mainProgramH,ADFHs);
+
+        Chromosome bestChromosome(slGep.cr);
+        bestChromosome.mainProgramEx = bestChroMainProgram;
+        bestChromosome.ADFEx = bestChroADFs;
+        pair<Chromosome, int>bestChromosomeAndIndex = make_pair(bestChromosome,0);
+
+        slGep.mainProgramSymbolCount = mainProgramSymbolCount;
+        slGep.ADFSymbolCount = ADFSymbolCount;
+        slGep.bestChromosomeAndIndex = bestChromosomeAndIndex;
+        slGep.minDistance = minDistance;
+        slGep.whichRenewSymbolCountWay = (uint8_t)whichRenewSymbolCountWay;
+        slGep.maxWeightScore = maxWeightScore;
+        slGep.maxDistanceByNow = maxDistanceByNow;
+
+        slGep.chromosomes[0] = bestChromosome;
+        return slGep;
 
     }catch (const char * &e){
         printf("%s\r\n",e);
@@ -318,6 +358,67 @@ SL_GEP SL_GEP_dataProcessor::loadSL_GEP(const string &loadFileName,const int &ch
     }
 
   }
+
+
+SL_GEP SL_GEP_dataProcessor::loadSL_GEPAndDataSet(const string &loadFileName,const string &dataSetFileName,const uint32_t &whichLabel,const int &chroNum,const int &needEpoch,
+                                 const bool &useTheCount,const uint8_t& whichRenewSymbolCountWay){
+    loadDataSet(dataSetFileName,whichLabel);
+    return loadSL_GEP(loadFileName,theDataSet.first,theDataSet.second,chroNum,needEpoch,useTheCount,whichRenewSymbolCountWay);
+
+}
+
+void SL_GEP_dataProcessor::loadDataSet(const string &dataSetFileName,const uint32_t &whichLabel) {
+    try{
+        vector<vector<string>> strArray = readCSV(dataSetFileName);
+        theDataSet.first.clear();
+        theDataSet.second.clear();
+        for(auto item: strArray){
+            int colIndex = 0;
+            vector<double>tmpTerm;
+            for(;item[colIndex][0] != inTheLabelDataChar;++colIndex)
+                tmpTerm.push_back(atof(item[colIndex].c_str()));
+
+            colIndex = colIndex + whichLabel * 2 + 1;           //现在位置是第一个 ‘l’ eg:
+                                                                // 第0个，l x0 对应colIndex+1位置，
+                                                                // 第1个，l x0 l x1 对应colIndex + 2 + 1
+                                                                // 第2个，l x0 l x1 l x2对应colIndex + 2 + 2 + 1
+            if(item.size() < colIndex)
+                throw "error: data row `s len is not so len when read label";
+
+            theDataSet.second.push_back(atof(item[colIndex].c_str()));
+            theDataSet.first.push_back(tmpTerm);
+        }
+    }catch (const char * &e){
+        printf("%s\r\n",e);
+        exit(-1);
+    }
+
+}
+
+pair<vector<vector<double>>, vector<double>> SL_GEP_dataProcessor::loadDataSetOut(const string &dataSetFileName,
+                                                                                  const uint32_t &whichLabel) {
+
+    loadDataSet(dataSetFileName,whichLabel);
+    return theDataSet;
+}
+
+vector<vector<string>> SL_GEP_dataProcessor::readCSV(const string &csvFileName) {
+    ifstream inFile(csvFileName, ios::in);
+    string lineStr;
+    vector<vector<string>> strArray;
+    while (getline(inFile, lineStr))
+    {
+        // 存成二维表结构
+        stringstream ss(lineStr);
+        string str;
+        vector<string> lineArray;
+        // 按照逗号分隔
+        while (getline(ss, str, ','))
+            lineArray.push_back(str);
+        strArray.push_back(lineArray);
+    }
+    return strArray;
+}
 
 void SL_GEP_dataProcessor::testSave() {
     // 写文件
@@ -356,4 +457,14 @@ void SL_GEP_dataProcessor::testLoad() {
         cout << endl;
 
     }
+}
+void SL_GEP_dataProcessor::testLoadDataSet() {
+    loadDataSet("./datasets/dataSetCSV.csv",1);
+    for(int i = 0 ; i < theDataSet.second.size() ; ++i){
+
+        for(int j = 0; j < theDataSet.first[i].size();++j)
+            printf("%f   ",theDataSet.first[i][j]);
+        printf("%f  \r\n",theDataSet.second[i]);
+    }
+
 }
