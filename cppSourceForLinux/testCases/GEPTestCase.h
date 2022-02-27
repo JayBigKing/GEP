@@ -15,6 +15,8 @@ public:
     static void testSL_GEP_load1();
     static void testLoadDataSet1();
     static void testTrainDataset1();
+    static void testTrainDataset2();
+    static void testTrainAndTestDataset1();
 
 private:
     static double fitFunctionVec(const vector<double>&args);

@@ -239,7 +239,7 @@ void GEPTestCase::testTrainDataset1() {
     ADFH[0] = 6;
     ADFH[1] = 10;
 
-    pair<vector<vector<double>>, vector<double>> theDataSet = SL_GEP_dataProcessor::loadDataSetOut("./datasets/dataSetCSV.csv",0);
+    pair<vector<vector<double>>, vector<double>> theDataSet = SL_GEP_dataProcessor::loadDataSetOut("./datasets/trainDataSetCSV.csv",0);
 
 
     SL_GEP slgep(chroNum, theDataSet.first, theDataSet.second,needEpoch, theDataSet.first[0].size(), presetFunctions,  argsLenOfADFs,
@@ -252,4 +252,83 @@ void GEPTestCase::testTrainDataset1() {
     cs.simpleShow(thePair.first);
 
     SL_GEP_dataProcessor::saveSL_GEP(slgep);
+}
+
+void GEPTestCase::testTrainDataset2() {
+    int chroNum = 60;
+    int numOfPresetFunctions = 13;
+    int numOfADFs = 2;
+
+    int mainProgramH = 20;
+
+    int needEpoch = 120000;
+
+    vector<int> presetFunctions(numOfPresetFunctions);
+    vector<int> argsLenOfADFs(numOfADFs);
+
+    int functionIndex = 0;
+    for (;functionIndex < 11; ++functionIndex) {
+//        if (j == (int)W_divide)
+//            j++;
+        presetFunctions[functionIndex] = functionIndex;
+    }
+    presetFunctions[functionIndex ++] =  (int)W_sqrt;
+    presetFunctions[functionIndex ++] = (int)W_log2;
+
+
+    argsLenOfADFs[0] = 2;
+    argsLenOfADFs[1] = 3;
+
+    vector<int> ADFH(numOfADFs);
+    ADFH[0] = 8;
+    ADFH[1] = 10;
+
+    pair<vector<vector<double>>, vector<double>> theTrainDataSet = SL_GEP_dataProcessor::loadDataSetOut("./datasets/trainDataSetCSV.csv",0);
+
+    pair<vector<vector<double>>, vector<double>> theTestDataSet = SL_GEP_dataProcessor::loadDataSetOut("./datasets/testDataSetCSV.csv",0);
+
+
+    SL_GEP slgep(chroNum, theTrainDataSet.first, theTrainDataSet.second,needEpoch, theTrainDataSet.first[0].size(), presetFunctions,  argsLenOfADFs,
+                 mainProgramH, ADFH);
+
+    ChromosomeShower cs(slgep.getChromosomeRule());
+
+    pair<Chromosome, ChromosomeRule> thePair = slgep.train();
+
+    cs.simpleShow(thePair.first);
+
+    SL_GEP_dataProcessor::saveSL_GEP(slgep,"./theSL_GEPs/SL_GEP_WORK_DIM_1.csv");
+
+    printf("\r\nperformance in test dataset:%f\r\n",slgep.testDataRunPerformance(theTestDataSet.first,theTrainDataSet.second));
+}
+
+void GEPTestCase::testTrainAndTestDataset1() {
+    int chroNum = 50;
+
+    int needEpoch = 80000;
+
+
+
+    pair<vector<vector<double>>, vector<double>> theTrainDataSet = SL_GEP_dataProcessor::loadDataSetOut("./datasets/trainDataSetCSV.csv",0);
+
+    pair<vector<vector<double>>, vector<double>> theTestDataSet = SL_GEP_dataProcessor::loadDataSetOut("./datasets/testDataSetCSV.csv",0);
+
+//    SL_GEP slgep(chroNum, theTrainDataSet.first, theTrainDataSet.second,needEpoch, theTrainDataSet.first[0].size(), presetFunctions,  argsLenOfADFs,
+//                 mainProgramH, ADFH);
+
+    SL_GEP slgep = SL_GEP_dataProcessor::loadSL_GEP("./theSL_GEPs/SL_GEP_WORK_DIM_1.csv",
+                                                    theTrainDataSet.first, theTrainDataSet.second,chroNum,needEpoch,
+                                                    ANY_ONE_EQUAL_WAY);
+
+    ChromosomeShower cs(slgep.getChromosomeRule());
+
+    pair<Chromosome, ChromosomeRule> thePair = slgep.train();
+
+    cs.simpleShow(thePair.first);
+
+    SL_GEP_dataProcessor::saveSL_GEP(slgep,"./theSL_GEPs/SL_GEP_WORK_DIM_1.csv");
+
+    printf("\r\nperformance in test dataset:%f\r\n",slgep.testDataRunPerformance(theTestDataSet.first,theTrainDataSet.second));
+
+
 }

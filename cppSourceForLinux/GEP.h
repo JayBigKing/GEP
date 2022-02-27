@@ -81,7 +81,11 @@ public:
     pair<Chromosome, int> getBestChromosomeAndIndex() { return bestChromosomeAndIndex; }
     ChromosomeRule getChromosomeRule() { return cr; }
 
+    virtual void printOutArgumentDetail();
 
+    virtual double predict(vector<double> &terminal) = 0;
+
+    virtual double testDataRunPerformance(const vector<vector<double>>&realTermVec, const vector<double>&ansVec) = 0;
 
     ~GEP(){}
 //    friend class SL_GEPTester;
@@ -146,6 +150,8 @@ protected:
     void initChromosomeSymbolCount2();
     void initCouldChooseSet();
 
+
+    void chromosomeSymbolCountReduce(double reduceRate);
     void resetSymbolCount();
 //	void initRand();
 

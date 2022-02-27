@@ -672,6 +672,8 @@ int main() {
 //    GEPTestCase::testSL_GEP_save1();
 //    GEPTestCase::testSL_GEP_load1();
 //    GEPTestCase::testLoadDataSet1();
-    GEPTestCase::testTrainDataset1();
+//    GEPTestCase::testTrainDataset1();
+//    GEPTestCase::testTrainAndTestDataset1();
+    GEPTestCase::testTrainDataset2();
     return 0;
 }

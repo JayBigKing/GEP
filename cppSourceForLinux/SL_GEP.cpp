@@ -154,11 +154,63 @@ void SL_GEP::reInit() {
     epoch = 0;
     resetSymbolCount();
 }
-
+/**
+  * @brief  输出一些GEP的参数信息
+  *
+  * @param
+  *
+  * @note   父类已经输出了一些信息，子类做一些补充
+  *
+  * @retval None
+  */
+void SL_GEP::printOutArgumentDetail() {
+    GEP::printOutArgumentDetail();
+    try{
+        switch (whichRenewSymbolCountWay) {
+            case ANY_ONE_EQUAL_WAY:
+                printf("any one equal way\r\n");
+                break;
+            case LOW_ONE_FIRST:
+                printf("low one first way\r\n");
+                break;
+            case BEST_ONE_ONLY:
+                printf("best one only way\r\n");
+                break;
+            case ANY_ONE_COUNT_BY_WEIGHT:
+                printf("any one count by weight way\r\n");
+                break;
+            default:
+                throw "error : unknown way!";
+        }
+    }catch(const char * &e){
+        printf("%s\r\n",e);
+        exit(-1);
+    }
+}
+/**
+  * @brief  用ANY_ONE_EQUAL_WAY等方式的时候，值可能会一直很大，需要选择合适时机，对所有count进行一个reduce操作，即全部乘上相同的系数
+  *
+  * @param
+  *
+  * @note
+  *
+  * @retval None
+  */
+void SL_GEP::reduceAllCount() {
+    static int reduceCount = 0;
+    static int theReduceOccasion = needEpoch * 0.2;
+    if(reduceCount++ >= theReduceOccasion){
+        reduceCount = 0;
+        chromosomeSymbolCountReduce(0.4);
+    }
+}
 pair<Chromosome, ChromosomeRule> SL_GEP::train() {
     pair<Chromosome, ChromosomeRule> outPair;
+    printOutArgumentDetail();
     initChromosomes();
     for (; shouldContiue();) {
+        if(whichRenewSymbolCountWay == ANY_ONE_EQUAL_WAY)
+            reduceAllCount();
         inheritanceProcess();
         printf("%d:%f\r\n", epoch, minDistance);		//602  (>2200)
     }
@@ -166,6 +218,49 @@ pair<Chromosome, ChromosomeRule> SL_GEP::train() {
     outPair.second = cr;
 
     return outPair;
+}
+/**
+  * @brief  用训练中得到的最优染色体进行预测
+  *
+  * @param  terminal:输入参数
+  *
+  * @note   先train再predict
+  *
+  * @retval 预测值
+  */
+double SL_GEP::predict(vector<double> &terminal) {
+    try{
+        if (epoch < needEpoch)
+            throw "please train first, you are not train enough!";
+        else{
+            cdPtr->setChromosome(bestChromosomeAndIndex.first);
+            return cdPtr->decode(terminal);
+        }
+    }catch (const char * &e){
+        printf("%s\r\n",e);
+    }
+}
+/**
+  * @brief  计算训练中得到的最优染色体在测试集中的欧式距离，即最优染色体在测试集中的表现
+  *
+  * @param  realTermVec:测试集的参数
+  * @param  ansVec:测试集的label
+  *
+  * @note
+  *
+  * @retval 最优染色体在测试集的距离
+  */
+double SL_GEP::testDataRunPerformance(const vector<vector<double>> &realTermVec, const vector<double> &ansVec) {
+    try{
+        if (epoch < needEpoch)
+            throw "please train first, you are not train enough!";
+        else{
+            return calculateDistance(bestChromosomeAndIndex.first);
+        }
+    }catch (const char * &e){
+        printf("%s\r\n",e);
+    }
+
 }
 
 //初始化染色体群
@@ -207,7 +302,7 @@ void SL_GEP::initChromosomes() {
         recordBestChromosome(i,nowDis);
 
         if(whichRenewSymbolCountWay == ANY_ONE_EQUAL_WAY)
-            recordOneSymbolCount(i);
+            recordOneSymbolCount(i,theMinSymbolCount);
     }
 
     if(whichRenewSymbolCountWay == ANY_ONE_COUNT_BY_WEIGHT || whichRenewSymbolCountWay == BEST_ONE_ONLY || whichRenewSymbolCountWay == LOW_ONE_FIRST)
@@ -516,7 +611,7 @@ double SL_GEP::EuclideanDis(const Chromosome &c){
             return maxDistanceByNow;
         count += pow((decodeVal - ansSet[i]), 2);
     }
-    count = sqrt(count);
+    count = sqrt(adjustValue(count));
     if (count > maxDistanceByNow)
         maxDistanceByNow = count;
 
@@ -547,7 +642,7 @@ void SL_GEP::inheritanceProcess() {
             individualSelection(i, ACSRandVal);							//自然选择
         else if (whichRenewSymbolCountWay == ANY_ONE_EQUAL_WAY) {
             individualSelection(i);
-            recordOneSymbolCount(i);
+            recordOneSymbolCount(i,theMinSymbolCount);
         }
 
 
@@ -603,7 +698,7 @@ void SL_GEP::setOneSymbolCountByRandVal(const int &chroIndex, const double &rand
 
 
 void SL_GEP::recordAllCount() {
-    if (totalWeight) {
+    if (totalWeight > 1e-8) {
         if (whichRenewSymbolCountWay == LOW_ONE_FIRST) {
             for (int i = 0; i < chromosomesNum; ++i)
                 recordOneSymbolCount(i, chromosomeWeight[i] / totalWeight);
@@ -662,6 +757,11 @@ void SL_GEP::setChromosomeWeight(const int & chroIndex, const double& distance) 
     chromosomeWeight[chroIndex] = distance;
     totalWeight += distance;
     adjustTotalWeight();
+}
+
+double SL_GEP::adjustValue(const double &x) {
+    if(isinf(x))
+        return getTheMaxReal();
 }
 
 void SL_GEP::adjustTotalWeight() {

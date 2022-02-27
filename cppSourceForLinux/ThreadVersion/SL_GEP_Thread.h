@@ -47,6 +47,12 @@ public:
                   const int &threadNum = -1 , const bool &ifUseSuspendNum = true,const double &similarValue = 1e-6
     );
     pair<Chromosome, ChromosomeRule> train();
+
+    void printOutArgumentDetail(){}
+
+    double predict(vector<double> &terminal){return -1;}
+
+    double testDataRunPerformance(const vector<vector<double>>&realTermVec, const vector<double>&ansVec){return -1;}
 private:
     int threadNum;
     uint8_t whichRenewSymbolCountWay = ANY_ONE_EQUAL_WAY;

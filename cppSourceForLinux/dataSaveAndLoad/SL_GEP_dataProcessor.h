@@ -16,12 +16,12 @@ public:
 
     static void saveSL_GEP(const SL_GEP &slGep,const string &saveFileName="");
     static SL_GEP loadSL_GEP(const string &loadFileName,const vector<vector<double>>&realTermVec, const vector<double>&ansVec,const int &chroNum = -1,
-                             const int &needEpoch = -1,const bool &useTheCount = true,const uint8_t& whichRenewSymbolCountWay = -1);
+                             const int &needEpoch = -1,const int8_t& whichRenewSymbolCountWay = -1);
 
     static void loadDataSet(const string &dataSetFileName,const uint32_t &whichLabel = 0);
     static pair<vector<vector<double>>,vector<double>> loadDataSetOut(const string &dataSetFileName,const uint32_t &whichLabel = 0);
     static SL_GEP loadSL_GEPAndDataSet(const string &loadFileName,const string &dataSetFileName,const uint32_t &whichLabel = 0,const int &chroNum = -1,const int &needEpoch = -1,
-                                     const bool &useTheCount = true,const uint8_t& whichRenewSymbolCountWay = -1);
+                                     const uint8_t& whichRenewSymbolCountWay = -1);
 
     static void testLoadDataSet();
 

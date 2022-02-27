@@ -150,8 +150,28 @@ void GEP::initHelp(const vector<vector<double>> &realTermVec, const vector<doubl
     initCouldChooseSet();
     initChromosomeSymbolCount2();
 }
+/**
+  * @brief  输出一些GEP的参数信息
+  *
+  * @param
+  *
+  * @note
+  *
+  * @retval None
+  */
+void GEP::printOutArgumentDetail() {
+    printf("chromosome num : %d\r\n",chromosomesNum);
+    printf("presetFunction num : %ld  ",cr.getSymbolSet().getFunctionSet().size());
+    for(auto & i : cr.getSymbolSet().getFunctionSet())
+        printf("%s , ",i.getSymbolName().c_str());
+    printf("\r\nADF num : %ld\r\n",cr.getSymbolSet().getSubFunctionSet().size());
+    printf("terminal num : %ld\r\n",cr.getSymbolSet().getTerminalSet().size());
+    printf("mainProgram H : %d\r\n",cr.getMainPR().h);
+    for(int i = 0 ; i < cr.getADFPR().size(); ++i)
+        printf("ADF%d`s H :%d , ",i+1,cr.getADFPR(i).h);
+    printf("\r\nneed epoch:%d\r\n",needEpoch);
 
-
+}
 
 
 void GEP::initChromosomeSymbolCount() {
@@ -307,6 +327,33 @@ void GEP::initChromosomeSymbolCount2() {
 
 }
 
+/**
+  * @brief  用ANY_ONE_EQUAL_WAY等方式的时候，值可能会一直很大，需要选择合适时机，对所有count进行一个reduce操作，即全部乘上相同的系数
+  *
+  * @param  reduceRate
+  *
+  * @note
+  *
+  * @retval None
+  */
+void GEP::chromosomeSymbolCountReduce(double reduceRate) {
+    try{
+        if (reduceRate < 0 || reduceRate >1 )
+            throw "error invaild reduce race";
+        for (auto &item : mainProgramSymbolCount)
+            for (auto &subItem : item)
+                subItem.second = subItem.second * reduceRate;
+
+        for (auto &item : ADFSymbolCount)
+            for (auto &subItem : item)
+                for(auto &subSubItem : subItem)
+                    subSubItem.second = subSubItem.second * reduceRate;
+    }catch (const char * &e){
+        printf("%s\r\n",e);
+        exit(-1);
+    }
+
+}
 
 //初始化可选集合
 void GEP::initCouldChooseSet() {

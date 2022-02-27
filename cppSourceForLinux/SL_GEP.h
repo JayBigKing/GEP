@@ -65,6 +65,12 @@ public:
 
     void reInit();
 
+    void printOutArgumentDetail();
+
+    double predict(vector<double> &terminal);
+
+    double testDataRunPerformance(const vector<vector<double>>&realTermVec, const vector<double>&ansVec);
+
     ~SL_GEP(){}
 
     friend class SL_GEPTester;
@@ -72,7 +78,7 @@ public:
 
 
 private:
-    uint8_t whichRenewSymbolCountWay = BEST_ONE_ONLY;
+    uint8_t whichRenewSymbolCountWay = ANY_ONE_EQUAL_WAY;
 
     default_random_engine FGenerator;
     default_random_engine BetaGenerator;
@@ -143,8 +149,11 @@ private:
 
     void recordAllCount();
 
+    void reduceAllCount();
+
     void setChromosomeWeight(const int & chroIndex, const double& distance);
     void adjustTotalWeight();
+    double adjustValue(const double &x);
 
 };
 
