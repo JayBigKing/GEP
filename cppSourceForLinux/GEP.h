@@ -85,7 +85,7 @@ public:
 
     virtual double predict(vector<double> &terminal) = 0;
 
-    virtual double testDataRunPerformance(const vector<vector<double>>&realTermVec, const vector<double>&ansVec) = 0;
+    virtual double testDataRunPerformance(const vector<vector<double>> &testRealTermVec, const vector<double> &testAnsVec) = 0;
 
     ~GEP(){}
 //    friend class SL_GEPTester;

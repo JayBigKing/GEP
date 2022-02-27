@@ -250,12 +250,21 @@ double SL_GEP::predict(vector<double> &terminal) {
   *
   * @retval 最优染色体在测试集的距离
   */
-double SL_GEP::testDataRunPerformance(const vector<vector<double>> &realTermVec, const vector<double> &ansVec) {
+double SL_GEP::testDataRunPerformance(const vector<vector<double>> &testRealTermVec, const vector<double> &testAnsVec) {
     try{
         if (epoch < needEpoch)
             throw "please train first, you are not train enough!";
         else{
-            return calculateDistance(bestChromosomeAndIndex.first);
+            double count = 0.0;
+            double decodeVal;
+            cdPtr->setChromosome(bestChromosomeAndIndex.first);
+            for (int i = 0; i < testRealTermVec.size(); ++i) {
+                decodeVal = (cdPtr->decode(testRealTermVec[i]));
+                if (decodeVal >= getTheMaxReal())
+                    return maxDistanceByNow;
+                count += pow((decodeVal - testAnsVec[i]), 2);
+            }
+            return sqrt(adjustValue(count));
         }
     }catch (const char * &e){
         printf("%s\r\n",e);

@@ -69,7 +69,7 @@ public:
 
     double predict(vector<double> &terminal);
 
-    double testDataRunPerformance(const vector<vector<double>>&realTermVec, const vector<double>&ansVec);
+    double testDataRunPerformance(const vector<vector<double>> &testRealTermVec, const vector<double> &testAnsVec);
 
     ~SL_GEP(){}
 
