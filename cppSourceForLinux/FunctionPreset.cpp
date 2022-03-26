@@ -45,11 +45,11 @@ double functionPresetHandler(const double *args, WhichFunction whichFunction) {
             case W_times:
                 return args[0] * args[1];
             case W_divide:
-                if (args[1] < 1e-5)
+                if (abs(args[1]) < 1e-5)
                     return theMaxReal;
                 else{
                     outVal = args[0] / args[1];
-                    if(isfinite(outVal))
+                    if(!isfinite(outVal))
                         return theMaxReal;
                     else
                         return outVal;
@@ -61,7 +61,7 @@ double functionPresetHandler(const double *args, WhichFunction whichFunction) {
                 return cos(args[0]);
             case W_tan:
                 outVal = tan(args[0]);
-                if(isinf(outVal) || outVal >= dangerousVal)
+                if(isinf(outVal) || abs(outVal) >= dangerousVal)
                     return theMaxReal;
                 else
                     return outVal;
@@ -136,11 +136,11 @@ double functionPresetHandler(const vector<double> &args, WhichFunction whichFunc
             case W_times:
                 return args[0] * args[1];
             case W_divide:
-                if (args[1] < 1e-5)
+                if (abs(args[1]) < 1e-5)
                     return theMaxReal;
                 else{
                     outVal = args[0] / args[1];
-                    if(isfinite(outVal))
+                    if(!isfinite(outVal))
                         return theMaxReal;
                     else
                         return outVal;
@@ -152,7 +152,7 @@ double functionPresetHandler(const vector<double> &args, WhichFunction whichFunc
                 return cos(args[0]);
             case W_tan:
                 outVal = tan(args[0]);
-                if(isinf(outVal) || outVal >= dangerousVal)
+                if(isinf(outVal) || abs(outVal) >= dangerousVal)
                     return theMaxReal;
                 else
                     return outVal;

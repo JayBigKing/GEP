@@ -4,7 +4,7 @@
 
 #include "SL_ChromosomeDecoder.h"
 #include <queue>
-
+#include <string.h>
 #include<boost/smart_ptr.hpp>
 
 void SL_ChromosomeDecoder::clearGlobalData() {
@@ -191,12 +191,13 @@ double SL_ChromosomeDecoder::mainProgramDecode() {
     while (!opStack.empty()) {
         tmpDe = opStack.top();
         Symbol tmpSym = symbolSet.getSymbol(tmpDe.symbolSetIndex);
-        int opLastIndex = tmpDe.pointIndex + tmpDe.opNum - 1;
+//        int opLastIndex = tmpDe.pointIndex + tmpDe.opNum - 1;
         opStack.pop();
 
-        for (int i = tmpDe.pointIndex, j = 0; i < tmpDe.pointIndex + tmpDe.opNum; ++i, ++j) {
-            args[j] = outputVec[i];
-        }
+//        for (int i = tmpDe.pointIndex, j = 0; i < tmpDe.pointIndex + tmpDe.opNum; ++i, ++j) {
+//            args[j] = outputVec[i];
+//        }
+        memcpy(args.get(),(uint8_t *)&outputVec[tmpDe.pointIndex],tmpDe.opNum * sizeof (double ));
 
         if (tmpDe.symbolType == FUNCTION) {
             nowDecodeVal = tmpSym.callFunctionHandler(args.get());
@@ -245,12 +246,13 @@ double SL_ChromosomeDecoder::ADFProgramDecode(Symbol &subFunctionSym, double* in
     while (!opStack.empty()) {
         tmpDe = opStack.top();
         Symbol tmpSym = symbolSet.getSymbol(tmpDe.symbolSetIndex);
-        int opLastIndex = tmpDe.pointIndex + tmpDe.opNum - 1;
+//        int opLastIndex = tmpDe.pointIndex + tmpDe.opNum - 1;
         opStack.pop();
 
-        for (int i = tmpDe.pointIndex, j = 0; i < tmpDe.pointIndex + tmpDe.opNum; ++i, ++j) {
-            args[j] = outputVec[i];
-        }
+//        for (int i = tmpDe.pointIndex, j = 0; i < tmpDe.pointIndex + tmpDe.opNum; ++i, ++j) {
+//            args[j] = outputVec[i];
+//        }
+        memcpy(args.get(),(uint8_t *)&outputVec[tmpDe.pointIndex],tmpDe.opNum * sizeof (double ));
         if (tmpDe.symbolType == FUNCTION) {
             nowDecodeVal = tmpSym.callFunctionHandler(args.get());
             if (nowDecodeVal >= getTheMaxReal())

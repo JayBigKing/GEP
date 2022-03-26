@@ -1,4 +1,5 @@
 from gepSymbol import Symbol
+import copy
 class SymbolMapInfo:
     def __init__(self):
         self.symbolType = Symbol.SymbolType
@@ -58,7 +59,7 @@ class SymbolSet:
 
     def pushFunctionSymbolObject(self,functionSymbol):
         functionSymbol.setNum(self.__symbolNum)
-        self.__functionSet.append(functionSymbol)
+        self.__functionSet.append(copy.deepcopy(functionSymbol))
         self.__appendSymbolVecAndMap(Symbol.SymbolType.FUNCTION, functionSymbol.getSymbolName())
 
     def pushSubFunctionSymbol(self,symbolName,numOfInputArgs, ADFIndex):
@@ -67,7 +68,7 @@ class SymbolSet:
 
     def pushSubFunctionSymbolObject(self,subFunctionSymbol):
         subFunctionSymbol.setNum(self.__symbolNum)
-        self.__subFunctionSet.append(subFunctionSymbol)
+        self.__subFunctionSet.append(copy.deepcopy(subFunctionSymbol))
         self.__appendSymbolVecAndMap(Symbol.SymbolType.SUB_FUNCTION,subFunctionSymbol.getSymbolName())
 
 
@@ -77,7 +78,7 @@ class SymbolSet:
 
     def pushTerminalSymbolObject(self,terminalSymbol):
         terminalSymbol.setNum(self.__symbolNum)
-        self.__terminalSet.append(terminalSymbol)
+        self.__terminalSet.append(copy.deepcopy(terminalSymbol))
         self.__appendSymbolVecAndMap(Symbol.SymbolType.TERMINAL,terminalSymbol.getSymbolName())
 
     def pushConstantSymbol(self,symbolName,value = 1):
@@ -86,7 +87,7 @@ class SymbolSet:
 
     def pushConstantSymbolObject(self,terminalSymbol):
         terminalSymbol.setNum(self.__symbolNum)
-        self.__terminalSet.append(terminalSymbol)
+        self.__terminalSet.append(copy.deepcopy(terminalSymbol))
         self.__appendSymbolVecAndMap(Symbol.SymbolType.TERMINAL,terminalSymbol.getSymbolName(),True)
 
     def pushInputArgSymbol(self,symbolName):
@@ -95,7 +96,7 @@ class SymbolSet:
 
     def pushInputArgSymbolObject(self,inputArgSymbol):
         inputArgSymbol.setNum(self.__symbolNum)
-        self.__inputArgsSet.append(inputArgSymbol)
+        self.__inputArgsSet.append(copy.deepcopy(inputArgSymbol))
         self.__appendSymbolVecAndMap(Symbol.SymbolType.ARGUMENT,inputArgSymbol.getSymbolName())
 
     def getFunctionSet(self):

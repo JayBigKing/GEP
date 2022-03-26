@@ -644,9 +644,14 @@ void test14(){
         printf("%d\r\n",rd());
 }
 
+void test15(const int &argc,char** argv){
+    printf("%d\r\n",argc);
+    for(int i = 1 ; i < argc ; ++i)
+        printf("%s\r\n",argv[i]);
 
+}
 
-int main() {
+int main(int argc, char** argv) {
 //    cout<<"hh"<<endl;
 //    test1();
 //    test2();
@@ -673,7 +678,9 @@ int main() {
 //    GEPTestCase::testSL_GEP_load1();
 //    GEPTestCase::testLoadDataSet1();
 //    GEPTestCase::testTrainDataset1();
-//    GEPTestCase::testTrainAndTestDataset1();
-    GEPTestCase::testTrainDataset2();
+    GEPTestCase::testTrainOrReTrainByArgv(argc,argv);
+//    GEPTestCase::testEvaluateDistance();
+
+
     return 0;
 }

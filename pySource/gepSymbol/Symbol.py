@@ -1,4 +1,5 @@
 from enum import Enum
+from gepSymbol.functionPreset import FunctionPreset
 class SymbolType(Enum):
     FUNCTION = 1,
     SUB_FUNCTION = 2
@@ -52,7 +53,7 @@ class FunctionSymbol(Symbol):
         if self.__whichFunction is None:
             return self.__functionHandler(args)
         else:
-            pass
+            return FunctionPreset.functionPresetHandler(args,self.__whichFunction)
 
 class SubFunctionSymbol(Symbol):
     def __init__(self,symbolName,num,numOfInputArgs, ADFIndex):
@@ -74,7 +75,7 @@ class TerminalSymbol(Symbol):
         self.__isValConstant = isValConstant
     def setValue(self,x):
         self.__value = x
-    def getValue(self,x):
+    def getValue(self):
         return self.__value
     def getIfValConstant(self):
         return self.__isValConstant
@@ -82,3 +83,10 @@ class TerminalSymbol(Symbol):
 class InputArgSymbol(Symbol):
     def __init__(self,symbolName,num):
         super().__init__(SymbolType.ARGUMENT,symbolName,num)
+        self.__value = 0
+
+    def setValue(self, x):
+        self.__value = x
+
+    def getValue(self):
+        return self.__value

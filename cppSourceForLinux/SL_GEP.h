@@ -139,6 +139,7 @@ private:
     void individualSelection(const int &chroIndex,const double &randVal);
     double calculateDistance(const 	Chromosome &c);
     double EuclideanDis(const Chromosome &c);
+    double ManhanttanDis(const Chromosome &c);
     //ManhattanDis ChebyshevDis
 
     void inheritanceProcess();				//遗传过程，优化单线程的程序，将突变，交叉，自然选择放在一起

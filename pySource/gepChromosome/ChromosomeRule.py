@@ -1,5 +1,6 @@
 from gepSymbol import Symbol,SymbolSet
 import numpy as np
+import copy
 class ProgramRule:
     def __init__(self):
         self.h = 0
@@ -32,10 +33,10 @@ class ChromosomeRule:
         return self.__ADFU
     def getSymbolSet(self):
         return self.__symbolSet
-    def init(self,mainProgramH , ADFH , symbolSet ):
+    def init(self,mainProgramH , ADFH , symbolSet : SymbolSet.SymbolSet ):
         self.__mainU = 0
         self.__ADFU = 0
-        self.__symbolSet = symbolSet
+        self.__symbolSet = copy.deepcopy(symbolSet)
 
         fs = symbolSet.getFunctionSet()         #fs namely functionSet
         sfs = symbolSet.getSubFunctionSet()     #sfs namely subFunctionSet

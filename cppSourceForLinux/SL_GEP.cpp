@@ -259,7 +259,7 @@ double SL_GEP::testDataRunPerformance(const vector<vector<double>> &testRealTerm
             double decodeVal;
             cdPtr->setChromosome(bestChromosomeAndIndex.first);
             for (int i = 0; i < testRealTermVec.size(); ++i) {
-                decodeVal = (cdPtr->decode(testRealTermVec[i]));
+                decodeVal = (cdPtr->decode((const_cast<vector<vector<double>>&>(testRealTermVec))[i]));
                 if (decodeVal >= getTheMaxReal())
                     return maxDistanceByNow;
                 count += pow((decodeVal - testAnsVec[i]), 2);
@@ -304,6 +304,8 @@ void SL_GEP::initChromosomes() {
         }
 
         nowDis = calculateDistance(chromosomes[i]);
+        lastChrmosomesDisValue[i] = nowDis;
+
         if(whichRenewSymbolCountWay == ANY_ONE_COUNT_BY_WEIGHT || whichRenewSymbolCountWay == BEST_ONE_ONLY || whichRenewSymbolCountWay == LOW_ONE_FIRST)
             setChromosomeWeight(i, nowDis);
 
@@ -572,7 +574,8 @@ void SL_GEP::individualSelection(const int &chroIndex){
     double xDistance = 0.0, uDistance = 0.0;
     double nowMinDistance = 0.0;
     //cdPtr->setChromosome(chromosomes[chroIndex]);
-    xDistance = calculateDistance(chromosomes[chroIndex]);
+//    xDistance = calculateDistance(chromosomes[chroIndex]);
+    xDistance = lastChrmosomesDisValue[chroIndex];
     uDistance = calculateDistance(UChromosome);
     if (uDistance < xDistance) {
         chromosomes[chroIndex] = UChromosome;
@@ -589,7 +592,8 @@ void SL_GEP::individualSelection(const int &chroIndex, const double &randVal) {
     double xDistance = 0.0, uDistance = 0.0;
     double nowMinDistance = 0.0;
     //cdPtr->setChromosome(chromosomes[chroIndex]);
-    xDistance = calculateDistance(chromosomes[chroIndex]);
+//    xDistance = calculateDistance(chromosomes[chroIndex]);
+    xDistance = lastChrmosomesDisValue[chroIndex];
     uDistance = calculateDistance(UChromosome);
     if (uDistance < xDistance) {
         chromosomes[chroIndex] = UChromosome;
@@ -607,7 +611,8 @@ void SL_GEP::individualSelection(const int &chroIndex, const double &randVal) {
 }
 
 double SL_GEP::calculateDistance(const 	Chromosome &c){
-    return EuclideanDis(c);
+//    return EuclideanDis(c);
+    return ManhanttanDis(c);
 
 }
 double SL_GEP::EuclideanDis(const Chromosome &c){
@@ -626,6 +631,21 @@ double SL_GEP::EuclideanDis(const Chromosome &c){
 
     return  count;
 
+}
+double SL_GEP::ManhanttanDis(const Chromosome &c) {
+    double count = 0.0;
+    double decodeVal;
+    cdPtr->setChromosome(const_cast<Chromosome&>(c));
+    for (int i = 0; i < termAnsPairNum; ++i) {
+        decodeVal = (cdPtr->decode(realTermSet[i]));
+        if (decodeVal >= getTheMaxReal())
+            return maxDistanceByNow;
+        count += abs((decodeVal - ansSet[i]));
+    }
+    if (count > maxDistanceByNow)
+        maxDistanceByNow = count;
+
+    return  count;
 }
 //********************************************************
 

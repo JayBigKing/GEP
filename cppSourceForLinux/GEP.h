@@ -100,6 +100,7 @@ protected:
 
     vector<Chromosome> chromosomes;
     pair<Chromosome, int>bestChromosomeAndIndex;
+    vector<double> lastChrmosomesDisValue;
 
 
     //记录mainProgram每个位置选的symbol的数量
